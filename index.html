@@ -2894,7 +2894,20 @@
     const totalCost = list.reduce((s, f) => s + f.cost, 0);
     const totalLiters = list.reduce((s, f) => s + f.liters, 0);
     const avgPrice = totalLiters ? totalCost / totalLiters : 0;
-    $('fuelStats').textContent = `ОБЩО ${formatNumber(totalCost)} € · СР. ЦЕНА ${avgPrice.toFixed(2)} €/Л`;
+
+    let statsText = `ОБЩО ${formatNumber(totalCost)} € · СР. ЦЕНА ${avgPrice.toFixed(2)} €/Л`;
+
+    const byKm = list.filter((f) => f.km > 0).slice().sort((a, b) => a.km - b.km);
+    if (byKm.length >= 2) {
+      const totalKm = byKm[byKm.length - 1].km - byKm[0].km;
+      const litersUsed = byKm.slice(1).reduce((s, f) => s + f.liters, 0);
+      if (totalKm > 0) {
+        const avgConsumption = (litersUsed / totalKm) * 100;
+        statsText += ` · СР. РАЗХОД ${avgConsumption.toFixed(1)} Л/100КМ`;
+      }
+    }
+
+    $('fuelStats').textContent = statsText;
   }
 
   function addFuel() {
