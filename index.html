@@ -4,7 +4,9 @@
 <meta charset="UTF-8" />
 <title>LifeOS</title>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+<link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
 <style>
   /* ============ Tokens — single committed world: a 2050 personal control center ============ */
   :root {
@@ -3034,10 +3036,14 @@
   /* ============ Auth ============ */
 
   function initAuth() {
+    $('authMessage').textContent = 'Проверка на сесията...';
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
         currentUser = data.session.user;
+        $('authMessage').textContent = 'Зареждане...';
         startApp();
+      } else {
+        $('authMessage').textContent = '';
       }
     });
   }
@@ -3071,18 +3077,21 @@
 
     if (authMode === 'signin') {
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      btn.disabled = false;
-      if (error) { msg.textContent = error.message; msg.className = 'auth-message error'; return; }
+      if (error) { btn.disabled = false; msg.textContent = error.message; msg.className = 'auth-message error'; return; }
       currentUser = data.user;
-      startApp();
+      msg.textContent = 'Зареждане...';
+      msg.className = 'auth-message ok';
+      await startApp();
     } else {
       const { data, error } = await sb.auth.signUp({ email, password });
-      btn.disabled = false;
-      if (error) { msg.textContent = error.message; msg.className = 'auth-message error'; return; }
+      if (error) { btn.disabled = false; msg.textContent = error.message; msg.className = 'auth-message error'; return; }
       if (data.session) {
         currentUser = data.user;
-        startApp();
+        msg.textContent = 'Зареждане...';
+        msg.className = 'auth-message ok';
+        await startApp();
       } else {
+        btn.disabled = false;
         msg.textContent = 'Провери имейла си, за да потвърдиш акаунта.';
         msg.className = 'auth-message ok';
       }
