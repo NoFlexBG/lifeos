@@ -1813,6 +1813,10 @@
               <span class="gauge-label">НЕПЛАТЕНИ ФИШОВЕ</span>
               <div class="garage-stat-value" id="ovFinesUnpaid">0€</div>
             </div>
+            <div class="console-panel garage-stat" data-accent="cyan">
+              <span class="gauge-label">СРЕДЕН РАЗХОД</span>
+              <div class="garage-stat-value" id="ovFuelConsumption">—</div>
+            </div>
           </div>
 
           <div class="console-panel chart-panel">
@@ -2873,6 +2877,15 @@
     renderGarageOverview();
   }
 
+  function calcAvgFuelConsumption(fuelList) {
+    const byKm = fuelList.filter((f) => f.km > 0).slice().sort((a, b) => a.km - b.km);
+    if (byKm.length < 2) return null;
+    const totalKm = byKm[byKm.length - 1].km - byKm[0].km;
+    if (totalKm <= 0) return null;
+    const litersUsed = byKm.slice(1).reduce((s, f) => s + f.liters, 0);
+    return (litersUsed / totalKm) * 100;
+  }
+
   function renderFuel() {
     const list = getActiveRecords().fuel.slice().sort((a, b) => b.date.localeCompare(a.date));
     const container = $('fuelList');
@@ -2895,19 +2908,7 @@
     const totalLiters = list.reduce((s, f) => s + f.liters, 0);
     const avgPrice = totalLiters ? totalCost / totalLiters : 0;
 
-    let statsText = `ОБЩО ${formatNumber(totalCost)} € · СР. ЦЕНА ${avgPrice.toFixed(2)} €/Л`;
-
-    const byKm = list.filter((f) => f.km > 0).slice().sort((a, b) => a.km - b.km);
-    if (byKm.length >= 2) {
-      const totalKm = byKm[byKm.length - 1].km - byKm[0].km;
-      const litersUsed = byKm.slice(1).reduce((s, f) => s + f.liters, 0);
-      if (totalKm > 0) {
-        const avgConsumption = (litersUsed / totalKm) * 100;
-        statsText += ` · СР. РАЗХОД ${avgConsumption.toFixed(1)} Л/100КМ`;
-      }
-    }
-
-    $('fuelStats').textContent = statsText;
+    $('fuelStats').textContent = `ОБЩО ${formatNumber(totalCost)} € · СР. ЦЕНА ${avgPrice.toFixed(2)} €/Л`;
   }
 
   function addFuel() {
@@ -3031,6 +3032,9 @@
     $('ovRepairsCost').textContent = formatNumber(repairsCost) + '€';
     $('ovFuelCost').textContent = formatNumber(fuelCost) + '€';
     $('ovFinesUnpaid').textContent = formatNumber(finesUnpaid) + '€';
+
+    const avgConsumption = calcAvgFuelConsumption(records.fuel);
+    $('ovFuelConsumption').textContent = avgConsumption === null ? '—' : `${avgConsumption.toFixed(1)} Л/100КМ`;
 
     const docsContainer = $('ovDocsAlerts');
     docsContainer.innerHTML = '';
