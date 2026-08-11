@@ -3098,10 +3098,20 @@
     }
   }
 
-  async function handleLogout() {
-    await sb.auth.signOut();
+  function handleLogout() {
+    sb.auth.signOut({ scope: 'local' });
     currentUser = null;
-    location.reload();
+
+    $('appRoot').classList.add('hidden');
+    $('authScreen').classList.remove('hidden');
+
+    $('authEmail').value = '';
+    $('authPassword').value = '';
+    $('authMessage').textContent = '';
+    $('authMessage').className = 'auth-message';
+
+    if (authMode !== 'signin') toggleAuthMode();
+    $('authSubmitBtn').disabled = false;
   }
 
   function wireEvents() {
