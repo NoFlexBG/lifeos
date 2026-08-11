@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <title>LifeOS</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
@@ -208,6 +208,7 @@
   .top-controls {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
   }
 
@@ -1184,11 +1185,14 @@
 
   @media (max-width: 860px) {
     .layout { grid-template-columns: 1fr; }
-    .app { overflow-y: auto; height: auto; min-height: 100vh; }
+    .app { overflow-y: auto; height: auto; min-height: 100vh; padding: 16px 14px 20px; }
     html, body { overflow-y: auto; }
     .screens { min-height: auto; }
     .record-row { grid-template-columns: 1fr auto; row-gap: 4px; }
     .record-row-desc { grid-column: 1 / -1; order: 3; }
+    .top-controls { gap: 8px; }
+    .rate-box, .goals-box, .vehicle-box { padding: 6px 8px; }
+    .goals-box { gap: 8px; }
   }
 
   @media (max-width: 560px) {
@@ -1292,6 +1296,17 @@
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-dim);
+  }
+
+  #userEmailLabel {
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 640px) {
+    #userEmailLabel { display: none; }
   }
 </style>
 </head>
