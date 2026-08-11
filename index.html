@@ -813,33 +813,43 @@
   #screen-admin {
     height: 100%;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    gap: 18px;
     overflow-y: auto;
-    padding-top: 2px;
+    min-height: 0;
   }
 
-  .admin-panel {
-    width: 100%;
-    max-width: 420px;
-    height: fit-content;
-    padding: 26px 30px;
+  .admin-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+  }
+
+  .admin-stat {
+    padding: 14px 18px;
   }
 
   .admin-stat-value {
-    margin-top: 10px;
+    margin-top: 8px;
     font-family: var(--font-mono);
-    font-size: 40px;
-    color: var(--amber);
+    font-size: 30px;
+    color: var(--violet);
     font-variant-numeric: tabular-nums;
+  }
+
+  .admin-stat.total .admin-stat-value { color: var(--amber); font-size: 34px; }
+
+  .admin-growth-panel { min-height: 220px; }
+
+  .admin-panel {
+    max-width: 420px;
   }
 
   .admin-actions {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    margin-top: 22px;
-    padding-top: 18px;
-    border-top: 1px solid var(--line);
+    margin-top: 4px;
   }
 
   /* ============ TDEE calculator fields ============ */
@@ -1894,12 +1904,36 @@
 
     <!-- ============ ADMIN (hidden, only rendered for the admin account) ============ -->
     <section id="screen-admin" class="screen hidden">
+      <div class="admin-stats-row">
+        <div class="console-panel admin-stat total">
+          <span class="gauge-label">ОБЩО ПОТРЕБИТЕЛИ</span>
+          <div class="admin-stat-value" id="adminUserCount">—</div>
+        </div>
+        <div class="console-panel admin-stat">
+          <span class="gauge-label">НОВИ ТАЗИ СЕДМИЦА</span>
+          <div class="admin-stat-value" id="adminUsersWeek">—</div>
+        </div>
+        <div class="console-panel admin-stat">
+          <span class="gauge-label">НОВИ ТОЗИ МЕСЕЦ</span>
+          <div class="admin-stat-value" id="adminUsersMonth">—</div>
+        </div>
+        <div class="console-panel admin-stat">
+          <span class="gauge-label">НОВИ ТАЗИ ГОДИНА</span>
+          <div class="admin-stat-value" id="adminUsersYear">—</div>
+        </div>
+      </div>
+
+      <div class="console-panel chart-panel admin-growth-panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="chart-head"><span class="gauge-label">РАСТЕЖ — ОБЩО ПОТРЕБИТЕЛИ, ПОСЛЕДНИТЕ 30 ДНИ</span></div>
+        <div id="adminGrowthChart" class="line-chart"></div>
+      </div>
+
       <div class="console-panel admin-panel">
         <span class="corner tl"></span><span class="corner tr"></span>
         <span class="corner bl"></span><span class="corner br"></span>
-        <div class="chart-head"><span class="gauge-label">РЕГИСТРИРАНИ ПОТРЕБИТЕЛИ</span></div>
-        <div class="admin-stat-value" id="adminUserCount">—</div>
-
+        <div class="chart-head"><span class="gauge-label">СЛУЖЕБНИ ДЕЙСТВИЯ</span></div>
         <div class="admin-actions">
           <button class="chip" id="adminClearCacheBtn">Изчисти локален кеш</button>
         </div>
@@ -2137,9 +2171,56 @@
   }
 
   async function renderAdmin() {
-    $('adminUserCount').textContent = '…';
-    const { count, error } = await sb.from('app_state').select('user_id', { count: 'exact', head: true });
-    $('adminUserCount').textContent = error ? '—' : formatNumber(count);
+    ['adminUserCount','adminUsersWeek','adminUsersMonth','adminUsersYear'].forEach((id) => $(id).textContent = '…');
+
+    const { data, error } = await sb.from('app_state').select('created_at');
+
+    if (error || !data) {
+      ['adminUserCount','adminUsersWeek','adminUsersMonth','adminUsersYear'].forEach((id) => $(id).textContent = '—');
+      $('adminGrowthChart').innerHTML = '<div class="line-chart-empty">Грешка при зареждане</div>';
+      return;
+    }
+
+    const dates = data.map((r) => new Date(r.created_at));
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const weekStart = getMonday(today);
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const yearStart = new Date(today.getFullYear(), 0, 1);
+
+    $('adminUserCount').textContent = formatNumber(dates.length);
+    $('adminUsersWeek').textContent = formatNumber(dates.filter((d) => d >= weekStart).length);
+    $('adminUsersMonth').textContent = formatNumber(dates.filter((d) => d >= monthStart).length);
+    $('adminUsersYear').textContent = formatNumber(dates.filter((d) => d >= yearStart).length);
+
+    const container = $('adminGrowthChart');
+    if (!dates.length) {
+      container.innerHTML = '<div class="line-chart-empty">Все още няма регистрирани потребители</div>';
+      return;
+    }
+
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      days.push({ date: d, label: `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}` });
+    }
+
+    const series = days.map((d) => {
+      const endOfDay = new Date(d.date);
+      endOfDay.setHours(23, 59, 59, 999);
+      return { label: d.label, value: dates.filter((created) => created <= endOfDay).length };
+    });
+
+    const rect = container.getBoundingClientRect();
+    container.innerHTML = buildLineChartSVG(series, {
+      width: Math.max(rect.width, 300),
+      height: rect.height || 190,
+      color: '#9b6bff',
+      gradientId: 'userGrowthGradient',
+      formatValue: (v) => Math.round(v).toString()
+    });
   }
 
   function handleClearCache() {
@@ -2545,6 +2626,9 @@
 
   function buildLineChartSVG(points, opts) {
     const width = opts.width, height = opts.height;
+    const color = opts.color || '#f3b64d';
+    const gradientId = opts.gradientId || 'weightAreaGradient';
+    const formatValue = opts.formatValue || ((v) => v.toFixed(1));
     const padL = 36, padR = 12, padT = 16, padB = 22;
     const innerW = width - padL - padR;
     const innerH = height - padT - padB;
@@ -2573,7 +2657,7 @@
       const y = padT + innerH * t;
       const val = max - (max - min) * t;
       return `<line class="line-chart-grid" x1="${padL}" y1="${y.toFixed(1)}" x2="${width - padR}" y2="${y.toFixed(1)}" />
-              <text class="line-chart-grid-label" x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${val.toFixed(1)}</text>`;
+              <text class="line-chart-grid-label" x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${formatValue(val)}</text>`;
     }).join('');
 
     const labelStep = Math.max(1, Math.round(points.length / 5));
@@ -2589,16 +2673,16 @@
     return `
       <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
         <defs>
-          <linearGradient id="weightAreaGradient" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#f3b64d" stop-opacity="0.35" />
-            <stop offset="100%" stop-color="#f3b64d" stop-opacity="0" />
+          <linearGradient id="${gradientId}" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="${color}" stop-opacity="0.35" />
+            <stop offset="100%" stop-color="${color}" stop-opacity="0" />
           </linearGradient>
         </defs>
         ${gridLines}
-        <path class="line-chart-area" d="${areaPath}" />
-        <path class="line-chart-line" d="${linePath}" />
-        <circle class="line-chart-dot" cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4" />
-        <text class="line-chart-endpoint-label" x="${Math.min(lastX + 8, width - padR - 34)}" y="${(lastY - 8).toFixed(1)}">${last.value.toFixed(1)}</text>
+        <path class="line-chart-area" style="fill:url(#${gradientId})" d="${areaPath}" />
+        <path class="line-chart-line" style="stroke:${color}" d="${linePath}" />
+        <circle class="line-chart-dot" style="fill:${color}" cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4" />
+        <text class="line-chart-endpoint-label" style="fill:${color}" x="${Math.min(lastX + 8, width - padR - 34)}" y="${(lastY - 8).toFixed(1)}">${formatValue(last.value)}</text>
         ${xLabels}
       </svg>
     `;
