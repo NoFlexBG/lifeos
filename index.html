@@ -351,6 +351,7 @@
   .tile[data-app="vitals"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
   .tile[data-app="tdee"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
   .tile[data-app="garage"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
+  .tile[data-app="admin"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 255, 255, 0.12); }
 
   .tile-top {
     display: flex;
@@ -373,6 +374,7 @@
   .tile[data-app="vitals"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
   .tile[data-app="tdee"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
   .tile[data-app="garage"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
+  .tile[data-app="admin"] .tile-icon { color: var(--text-dim); border-color: var(--line-strong); }
 
   .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
   .tile:hover .tile-arrow { transform: translateX(3px); color: var(--text-dim); }
@@ -804,6 +806,40 @@
     max-width: 620px;
     height: fit-content;
     padding: 26px 30px;
+  }
+
+  /* ============ Admin ============ */
+
+  #screen-admin {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+    padding-top: 2px;
+  }
+
+  .admin-panel {
+    width: 100%;
+    max-width: 420px;
+    height: fit-content;
+    padding: 26px 30px;
+  }
+
+  .admin-stat-value {
+    margin-top: 10px;
+    font-family: var(--font-mono);
+    font-size: 40px;
+    color: var(--amber);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 22px;
+    padding-top: 18px;
+    border-top: 1px solid var(--line);
   }
 
   /* ============ TDEE calculator fields ============ */
@@ -1391,7 +1427,7 @@
     <!-- ============ HUB ============ -->
     <section id="screen-hub" class="screen">
       <span class="hub-intro">ИЗБЕРИ МОДУЛ</span>
-      <div class="hub-grid">
+      <div class="hub-grid" id="hubGrid">
         <div class="console-panel tile" data-app="vitals">
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
@@ -1856,6 +1892,20 @@
       </div>
     </section>
 
+    <!-- ============ ADMIN (hidden, only rendered for the admin account) ============ -->
+    <section id="screen-admin" class="screen hidden">
+      <div class="console-panel admin-panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="chart-head"><span class="gauge-label">РЕГИСТРИРАНИ ПОТРЕБИТЕЛИ</span></div>
+        <div class="admin-stat-value" id="adminUserCount">—</div>
+
+        <div class="admin-actions">
+          <button class="chip" id="adminClearCacheBtn">Изчисти локален кеш</button>
+        </div>
+      </div>
+    </section>
+
   </div>
 </div>
 
@@ -1868,6 +1918,7 @@
 
   const SUPABASE_URL = 'https://ytosvspqdmazfwymgssv.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_NI452NCaweP12tTTIqOITA_IEGt_9zB';
+  const ADMIN_UID = 'f325eb5e-b90e-4a82-be5c-ea421d2ad1cc';
   const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
   let currentUser = null;
@@ -2010,13 +2061,14 @@
     $('goalsBox').classList.toggle('hidden', name !== 'vitals');
     $('vehicleBox').classList.toggle('hidden', name !== 'garage');
 
-    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE' };
+    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', admin: 'ADMIN' };
     const subs = {
       hub: 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР',
       workdays: 'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ',
       vitals: 'ВИТАЛНИ ПОКАЗАТЕЛИ',
       tdee: 'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД',
-      garage: 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ'
+      garage: 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ',
+      admin: 'СЛУЖЕБНО ТАБЛО'
     };
     $('brandTitle').textContent = titles[name];
     $('brandSub').textContent = subs[name];
@@ -2026,6 +2078,7 @@
     if (name === 'vitals') { renderVitalsToday(true); renderVitalsCharts(); switchVitalsTab('today'); }
     if (name === 'tdee') computeTDEE();
     if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
+    if (name === 'admin') renderAdmin();
   }
 
   /* ============ Hub ============ */
@@ -2058,6 +2111,41 @@
     });
     $('hubGarageFines').textContent = formatNumber(unpaidFinesTotal) + '€';
     $('hubGarageDocs').textContent = docsAlertCount;
+
+    if (currentUser && currentUser.id === ADMIN_UID) ensureAdminTile();
+  }
+
+  function ensureAdminTile() {
+    if ($('adminHubTile')) return;
+
+    const tile = document.createElement('div');
+    tile.className = 'console-panel tile';
+    tile.dataset.app = 'admin';
+    tile.id = 'adminHubTile';
+    tile.innerHTML = `
+      <span class="corner tl"></span><span class="corner tr"></span>
+      <span class="corner bl"></span><span class="corner br"></span>
+      <div class="tile-top">
+        <div class="tile-icon">◈</div>
+        <div class="tile-arrow">→</div>
+      </div>
+      <div class="tile-name">ADMIN</div>
+      <div class="tile-desc">Служебна статистика</div>
+    `;
+    tile.addEventListener('click', () => showScreen('admin'));
+    $('hubGrid').appendChild(tile);
+  }
+
+  async function renderAdmin() {
+    $('adminUserCount').textContent = '…';
+    const { count, error } = await sb.from('app_state').select('user_id', { count: 'exact', head: true });
+    $('adminUserCount').textContent = error ? '—' : formatNumber(count);
+  }
+
+  function handleClearCache() {
+    localStorage.clear();
+    sessionStorage.clear();
+    showToast('Кешът е изчистен');
   }
 
   /* ============ WorkDays ============ */
@@ -3198,6 +3286,7 @@
     $('fineDesc').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFine(); });
 
     $('logoutBtn').addEventListener('click', handleLogout);
+    $('adminClearCacheBtn').addEventListener('click', handleClearCache);
     $('authSubmitBtn').addEventListener('click', handleAuthSubmit);
     $('authSwitchLink').addEventListener('click', toggleAuthMode);
     ['authEmail','authPassword'].forEach((id) => {
