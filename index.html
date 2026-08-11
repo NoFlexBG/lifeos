@@ -1152,6 +1152,74 @@
 
   .garage-alert-empty { color: var(--text-faint); font-size: 12px; }
 
+  .photo-upload-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .photo-upload-label {
+    display: inline-flex;
+  }
+
+  .photo-upload-hint {
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .photo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .photo-item {
+    position: relative;
+    aspect-ratio: 4 / 3;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+  }
+
+  .photo-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .photo-item.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 10px;
+  }
+
+  .photo-del {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: rgba(7, 7, 15, 0.65);
+    color: var(--text);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .photo-del:hover { border-color: var(--danger); color: var(--danger); }
+
   .record-form {
     display: flex;
     gap: 8px;
@@ -1797,6 +1865,7 @@
           <button class="vitals-tab" data-garage-tab="fuel">ГОРИВО</button>
           <button class="vitals-tab" data-garage-tab="documents">ДОКУМЕНТИ</button>
           <button class="vitals-tab" data-garage-tab="fines">ФИШОВЕ</button>
+          <button class="vitals-tab" data-garage-tab="photos">СНИМКИ</button>
         </div>
 
         <div class="vitals-tab-panel" id="garageTabOverview">
@@ -1903,6 +1972,22 @@
             <div class="record-list" id="finesList"></div>
           </div>
         </div>
+
+        <div class="vitals-tab-panel hidden" id="garageTabPhotos">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">СНИМКИ НА КОЛАТА</span></div>
+
+            <div class="photo-upload-row">
+              <label class="chip photo-upload-label" for="photoUploadInput">+ Добави снимки</label>
+              <input type="file" id="photoUploadInput" accept="image/*" multiple class="hidden" />
+              <span class="photo-upload-hint" id="photoUploadHint"></span>
+            </div>
+
+            <div class="photo-grid" id="photoGrid"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -1973,7 +2058,7 @@
     garage: {
       vehicles: [{ id: 'v1', name: 'Моята кола', plate: '' }],
       activeVehicleId: 'v1',
-      records: { v1: { repairs: [], fuel: [], documents: [], fines: [] } }
+      records: { v1: { repairs: [], fuel: [], documents: [], fines: [], photos: [] } }
     }
   };
 
@@ -2787,8 +2872,9 @@
   function getActiveRecords() {
     const id = state.garage.activeVehicleId;
     if (!state.garage.records[id]) {
-      state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [] };
+      state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [], photos: [] };
     }
+    if (!state.garage.records[id].photos) state.garage.records[id].photos = [];
     return state.garage.records[id];
   }
 
@@ -3092,6 +3178,7 @@
     renderFuel();
     renderDocuments();
     renderFines();
+    if (!$('garageTabPhotos').classList.contains('hidden')) renderPhotos();
   }
 
   function renderVehicleSelect() {
@@ -3122,7 +3209,7 @@
     if (!name) return;
     const id = genId('v');
     state.garage.vehicles.push({ id, name, plate });
-    state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [] };
+    state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [], photos: [] };
     state.garage.activeVehicleId = id;
     saveState();
     $('newVehicleName').value = '';
@@ -3147,10 +3234,106 @@
       repairs: 'garageTabRepairs',
       fuel: 'garageTabFuel',
       documents: 'garageTabDocuments',
-      fines: 'garageTabFines'
+      fines: 'garageTabFines',
+      photos: 'garageTabPhotos'
     };
     Object.entries(map).forEach(([key, id]) => {
       $(id).classList.toggle('hidden', key !== tab);
+    });
+    if (tab === 'photos') renderPhotos();
+  }
+
+  const PHOTO_BUCKET = 'vehicle-photos';
+  const MAX_PHOTO_MB = 8;
+
+  function photoExt(file) {
+    const fromName = (file.name.split('.').pop() || '').toLowerCase();
+    if (fromName && fromName.length <= 5) return fromName;
+    return (file.type.split('/')[1] || 'jpg').toLowerCase();
+  }
+
+  async function uploadPhotos(fileList) {
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+
+    const vehicleId = state.garage.activeVehicleId;
+    const hint = $('photoUploadHint');
+    let uploaded = 0;
+
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) continue;
+      if (file.size > MAX_PHOTO_MB * 1024 * 1024) {
+        showToast(`"${file.name}" е над ${MAX_PHOTO_MB}MB — прескочена`);
+        continue;
+      }
+
+      hint.textContent = `Качване ${uploaded + 1}/${files.length}...`;
+      const path = `${currentUser.id}/${vehicleId}/${genId('p')}.${photoExt(file)}`;
+      const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, file);
+
+      if (error) {
+        showToast('Грешка при качване на снимка');
+        continue;
+      }
+
+      getActiveRecords().photos.push({ id: genId('ph'), path });
+      uploaded++;
+    }
+
+    hint.textContent = '';
+    if (uploaded) {
+      saveState();
+      renderPhotos();
+    }
+  }
+
+  async function deletePhoto(photoId) {
+    const rec = getActiveRecords();
+    const photo = rec.photos.find((p) => p.id === photoId);
+    if (!photo) return;
+
+    await sb.storage.from(PHOTO_BUCKET).remove([photo.path]);
+    rec.photos = rec.photos.filter((p) => p.id !== photoId);
+    saveState();
+    renderPhotos();
+  }
+
+  async function renderPhotos() {
+    const container = $('photoGrid');
+    const photos = getActiveRecords().photos;
+
+    if (!photos.length) {
+      container.innerHTML = '';
+      const e = document.createElement('div');
+      e.className = 'record-empty';
+      e.textContent = 'Няма добавени снимки за тази кола';
+      container.appendChild(e);
+      return;
+    }
+
+    container.innerHTML = '';
+    photos.forEach((photo) => {
+      const item = document.createElement('div');
+      item.className = 'photo-item loading';
+      item.textContent = '…';
+      container.appendChild(item);
+
+      sb.storage.from(PHOTO_BUCKET).createSignedUrl(photo.path, 3600).then(({ data, error }) => {
+        item.classList.remove('loading');
+        item.textContent = '';
+        if (error || !data) return;
+
+        const img = document.createElement('img');
+        img.src = data.signedUrl;
+        img.loading = 'lazy';
+        item.appendChild(img);
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'photo-del';
+        delBtn.textContent = '×';
+        delBtn.addEventListener('click', () => deletePhoto(photo.id));
+        item.appendChild(delBtn);
+      });
     });
   }
 
@@ -3367,6 +3550,11 @@
     $('docAddBtn').addEventListener('click', addDocument);
     $('fineAddBtn').addEventListener('click', addFine);
     $('fineDesc').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFine(); });
+
+    $('photoUploadInput').addEventListener('change', (e) => {
+      uploadPhotos(e.target.files);
+      e.target.value = '';
+    });
 
     $('logoutBtn').addEventListener('click', handleLogout);
     $('adminClearCacheBtn').addEventListener('click', handleClearCache);
