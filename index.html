@@ -173,6 +173,8 @@
     flex-shrink: 0;
   }
 
+  #brandMark { cursor: pointer; }
+
   @keyframes markFlicker {
     0%, 88%, 100% { box-shadow: 0 0 8px 0 rgba(155, 107, 255, 0.35); opacity: 1; }
     90% { opacity: 0.4; }
@@ -351,7 +353,6 @@
   .tile[data-app="vitals"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
   .tile[data-app="tdee"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
   .tile[data-app="garage"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
-  .tile[data-app="admin"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 255, 255, 0.12); }
 
   .tile-top {
     display: flex;
@@ -374,7 +375,6 @@
   .tile[data-app="vitals"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
   .tile[data-app="tdee"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
   .tile[data-app="garage"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
-  .tile[data-app="admin"] .tile-icon { color: var(--text-dim); border-color: var(--line-strong); }
 
   .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
   .tile:hover .tile-arrow { transform: translateX(3px); color: var(--text-dim); }
@@ -1400,7 +1400,7 @@
   <header class="topbar">
     <div class="brand">
       <button id="homeBtn" class="home-btn" aria-label="Към хъба">‹</button>
-      <div class="brand-mark">◆</div>
+      <div class="brand-mark" id="brandMark">◆</div>
       <div class="brand-text">
         <h1 id="brandTitle">LIFEOS</h1>
         <span class="brand-sub" id="brandSub">ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР</span>
@@ -2145,29 +2145,10 @@
     });
     $('hubGarageFines').textContent = formatNumber(unpaidFinesTotal) + '€';
     $('hubGarageDocs').textContent = docsAlertCount;
-
-    if (currentUser && currentUser.id === ADMIN_UID) ensureAdminTile();
   }
 
-  function ensureAdminTile() {
-    if ($('adminHubTile')) return;
-
-    const tile = document.createElement('div');
-    tile.className = 'console-panel tile';
-    tile.dataset.app = 'admin';
-    tile.id = 'adminHubTile';
-    tile.innerHTML = `
-      <span class="corner tl"></span><span class="corner tr"></span>
-      <span class="corner bl"></span><span class="corner br"></span>
-      <div class="tile-top">
-        <div class="tile-icon">◈</div>
-        <div class="tile-arrow">→</div>
-      </div>
-      <div class="tile-name">ADMIN</div>
-      <div class="tile-desc">Служебна статистика</div>
-    `;
-    tile.addEventListener('click', () => showScreen('admin'));
-    $('hubGrid').appendChild(tile);
+  function onBrandMarkClick() {
+    if (currentUser && currentUser.id === ADMIN_UID) showScreen('admin');
   }
 
   async function renderAdmin() {
@@ -3313,6 +3294,7 @@
     $('importBtn').addEventListener('click', () => $('importFile').click());
     $('importFile').addEventListener('change', importData);
     $('homeBtn').addEventListener('click', () => showScreen('hub'));
+    $('brandMark').addEventListener('click', onBrandMarkClick);
 
     document.querySelectorAll('.tile').forEach((tile) => {
       tile.addEventListener('click', () => showScreen(tile.dataset.app));
