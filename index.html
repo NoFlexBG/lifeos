@@ -1,0 +1,3201 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+<meta charset="UTF-8" />
+<title>LifeOS</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  /* ============ Tokens — single committed world: a 2050 personal control center ============ */
+  :root {
+    --bg: #07070f;
+    --surface: #0e0f1e;
+    --surface-2: #151732;
+    --line: rgba(168, 130, 255, 0.14);
+    --line-strong: rgba(168, 130, 255, 0.28);
+    --text: #eae7fb;
+    --text-dim: #8683a8;
+    --text-faint: #4c4966;
+    --violet: #9b6bff;
+    --violet-dim: rgba(155, 107, 255, 0.14);
+    --pink: #ff5cc8;
+    --pink-dim: rgba(255, 92, 200, 0.14);
+    --cyan: #4dd8e6;
+    --cyan-dim: rgba(77, 216, 230, 0.14);
+    --amber: #f3b64d;
+    --amber-dim: rgba(243, 182, 77, 0.14);
+    --danger: #ff6b6b;
+    --danger-dim: rgba(255, 107, 107, 0.14);
+    --font-mono: ui-monospace, 'Cascadia Code', 'JetBrains Mono', 'SF Mono', Consolas, monospace;
+    --font-sans: -apple-system, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    overflow: hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  /* ============ Background: dot-grid schematic + slow scan sweep ============ */
+
+  .bg-fx {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: radial-gradient(var(--line) 1px, transparent 1px);
+    background-size: 28px 28px;
+  }
+
+  .bg-fx::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 140px;
+    top: -140px;
+    background: linear-gradient(180deg, transparent, rgba(155, 107, 255, 0.05), transparent);
+    animation: sweep 9s ease-in-out infinite;
+  }
+
+  @keyframes sweep {
+    0% { top: -140px; }
+    55% { top: 100%; }
+    100% { top: 100%; }
+  }
+
+  .glow-orb {
+    position: absolute;
+    width: 42vw;
+    height: 42vw;
+    border-radius: 50%;
+    filter: blur(110px);
+    opacity: 0.16;
+    animation: orbFloat 16s ease-in-out infinite;
+  }
+
+  .orb-violet { background: var(--violet); top: -14%; left: -12%; }
+  .orb-pink { background: var(--pink); bottom: -18%; right: -10%; animation-delay: -8s; }
+
+  @keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(4%, 3%) scale(1.1); }
+  }
+
+  /* ============ App shell ============ */
+
+  .app {
+    position: relative;
+    z-index: 1;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 30px 26px;
+    gap: 20px;
+    opacity: 0;
+    animation: powerOn 0.7s ease 0.05s forwards;
+  }
+
+  @keyframes powerOn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ Top bar ============ */
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .home-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-size: 15px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.18s ease;
+  }
+
+  .home-btn:hover {
+    border-color: var(--pink);
+    color: var(--pink);
+    box-shadow: 0 0 10px var(--pink-dim);
+  }
+
+  .brand-mark {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--violet);
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--violet);
+    box-shadow: 0 0 0 0 rgba(155, 107, 255, 0.5);
+    animation: markFlicker 3.2s ease-in-out 0.6s infinite;
+    flex-shrink: 0;
+  }
+
+  @keyframes markFlicker {
+    0%, 88%, 100% { box-shadow: 0 0 8px 0 rgba(155, 107, 255, 0.35); opacity: 1; }
+    90% { opacity: 0.4; }
+    92% { opacity: 1; }
+  }
+
+  .brand-text h1 {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 19px;
+    letter-spacing: 5px;
+    font-weight: 500;
+    background: linear-gradient(90deg, var(--violet), var(--pink), var(--violet));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: brandShine 6s linear infinite;
+  }
+
+  @keyframes brandShine {
+    to { background-position: 200% center; }
+  }
+
+  .brand-sub {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+
+  .top-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .rate-box, .goals-box, .vehicle-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 7px 12px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .vehicle-box { padding: 5px 8px 5px 12px; }
+  .vehicle-box select { max-width: 140px; }
+
+  .goals-box { gap: 14px; }
+
+  .goal-field { display: flex; align-items: center; gap: 6px; }
+
+  .rate-box:focus-within, .goal-field:focus-within {
+    border-color: var(--violet);
+  }
+
+  .rate-box label, .goal-field label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  #dailyRate, .goal-field input {
+    width: 58px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--pink);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: right;
+  }
+
+  .currency {
+    color: var(--text-dim);
+    font-size: 12px;
+    font-family: var(--font-mono);
+  }
+
+  .icon-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.18s ease;
+    flex-shrink: 0;
+  }
+
+  .icon-btn:hover {
+    border-color: var(--violet);
+    color: var(--violet);
+    box-shadow: 0 0 10px var(--violet-dim);
+  }
+
+  /* ============ Screens ============ */
+
+  .screens { flex: 1; min-height: 0; position: relative; }
+
+  .screen {
+    height: 100%;
+    min-height: 0;
+    animation: screenIn 0.4s ease both;
+  }
+
+  .screen.hidden { display: none; }
+
+  @keyframes screenIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ Bracketed console panels ============ */
+
+  .console-panel {
+    position: relative;
+    background: linear-gradient(180deg, rgba(21, 23, 50, 0.55), rgba(14, 15, 30, 0.5));
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    backdrop-filter: blur(14px);
+  }
+
+  .corner {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    pointer-events: none;
+  }
+  .corner.tl { top: -1px; left: -1px; border-top: 2px solid var(--violet); border-left: 2px solid var(--violet); border-radius: 8px 0 0 0; }
+  .corner.tr { top: -1px; right: -1px; border-top: 2px solid var(--violet); border-right: 2px solid var(--violet); border-radius: 0 8px 0 0; }
+  .corner.bl { bottom: -1px; left: -1px; border-bottom: 2px solid var(--violet); border-left: 2px solid var(--violet); border-radius: 0 0 0 8px; }
+  .corner.br { bottom: -1px; right: -1px; border-bottom: 2px solid var(--violet); border-right: 2px solid var(--violet); border-radius: 0 0 8px 0; }
+
+  /* ============ Hub ============ */
+
+  #screen-hub { display: flex; flex-direction: column; }
+
+  .hub-intro {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  .hub-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+
+  .tile {
+    padding: 22px 24px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .tile:hover {
+    transform: translateY(-3px);
+    border-color: var(--line-strong);
+  }
+
+  .tile[data-app="workdays"]:hover { box-shadow: 0 10px 30px -10px rgba(155, 107, 255, 0.35); }
+  .tile[data-app="vitals"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
+  .tile[data-app="tdee"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
+  .tile[data-app="garage"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
+
+  .tile-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .tile-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 17px;
+    border: 1px solid var(--line);
+  }
+
+  .tile[data-app="workdays"] .tile-icon { color: var(--violet); border-color: rgba(155,107,255,0.4); }
+  .tile[data-app="vitals"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
+  .tile[data-app="tdee"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
+  .tile[data-app="garage"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
+
+  .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
+  .tile:hover .tile-arrow { transform: translateX(3px); color: var(--text-dim); }
+
+  .tile-name {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 2px;
+    margin: 16px 0 4px;
+  }
+
+  .tile-desc { font-size: 11.5px; color: var(--text-dim); margin-bottom: 14px; }
+
+  .tile-preview {
+    display: flex;
+    gap: 18px;
+    border-top: 1px solid var(--line);
+    padding-top: 12px;
+  }
+
+  .tile-stat { display: flex; flex-direction: column; gap: 2px; }
+  .tile-stat-value { font-family: var(--font-mono); font-size: 17px; font-variant-numeric: tabular-nums; }
+  .tile-stat-label { font-size: 9px; letter-spacing: 1.5px; color: var(--text-faint); }
+
+  /* ============ Calendar viewport ============ */
+
+  .layout {
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap: 20px;
+    min-height: 0;
+  }
+
+  .calendar-panel {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .nav-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 5px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--violet);
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .nav-btn:hover {
+    border-color: var(--violet);
+    box-shadow: 0 0 10px var(--violet-dim);
+  }
+
+  .month-title {
+    display: flex;
+    gap: 9px;
+    align-items: baseline;
+    font-family: var(--font-mono);
+    font-size: 16px;
+    letter-spacing: 1.5px;
+  }
+
+  #yearLabel { color: var(--text-dim); font-weight: 400; }
+
+  .weekday-row {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-faint);
+    margin-bottom: 7px;
+    font-family: var(--font-mono);
+  }
+
+  .calendar-grid {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    grid-auto-rows: 1fr;
+    gap: 6px;
+    min-height: 0;
+  }
+
+  .day-cell {
+    position: relative;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.015);
+    display: flex;
+    align-items: flex-start;
+    padding: 6px 0 0 8px;
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+  }
+
+  .day-cell.empty { cursor: default; border: none; background: transparent; }
+
+  .day-cell:not(.empty):hover {
+    border-color: var(--line-strong);
+    transform: translateY(-1px);
+  }
+
+  .day-cell.today {
+    border-color: var(--pink);
+    box-shadow: inset 0 0 0 1px var(--pink);
+    color: var(--pink);
+  }
+
+  .day-cell.worked {
+    background: var(--violet-dim);
+    border-color: var(--violet);
+    color: var(--text);
+    animation: dayPop 0.3s ease;
+  }
+
+  @keyframes dayPop {
+    0% { transform: scale(0.88); }
+    60% { transform: scale(1.04); }
+    100% { transform: scale(1); }
+  }
+
+  .day-cell.worked::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--violet);
+    box-shadow: 0 0 6px var(--violet);
+  }
+
+  .legend {
+    display: flex;
+    gap: 18px;
+    margin-top: 12px;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+  }
+
+  .legend-item { display: flex; align-items: center; gap: 6px; }
+
+  .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
+  .dot-work { background: var(--violet); box-shadow: 0 0 5px var(--violet); }
+  .dot-today { background: transparent; border: 1px solid var(--pink); }
+
+  /* ============ Gauges (shared: WorkDays + Vitals) ============ */
+
+  .gauges {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    min-height: 0;
+    height: 100%;
+    overflow-y: auto;
+  }
+
+  .gauge {
+    background: rgba(21, 23, 50, 0.45);
+    border: 1px solid var(--line);
+    border-left: 2px solid var(--violet);
+    border-radius: 6px;
+    padding: 14px 18px;
+    backdrop-filter: blur(14px);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+  }
+
+  .gauge:hover {
+    transform: translateX(2px);
+    box-shadow: -2px 0 14px -4px rgba(155, 107, 255, 0.25);
+  }
+
+  .gauge[data-metric="calories"] { border-left-color: var(--pink); }
+  .gauge[data-metric="water"] { border-left-color: var(--cyan); }
+  .gauge[data-metric="steps"] { border-left-color: var(--violet); }
+  .gauge[data-metric="weight"] { border-left-color: var(--amber); }
+
+  .gauge-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .gauge-label {
+    font-size: 10px;
+    letter-spacing: 2.5px;
+    color: var(--text-dim);
+  }
+
+  .gauge-delta {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    padding: 1px 7px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+  }
+
+  .gauge-delta.up { color: var(--violet); border-color: rgba(155,107,255,0.3); background: var(--violet-dim); }
+  .gauge-delta.down { color: var(--text-dim); border-color: var(--line); }
+  .gauge-delta.flat { color: var(--text-faint); border-color: var(--line); }
+  .gauge-delta.good { color: var(--violet); border-color: rgba(155,107,255,0.3); background: var(--violet-dim); }
+  .gauge-delta.danger { color: var(--danger); border-color: rgba(255,107,107,0.3); background: var(--danger-dim); }
+
+  .gauge-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-top: 8px;
+  }
+
+  .gauge-value-wrap { display: flex; align-items: baseline; gap: 5px; }
+
+  .gauge-value {
+    font-family: var(--font-mono);
+    font-size: 26px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .gauge-value.money { color: var(--pink); }
+  .gauge[data-metric="calories"] .gauge-value.metric { color: var(--pink); }
+  .gauge[data-metric="water"] .gauge-value.metric { color: var(--cyan); }
+  .gauge[data-metric="steps"] .gauge-value.metric { color: var(--violet); }
+  .gauge[data-metric="weight"] .gauge-value.metric { color: var(--amber); }
+
+  .gauge-unit { font-size: 11px; color: var(--text-dim); }
+
+  .progress-track {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+  }
+
+  .progress-track.thin { height: 4px; margin-top: 6px; }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .gauge[data-metric="calories"] .progress-fill { background: var(--pink); }
+  .gauge[data-metric="water"] .progress-fill { background: var(--cyan); }
+  .gauge[data-metric="steps"] .progress-fill { background: var(--violet); }
+
+  .inline-goal-input {
+    width: 42px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px dashed var(--line-strong);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: inherit;
+    text-align: right;
+    outline: none;
+    padding: 0 2px;
+  }
+
+  .inline-goal-input:focus { color: var(--text); border-color: var(--violet); }
+
+  .macro-row { margin-top: 14px; }
+
+  .macro-row-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+  }
+
+  .macro-row-head > span:first-child { letter-spacing: 2px; }
+
+  .macro-row[data-macro="protein"] .progress-fill { background: var(--violet); }
+  .macro-row[data-macro="carbs"] .progress-fill { background: var(--amber); }
+  .macro-row[data-macro="fat"] .progress-fill { background: var(--cyan); }
+
+  .meal-entry-row .mini-input { width: 64px; }
+
+  .chip-row {
+    display: flex;
+    gap: 7px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .chip {
+    padding: 5px 11px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .chip:hover { border-color: var(--line-strong); color: var(--text); }
+
+  .mini-input {
+    width: 64px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 8px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    outline: none;
+  }
+
+  .mini-input:focus { border-color: var(--line-strong); }
+
+  /* ============ Vitals layout ============ */
+
+  .vitals-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .vitals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+  }
+
+  .vitals-tabs {
+    display: flex;
+    gap: 8px;
+  }
+
+  .vitals-tab {
+    padding: 7px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .vitals-tab:hover { border-color: var(--line-strong); color: var(--text); }
+
+  .vitals-tab.active {
+    border-color: var(--amber);
+    color: var(--amber);
+    background: var(--amber-dim);
+  }
+
+  .vitals-tab-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .vitals-tab-panel.hidden { display: none; }
+
+  /* ============ Weight line chart ============ */
+
+  .weight-chart-panel { min-height: 260px; }
+
+  .weight-chart-stats {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+  }
+
+  .line-chart {
+    flex: 1;
+    margin-top: 10px;
+    min-height: 190px;
+  }
+
+  .line-chart svg { width: 100%; height: 100%; display: block; }
+  .line-chart-grid { stroke: var(--line); stroke-width: 1; }
+  .line-chart-grid-label { font-family: var(--font-mono); font-size: 9px; fill: var(--text-faint); }
+  .line-chart-axis-label { font-family: var(--font-mono); font-size: 9px; fill: var(--text-faint); }
+  .line-chart-area { fill: url(#weightAreaGradient); }
+  .line-chart-line { fill: none; stroke: var(--amber); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .line-chart-dot { fill: var(--amber); }
+  .line-chart-endpoint-label { font-family: var(--font-mono); font-size: 11px; fill: var(--amber); font-weight: 600; }
+  .line-chart-empty { color: var(--text-faint); font-size: 12px; text-align: center; padding-top: 60px; }
+
+  /* ============ TDEE screen ============ */
+
+  #screen-tdee {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+    padding-top: 2px;
+  }
+
+  .tdee-panel {
+    width: 100%;
+    max-width: 620px;
+    height: fit-content;
+    padding: 26px 30px;
+  }
+
+  /* ============ TDEE calculator fields ============ */
+
+  .calc-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .calc-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .calc-field-wide { grid-column: 1 / -1; }
+
+  .calc-field label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  select.mini-input {
+    width: 100%;
+    cursor: pointer;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, var(--text-dim) 50%), linear-gradient(135deg, var(--text-dim) 50%, transparent 50%);
+    background-position: calc(100% - 14px) center, calc(100% - 9px) center;
+    background-size: 5px 5px, 5px 5px;
+    background-repeat: no-repeat;
+    padding-right: 24px;
+  }
+
+  .calc-field .mini-input { width: 100%; }
+
+  .calc-results {
+    display: flex;
+    gap: 28px;
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+  }
+
+  .calc-result { display: flex; flex-direction: column; gap: 3px; }
+
+  .calc-result-label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text-faint);
+  }
+
+  .calc-result-value {
+    font-family: var(--font-mono);
+    font-size: 21px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+  }
+
+  .calc-suggestions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .calc-sugg {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 12px;
+    transition: border-color 0.18s ease;
+  }
+
+  .calc-sugg:hover { border-color: var(--line-strong); }
+
+  .calc-sugg-label {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  .calc-sugg-value {
+    font-family: var(--font-mono);
+    font-size: 16px;
+    color: var(--cyan);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .tdee-note {
+    font-size: 10.5px;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
+  /* ============ Chart panels ============ */
+
+  .chart-panel {
+    padding: 16px 20px 14px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .chart-panel.workdays-chart { flex: 1; min-height: 150px; }
+
+  .chart-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .year-chart {
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    margin-top: 10px;
+    min-height: 90px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 6px;
+  }
+
+  .chart-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    gap: 5px;
+  }
+
+  .chart-bar {
+    width: 100%;
+    max-width: 20px;
+    border-radius: 2px 2px 0 0;
+    background: var(--pink);
+    opacity: 0.85;
+    box-shadow: 0 0 8px rgba(255, 92, 200, 0.25);
+    transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    min-height: 2px;
+  }
+
+  .chart-bar-wrap.current .chart-bar {
+    background: var(--violet);
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(155, 107, 255, 0.4);
+  }
+
+  .chart-bar-label {
+    font-family: var(--font-mono);
+    font-size: 8.5px;
+    color: var(--text-faint);
+    letter-spacing: 0.5px;
+  }
+
+  .week-chart-block + .week-chart-block { margin-top: 14px; }
+
+  .week-chart-head {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9.5px;
+    letter-spacing: 1.5px;
+    color: var(--text-faint);
+    margin-bottom: 6px;
+  }
+
+  .week-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 46px;
+    border-bottom: 1px solid var(--line);
+    padding-bottom: 4px;
+  }
+
+  .week-bar-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    gap: 4px;
+  }
+
+  .week-bar {
+    width: 100%;
+    max-width: 16px;
+    border-radius: 2px 2px 0 0;
+    opacity: 0.85;
+    transition: height 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    min-height: 2px;
+  }
+
+  .week-bar-wrap.today .week-bar { opacity: 1; }
+
+  .week-bar-label {
+    font-family: var(--font-mono);
+    font-size: 8px;
+    color: var(--text-faint);
+  }
+
+  /* ============ Scrollbar ============ */
+
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-thumb { background: rgba(155, 107, 255, 0.25); border-radius: 4px; }
+
+  /* ============ Toast ============ */
+
+  .toast {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%) translateY(10px);
+    background: var(--surface-2);
+    border: 1px solid var(--violet);
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1px;
+    padding: 9px 18px;
+    border-radius: 6px;
+    box-shadow: 0 0 20px var(--violet-dim);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 10;
+  }
+
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  #importFile { display: none; }
+  .hidden { display: none !important; }
+
+  /* ============ Garage ============ */
+
+  .garage-body {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .vehicle-add-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .vehicle-add-row .mini-input { width: 140px; }
+
+  .garage-stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px;
+  }
+
+  .garage-stat {
+    padding: 14px 18px;
+  }
+
+  .garage-stat-value {
+    margin-top: 8px;
+    font-family: var(--font-mono);
+    font-size: 24px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .garage-stat[data-accent="amber"] .garage-stat-value { color: var(--amber); }
+  .garage-stat[data-accent="cyan"] .garage-stat-value { color: var(--cyan); }
+  .garage-stat[data-accent="pink"] .garage-stat-value { color: var(--pink); }
+
+  .garage-alert-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .garage-alert-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+
+  .garage-alert-empty { color: var(--text-faint); font-size: 12px; }
+
+  .record-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .record-form .mini-input { width: 108px; }
+  .record-form .mini-input.narrow { width: 76px; }
+  .record-form .mini-input.wide { width: 170px; }
+
+  .record-list {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .record-row {
+    display: grid;
+    grid-template-columns: 90px 1fr auto auto 22px;
+    gap: 12px;
+    align-items: center;
+    padding: 9px 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    font-size: 12px;
+  }
+
+  .record-row-date {
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  .record-row-desc { color: var(--text); }
+  .record-row-meta { font-family: var(--font-mono); color: var(--text-dim); font-size: 11px; white-space: nowrap; }
+  .record-row-cost { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  .record-row-del {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-faint);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .record-row-del:hover { border-color: var(--danger); color: var(--danger); }
+
+  .record-empty { color: var(--text-faint); font-size: 12px; padding: 8px 2px; }
+
+  .status-chip {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 2px 9px;
+    border-radius: 20px;
+    border: 1px solid transparent;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  .status-chip.valid { color: var(--violet); border-color: rgba(155,107,255,0.3); background: var(--violet-dim); }
+  .status-chip.soon { color: var(--amber); border-color: rgba(243,182,77,0.3); background: var(--amber-dim); }
+  .status-chip.expired { color: var(--danger); border-color: rgba(255,107,107,0.3); background: var(--danger-dim); }
+  .status-chip.paid { color: var(--text-dim); border-color: var(--line); cursor: pointer; }
+  .status-chip.unpaid { color: var(--danger); border-color: rgba(255,107,107,0.3); background: var(--danger-dim); cursor: pointer; }
+  .status-chip.unpaid:hover { box-shadow: 0 0 8px var(--danger-dim); }
+
+  @media (max-width: 860px) {
+    .layout { grid-template-columns: 1fr; }
+    .app { overflow-y: auto; height: auto; min-height: 100vh; }
+    html, body { overflow-y: auto; }
+    .screens { min-height: auto; }
+    .record-row { grid-template-columns: 1fr auto; row-gap: 4px; }
+    .record-row-desc { grid-column: 1 / -1; order: 3; }
+  }
+
+  @media (max-width: 560px) {
+    .hub-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ============ Auth screen ============ */
+
+  .auth-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .auth-panel {
+    width: 100%;
+    max-width: 340px;
+    padding: 28px 30px;
+  }
+
+  .auth-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .auth-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .auth-field { display: flex; flex-direction: column; gap: 5px; }
+
+  .auth-field label {
+    font-size: 9px;
+    letter-spacing: 1.5px;
+    color: var(--text-dim);
+  }
+
+  .auth-field input {
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.18s ease;
+  }
+
+  .auth-field input:focus { border-color: var(--violet); }
+
+  .auth-submit {
+    margin-top: 6px;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid var(--violet);
+    background: var(--violet-dim);
+    color: var(--violet);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    transition: all 0.18s ease;
+  }
+
+  .auth-submit:hover { box-shadow: 0 0 14px var(--violet-dim); }
+  .auth-submit:disabled { opacity: 0.5; cursor: default; }
+
+  .auth-switch {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 11.5px;
+    color: var(--text-dim);
+  }
+
+  .auth-switch a { color: var(--pink); cursor: pointer; text-decoration: none; }
+  .auth-switch a:hover { text-decoration: underline; }
+
+  .auth-message {
+    margin-top: 12px;
+    font-size: 11.5px;
+    text-align: center;
+    min-height: 14px;
+  }
+
+  .auth-message.error { color: var(--danger); }
+  .auth-message.ok { color: var(--violet); }
+
+  .user-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-fx">
+  <div class="glow-orb orb-violet"></div>
+  <div class="glow-orb orb-pink"></div>
+</div>
+
+<div class="auth-screen" id="authScreen">
+  <div class="console-panel auth-panel">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+
+    <div class="auth-brand">
+      <div class="brand-mark">◆</div>
+      <div class="brand-text">
+        <h1 style="font-size:17px;letter-spacing:4px;">LIFEOS</h1>
+        <span class="brand-sub" id="authSubtitle">ВХОД</span>
+      </div>
+    </div>
+
+    <div class="auth-fields">
+      <div class="auth-field">
+        <label for="authEmail">ИМЕЙЛ</label>
+        <input id="authEmail" type="email" autocomplete="email" />
+      </div>
+      <div class="auth-field">
+        <label for="authPassword">ПАРОЛА</label>
+        <input id="authPassword" type="password" autocomplete="current-password" />
+      </div>
+      <button class="auth-submit" id="authSubmitBtn">ВХОД</button>
+    </div>
+
+    <div class="auth-message" id="authMessage"></div>
+
+    <div class="auth-switch">
+      <span id="authSwitchText">Нямаш акаунт?</span> <a id="authSwitchLink">Регистрирай се</a>
+    </div>
+  </div>
+</div>
+
+<div class="app hidden" id="appRoot">
+  <header class="topbar">
+    <div class="brand">
+      <button id="homeBtn" class="home-btn" aria-label="Към хъба">‹</button>
+      <div class="brand-mark">◆</div>
+      <div class="brand-text">
+        <h1 id="brandTitle">LIFEOS</h1>
+        <span class="brand-sub" id="brandSub">ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР</span>
+      </div>
+    </div>
+
+    <div class="top-controls">
+      <div class="rate-box hidden" id="rateBox">
+        <label for="dailyRate">ДНЕВНА СТАВКА</label>
+        <input id="dailyRate" type="number" min="0" step="1" />
+        <span class="currency">€</span>
+      </div>
+      <div class="goals-box hidden" id="goalsBox">
+        <div class="goal-field"><label for="goalCalories">ККАЛ</label><input id="goalCalories" type="number" min="0" step="50" /></div>
+        <div class="goal-field"><label for="goalWater">МЛ</label><input id="goalWater" type="number" min="0" step="50" /></div>
+        <div class="goal-field"><label for="goalSteps">КРАЧКИ</label><input id="goalSteps" type="number" min="0" step="500" /></div>
+      </div>
+      <div class="vehicle-box hidden" id="vehicleBox">
+        <select id="vehicleSelect" class="mini-input"></select>
+        <button class="icon-btn" id="addVehicleBtn" title="Нова кола">+</button>
+      </div>
+      <button class="icon-btn" id="exportBtn" title="Изтегли резервно копие (JSON)">⭳</button>
+      <button class="icon-btn" id="importBtn" title="Възстанови от файл">⭱</button>
+      <input type="file" id="importFile" accept="application/json" />
+      <div class="user-box">
+        <span id="userEmailLabel"></span>
+        <button class="icon-btn" id="logoutBtn" title="Изход">⏻</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="screens">
+
+    <!-- ============ HUB ============ -->
+    <section id="screen-hub" class="screen">
+      <span class="hub-intro">ИЗБЕРИ МОДУЛ</span>
+      <div class="hub-grid">
+        <div class="console-panel tile" data-app="vitals">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">⌁</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">VITALS</div>
+          <div class="tile-desc">Калории, вода, крачки</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsCalories">0</span><span class="tile-stat-label">ККАЛ ДНЕС</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsWater">0</span><span class="tile-stat-label">МЛ ДНЕС</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsSteps">0</span><span class="tile-stat-label">КРАЧКИ ДНЕС</span></div>
+          </div>
+        </div>
+
+        <div class="console-panel tile" data-app="garage">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">⚙</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">GARAGE</div>
+          <div class="tile-desc">Ремонти, гориво, документи, фишове</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubGarageFines">0€</span><span class="tile-stat-label">НЕПЛАТЕНИ ФИШОВЕ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubGarageDocs">0</span><span class="tile-stat-label">ДОКУМЕНТИ ИЗТИЧАТ</span></div>
+          </div>
+        </div>
+
+        <div class="console-panel tile" data-app="workdays">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">▦</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">WORKDAYS</div>
+          <div class="tile-desc">Работни дни и доходи</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthDays">0</span><span class="tile-stat-label">ДНИ ТОЗИ МЕСЕЦ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthEarnings">0€</span><span class="tile-stat-label">ДОХОД ТОЗИ МЕСЕЦ</span></div>
+          </div>
+        </div>
+
+        <div class="console-panel tile" data-app="tdee">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">Σ</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">TDEE</div>
+          <div class="tile-desc">Калкулатор на енергоразход</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubTdeeBmr">0</span><span class="tile-stat-label">BMR</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubTdeeValue">0</span><span class="tile-stat-label">TDEE (ККАЛ)</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORKDAYS ============ -->
+    <section id="screen-workdays" class="screen hidden">
+      <main class="layout">
+        <section class="console-panel calendar-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+
+          <div class="calendar-header">
+            <button id="prevMonth" class="nav-btn" aria-label="Предишен месец">‹</button>
+            <div class="month-title">
+              <span id="monthLabel">Август</span>
+              <span id="yearLabel">2026</span>
+            </div>
+            <button id="nextMonth" class="nav-btn" aria-label="Следващ месец">›</button>
+          </div>
+
+          <div class="weekday-row">
+            <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>НД</span>
+          </div>
+
+          <div id="calendarGrid" class="calendar-grid"></div>
+
+          <div class="legend">
+            <div class="legend-item"><span class="dot dot-work"></span> Работен ден</div>
+            <div class="legend-item"><span class="dot dot-today"></span> Днес</div>
+            <div class="legend-item">Кликни ден, за да превключиш</div>
+          </div>
+        </section>
+
+        <aside class="gauges">
+          <div class="gauge">
+            <div class="gauge-top">
+              <span class="gauge-label">ТАЗИ СЕДМИЦА</span>
+              <span class="gauge-delta flat" id="weekDelta">—</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value" id="weekDays">0</span><span class="gauge-unit">дни</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value money" id="weekEarnings">0</span><span class="gauge-unit">€</span></div>
+            </div>
+          </div>
+
+          <div class="gauge">
+            <div class="gauge-top">
+              <span class="gauge-label">ТОЗИ МЕСЕЦ</span>
+              <span class="gauge-delta flat" id="monthDelta">—</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value" id="monthDays">0</span><span class="gauge-unit">дни</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value money" id="monthEarnings">0</span><span class="gauge-unit">€</span></div>
+            </div>
+          </div>
+
+          <div class="gauge">
+            <div class="gauge-top">
+              <span class="gauge-label">ТАЗИ ГОДИНА</span>
+              <span class="gauge-delta flat" id="yearDelta">—</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value" id="yearDays">0</span><span class="gauge-unit">дни</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value money" id="yearEarnings">0</span><span class="gauge-unit">€</span></div>
+            </div>
+          </div>
+
+          <div class="console-panel chart-panel workdays-chart">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label">ДОХОД ПО МЕСЕЦИ</span>
+            </div>
+            <div id="yearChart" class="year-chart"></div>
+          </div>
+        </aside>
+      </main>
+    </section>
+
+    <!-- ============ VITALS ============ -->
+    <section id="screen-vitals" class="screen hidden">
+      <div class="vitals-body">
+        <div class="vitals-tabs">
+          <button class="vitals-tab active" data-tab="today">ДНЕС</button>
+          <button class="vitals-tab" data-tab="weight">ТЕГЛО</button>
+        </div>
+
+        <div class="vitals-tab-panel" id="vitalsTabToday">
+        <div class="vitals-grid">
+          <div class="gauge" data-metric="calories">
+            <div class="gauge-top">
+              <span class="gauge-label">КАЛОРИИ ДНЕС</span>
+              <span class="gauge-delta flat" id="calStatus">—</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="calValue">0</span><span class="gauge-unit">/ <span id="calGoalLabel">0</span> ккал</span></div>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="calProgress"></div></div>
+            <div class="chip-row">
+              <button class="chip" id="nutritionResetBtn">Нулирай хранене</button>
+            </div>
+          </div>
+
+          <div class="gauge" data-metric="water">
+            <div class="gauge-top">
+              <span class="gauge-label">ВОДА ДНЕС</span>
+              <span class="gauge-delta flat" id="waterStatus">—</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="waterValue">0</span><span class="gauge-unit">/ <span id="waterGoalLabel">0</span> мл</span></div>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="waterProgress"></div></div>
+            <div class="chip-row">
+              <button class="chip" data-water-add="250">+250 мл</button>
+              <button class="chip" data-water-add="500">+500 мл</button>
+              <button class="chip" id="waterResetBtn">Нулирай</button>
+            </div>
+          </div>
+
+          <div class="gauge" data-metric="steps">
+            <div class="gauge-top">
+              <span class="gauge-label">КРАЧКИ ДНЕС</span>
+              <span class="gauge-delta flat" id="stepsStatus">—</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="stepsValue">0</span><span class="gauge-unit">/ <span id="stepsGoalLabel">0</span></span></div>
+            </div>
+            <div class="progress-track"><div class="progress-fill" id="stepsProgress"></div></div>
+            <div class="chip-row">
+              <input type="number" id="stepsInput" class="mini-input" placeholder="крачки" min="0" />
+              <button class="chip" id="stepsSetBtn">Задай</button>
+              <button class="chip" data-steps-add="1000">+1000</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="console-panel chart-panel nutrition-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head"><span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span></div>
+
+          <div class="chip-row meal-entry-row">
+            <input type="number" id="mealCalories" class="mini-input" placeholder="ккал" min="0" />
+            <input type="number" id="mealProtein" class="mini-input" placeholder="Б (г)" min="0" />
+            <input type="number" id="mealCarbs" class="mini-input" placeholder="В (г)" min="0" />
+            <input type="number" id="mealFat" class="mini-input" placeholder="М (г)" min="0" />
+            <button class="chip" id="mealAddBtn">Добави хранене</button>
+          </div>
+
+          <div class="macro-row" data-macro="protein">
+            <div class="macro-row-head">
+              <span>ПРОТЕИНИ</span>
+              <span><span id="proteinValue">0</span> / <input id="proteinGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+            </div>
+            <div class="progress-track thin"><div class="progress-fill" id="proteinProgress"></div></div>
+          </div>
+
+          <div class="macro-row" data-macro="carbs">
+            <div class="macro-row-head">
+              <span>ВЪГЛЕХИДРАТИ</span>
+              <span><span id="carbsValue">0</span> / <input id="carbsGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+            </div>
+            <div class="progress-track thin"><div class="progress-fill" id="carbsProgress"></div></div>
+          </div>
+
+          <div class="macro-row" data-macro="fat">
+            <div class="macro-row-head">
+              <span>МАЗНИНИ</span>
+              <span><span id="fatValue">0</span> / <input id="fatGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+            </div>
+            <div class="progress-track thin"><div class="progress-fill" id="fatProgress"></div></div>
+          </div>
+        </div>
+
+        <div class="console-panel chart-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head"><span class="gauge-label">ПОСЛЕДНИ 7 ДНИ</span></div>
+
+          <div class="week-chart-block">
+            <div class="week-chart-head"><span>КАЛОРИИ</span></div>
+            <div id="weekChartCalories" class="week-chart"></div>
+          </div>
+          <div class="week-chart-block">
+            <div class="week-chart-head"><span>ВОДА</span></div>
+            <div id="weekChartWater" class="week-chart"></div>
+          </div>
+          <div class="week-chart-block">
+            <div class="week-chart-head"><span>КРАЧКИ</span></div>
+            <div id="weekChartSteps" class="week-chart"></div>
+          </div>
+        </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="vitalsTabWeight">
+          <div class="gauge" data-metric="weight">
+            <div class="gauge-top">
+              <span class="gauge-label">ТЕГЛО ДНЕС</span>
+              <span class="gauge-delta flat" id="weightStatus">—</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="weightValue">—</span><span class="gauge-unit">/ цел <input id="weightGoalInput" class="inline-goal-input" type="number" min="0" step="0.1" /> кг</span></div>
+            </div>
+            <div class="chip-row">
+              <input type="number" id="weightInput" class="mini-input" placeholder="кг" min="0" step="0.1" />
+              <button class="chip" id="weightSetBtn">Запиши</button>
+            </div>
+          </div>
+
+          <div class="console-panel chart-panel weight-chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label">ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ</span>
+              <span class="weight-chart-stats" id="weightChartStats"></span>
+            </div>
+            <div id="weightLineChart" class="line-chart"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ TDEE ============ -->
+    <section id="screen-tdee" class="screen hidden">
+      <div class="console-panel tdee-panel">
+        <span class="corner tl"></span><span class="corner tr"></span>
+        <span class="corner bl"></span><span class="corner br"></span>
+        <div class="chart-head"><span class="gauge-label">ДАННИ</span></div>
+        <div class="tdee-note">По формулата на Mifflin-St Jeor</div>
+
+        <div class="calc-grid">
+          <div class="calc-field">
+            <label for="calcSex">ПОЛ</label>
+            <select id="calcSex" class="mini-input">
+              <option value="male">Мъж</option>
+              <option value="female">Жена</option>
+            </select>
+          </div>
+          <div class="calc-field">
+            <label for="calcAge">ВЪЗРАСТ</label>
+            <input id="calcAge" type="number" class="mini-input" min="10" max="100" />
+          </div>
+          <div class="calc-field">
+            <label for="calcHeight">РЪСТ (СМ)</label>
+            <input id="calcHeight" type="number" class="mini-input" min="100" max="250" />
+          </div>
+          <div class="calc-field">
+            <label for="calcWeight">ТЕГЛО (КГ)</label>
+            <input id="calcWeight" type="number" class="mini-input" min="30" max="300" />
+          </div>
+          <div class="calc-field calc-field-wide">
+            <label for="calcActivity">НИВО НА АКТИВНОСТ</label>
+            <select id="calcActivity" class="mini-input">
+              <option value="1.2">Заседнал (без спорт)</option>
+              <option value="1.375">Леко активен (1-3 дни/седмица)</option>
+              <option value="1.55">Умерено активен (3-5 дни/седмица)</option>
+              <option value="1.725">Много активен (6-7 дни/седмица)</option>
+              <option value="1.9">Екстремно активен (физически труд + спорт)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="calc-results">
+          <div class="calc-result"><span class="calc-result-label">BMR (ПОКОЙ)</span><span class="calc-result-value" id="bmrValue">0</span></div>
+          <div class="calc-result"><span class="calc-result-label">TDEE (ПОДДЪРЖАНЕ)</span><span class="calc-result-value" id="tdeeValue">0</span></div>
+        </div>
+
+        <div class="calc-suggestions">
+          <div class="calc-sugg">
+            <div><span class="calc-sugg-label">ОТСЛАБВАНЕ (-20%)</span><span class="calc-sugg-value" id="cutValue">0 ккал</span></div>
+            <button class="chip" data-apply-goal="cut">Приложи като цел във Vitals</button>
+          </div>
+          <div class="calc-sugg">
+            <div><span class="calc-sugg-label">ПОДДЪРЖАНЕ</span><span class="calc-sugg-value" id="maintainValue">0 ккал</span></div>
+            <button class="chip" data-apply-goal="maintain">Приложи като цел във Vitals</button>
+          </div>
+          <div class="calc-sugg">
+            <div><span class="calc-sugg-label">НАБИРАНЕ (+15%)</span><span class="calc-sugg-value" id="bulkValue">0 ккал</span></div>
+            <button class="chip" data-apply-goal="bulk">Приложи като цел във Vitals</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ GARAGE ============ -->
+    <section id="screen-garage" class="screen hidden">
+      <div class="garage-body">
+        <div class="vehicle-add-row hidden" id="vehicleAddRow">
+          <input id="newVehicleName" class="mini-input" placeholder="Име (напр. Астра)" />
+          <input id="newVehiclePlate" class="mini-input" placeholder="Рег. номер" />
+          <button class="chip" id="confirmAddVehicleBtn">Добави кола</button>
+          <button class="chip" id="cancelAddVehicleBtn">Отказ</button>
+        </div>
+
+        <div class="vitals-tabs">
+          <button class="vitals-tab active" data-garage-tab="overview">ОБЗОР</button>
+          <button class="vitals-tab" data-garage-tab="repairs">РЕМОНТИ</button>
+          <button class="vitals-tab" data-garage-tab="fuel">ГОРИВО</button>
+          <button class="vitals-tab" data-garage-tab="documents">ДОКУМЕНТИ</button>
+          <button class="vitals-tab" data-garage-tab="fines">ФИШОВЕ</button>
+        </div>
+
+        <div class="vitals-tab-panel" id="garageTabOverview">
+          <div class="garage-stats-row">
+            <div class="console-panel garage-stat" data-accent="amber">
+              <span class="gauge-label">РЕМОНТИ ТАЗИ ГОДИНА</span>
+              <div class="garage-stat-value" id="ovRepairsCost">0€</div>
+            </div>
+            <div class="console-panel garage-stat" data-accent="cyan">
+              <span class="gauge-label">ГОРИВО ТАЗИ ГОДИНА</span>
+              <div class="garage-stat-value" id="ovFuelCost">0€</div>
+            </div>
+            <div class="console-panel garage-stat" data-accent="pink">
+              <span class="gauge-label">НЕПЛАТЕНИ ФИШОВЕ</span>
+              <div class="garage-stat-value" id="ovFinesUnpaid">0€</div>
+            </div>
+          </div>
+
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">ДОКУМЕНТИ ИЗТИЧАЩИ СКОРО</span></div>
+            <div class="garage-alert-list" id="ovDocsAlerts"></div>
+          </div>
+
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">НЕПЛАТЕНИ ФИШОВЕ</span></div>
+            <div class="garage-alert-list" id="ovFinesAlerts"></div>
+          </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="garageTabRepairs">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">РЕМОНТИ</span></div>
+            <div class="record-form">
+              <input type="date" id="repairDate" class="mini-input" />
+              <input type="text" id="repairDesc" class="mini-input wide" placeholder="Описание" />
+              <input type="number" id="repairKm" class="mini-input narrow" placeholder="Km" min="0" />
+              <input type="number" id="repairCost" class="mini-input narrow" placeholder="Цена €" min="0" />
+              <button class="chip" id="repairAddBtn">Добави</button>
+            </div>
+            <div class="record-list" id="repairsList"></div>
+          </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="garageTabFuel">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label">ГОРИВО</span>
+              <span class="weight-chart-stats" id="fuelStats"></span>
+            </div>
+            <div class="record-form">
+              <input type="date" id="fuelDate" class="mini-input" />
+              <input type="number" id="fuelLiters" class="mini-input narrow" placeholder="Литри" min="0" step="0.01" />
+              <input type="number" id="fuelCost" class="mini-input narrow" placeholder="Цена €" min="0" />
+              <input type="number" id="fuelKm" class="mini-input narrow" placeholder="Km" min="0" />
+              <button class="chip" id="fuelAddBtn">Добави</button>
+            </div>
+            <div class="record-list" id="fuelList"></div>
+          </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="garageTabDocuments">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">ДОКУМЕНТИ</span></div>
+            <div class="record-form">
+              <select id="docType" class="mini-input wide">
+                <option>Гражданска отговорност</option>
+                <option>Автокаско</option>
+                <option>Технически преглед</option>
+                <option>Винетка</option>
+                <option>Друго</option>
+              </select>
+              <input type="date" id="docExpiry" class="mini-input" />
+              <button class="chip" id="docAddBtn">Добави</button>
+            </div>
+            <div class="record-list" id="documentsList"></div>
+          </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="garageTabFines">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">ФИШОВЕ</span></div>
+            <div class="record-form">
+              <input type="date" id="fineDate" class="mini-input" />
+              <input type="text" id="fineDesc" class="mini-input wide" placeholder="Описание" />
+              <input type="number" id="fineAmount" class="mini-input narrow" placeholder="Сума €" min="0" />
+              <button class="chip" id="fineAddBtn">Добави</button>
+            </div>
+            <div class="record-list" id="finesList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  const MONTH_NAMES = ['Януари','Февруари','Март','Април','Май','Юни','Юли','Август','Септември','Октомври','Ноември','Декември'];
+  const MONTH_SHORT = ['Яну','Фев','Мар','Апр','Май','Юни','Юли','Авг','Сеп','Окт','Ное','Дек'];
+  const WEEKDAY_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+
+  const SUPABASE_URL = 'https://ytosvspqdmazfwymgssv.supabase.co';
+  const SUPABASE_ANON_KEY = 'sb_publishable_NI452NCaweP12tTTIqOITA_IEGt_9zB';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  let currentUser = null;
+  let authMode = 'signin';
+  let saveTimer = null;
+
+  let state = {
+    workdays: { dailyRate: 100, workDays: {} },
+    vitals: {
+      goals: { calories: 2200, water: 2000, steps: 10000, weight: 75, protein: 150, carbs: 250, fat: 70 },
+      days: {},
+      calc: { sex: 'male', age: 30, height: 175, weight: 75, activity: 1.55 }
+    },
+    garage: {
+      vehicles: [{ id: 'v1', name: 'Моята кола', plate: '' }],
+      activeVehicleId: 'v1',
+      records: { v1: { repairs: [], fuel: [], documents: [], fines: [] } }
+    }
+  };
+
+  let viewDate = new Date();
+  viewDate.setDate(1);
+  let currentScreen = 'hub';
+
+  const $ = (id) => document.getElementById(id);
+
+  async function loadState() {
+    const defaults = JSON.parse(JSON.stringify(state));
+    try {
+      const { data, error } = await sb
+        .from('app_state')
+        .select('data')
+        .eq('user_id', currentUser.id)
+        .maybeSingle();
+
+      if (error) throw error;
+
+      if (data && data.data) {
+        const parsed = data.data;
+        state = {
+          workdays: { ...defaults.workdays, ...parsed.workdays },
+          vitals: {
+            goals: { ...defaults.vitals.goals, ...(parsed.vitals && parsed.vitals.goals) },
+            days: (parsed.vitals && parsed.vitals.days) || {},
+            calc: { ...defaults.vitals.calc, ...(parsed.vitals && parsed.vitals.calc) }
+          },
+          garage: {
+            vehicles: (parsed.garage && parsed.garage.vehicles && parsed.garage.vehicles.length) ? parsed.garage.vehicles : defaults.garage.vehicles,
+            activeVehicleId: (parsed.garage && parsed.garage.activeVehicleId) || defaults.garage.activeVehicleId,
+            records: (parsed.garage && parsed.garage.records) || defaults.garage.records
+          }
+        };
+        if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
+          state.garage.activeVehicleId = state.garage.vehicles[0].id;
+        }
+      } else {
+        state = defaults;
+        await sb.from('app_state').insert({ user_id: currentUser.id, data: state });
+      }
+    } catch (err) {
+      state = defaults;
+      showToast('Грешка при зареждане на данните');
+    }
+  }
+
+  function saveState() {
+    if (!currentUser) return;
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        await sb.from('app_state').upsert({
+          user_id: currentUser.id,
+          data: state,
+          updated_at: new Date().toISOString()
+        });
+      } catch {
+        showToast('Грешка при запис — провери връзката');
+      }
+    }, 400);
+  }
+
+  function dateKey(y, m, d) {
+    return `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  }
+
+  function todayKey() {
+    const t = new Date();
+    return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
+  }
+
+  function isSameDay(a, b) {
+    return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  }
+
+  function getMonday(d) {
+    const date = new Date(d);
+    const day = (date.getDay() + 6) % 7;
+    date.setDate(date.getDate() - day);
+    date.setHours(0, 0, 0, 0);
+    return date;
+  }
+
+  function showToast(msg) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(showToast._h);
+    showToast._h = setTimeout(() => t.classList.remove('show'), 2400);
+  }
+
+  function formatNumber(n) {
+    return Math.round(n).toLocaleString('bg-BG');
+  }
+
+  function animateValue(el, to) {
+    const from = parseFloat(el.dataset.val || '0');
+    if (from === to) { el.textContent = formatNumber(to); return; }
+    el.dataset.val = to;
+    const duration = 500;
+    const start = performance.now();
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = formatNumber(from + (to - from) * eased);
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = formatNumber(to);
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ============ Routing ============ */
+
+  function showScreen(name) {
+    currentScreen = name;
+    document.querySelectorAll('.screen').forEach((s) => s.classList.add('hidden'));
+    $('screen-' + name).classList.remove('hidden');
+
+    $('homeBtn').style.display = name === 'hub' ? 'none' : 'flex';
+    $('rateBox').classList.toggle('hidden', name !== 'workdays');
+    $('goalsBox').classList.toggle('hidden', name !== 'vitals');
+    $('vehicleBox').classList.toggle('hidden', name !== 'garage');
+
+    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE' };
+    const subs = {
+      hub: 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР',
+      workdays: 'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ',
+      vitals: 'ВИТАЛНИ ПОКАЗАТЕЛИ',
+      tdee: 'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД',
+      garage: 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ'
+    };
+    $('brandTitle').textContent = titles[name];
+    $('brandSub').textContent = subs[name];
+
+    if (name === 'hub') renderHub();
+    if (name === 'workdays') { renderCalendar(); renderStats(true); renderYearChart(); }
+    if (name === 'vitals') { renderVitalsToday(true); renderVitalsCharts(); switchVitalsTab('today'); }
+    if (name === 'tdee') computeTDEE();
+    if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
+  }
+
+  /* ============ Hub ============ */
+
+  function renderHub() {
+    const today = new Date();
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+    const monthDays = countWorkRange(monthStart, monthEnd);
+    const rate = state.workdays.dailyRate || 0;
+
+    $('hubWorkMonthDays').textContent = monthDays;
+    $('hubWorkMonthEarnings').textContent = formatNumber(monthDays * rate) + '€';
+
+    const entry = getVitalsDay(todayKey());
+    $('hubVitalsCalories').textContent = formatNumber(entry.calories);
+    $('hubVitalsWater').textContent = formatNumber(entry.water);
+    $('hubVitalsSteps').textContent = formatNumber(entry.steps);
+
+    const tdee = calcTDEEValues();
+    $('hubTdeeBmr').textContent = formatNumber(tdee.bmr);
+    $('hubTdeeValue').textContent = formatNumber(tdee.tdee);
+
+    let unpaidFinesTotal = 0;
+    let docsAlertCount = 0;
+    state.garage.vehicles.forEach((v) => {
+      const rec = state.garage.records[v.id] || { fines: [], documents: [] };
+      unpaidFinesTotal += (rec.fines || []).filter((f) => !f.paid).reduce((s, f) => s + f.amount, 0);
+      docsAlertCount += (rec.documents || []).filter((d) => docStatus(d.expiry).cls !== 'valid').length;
+    });
+    $('hubGarageFines').textContent = formatNumber(unpaidFinesTotal) + '€';
+    $('hubGarageDocs').textContent = docsAlertCount;
+  }
+
+  /* ============ WorkDays ============ */
+
+  function onRateChange(e) {
+    const val = parseFloat(e.target.value);
+    state.workdays.dailyRate = isNaN(val) ? 0 : val;
+    saveState();
+    renderStats(false);
+    renderYearChart();
+  }
+
+  function shiftMonth(delta) {
+    viewDate.setMonth(viewDate.getMonth() + delta);
+    renderCalendar();
+  }
+
+  function renderCalendar() {
+    const y = viewDate.getFullYear();
+    const m = viewDate.getMonth();
+
+    $('monthLabel').textContent = MONTH_NAMES[m];
+    $('yearLabel').textContent = y;
+
+    const grid = $('calendarGrid');
+    grid.innerHTML = '';
+
+    const firstDay = new Date(y, m, 1);
+    const leading = (firstDay.getDay() + 6) % 7;
+    const daysInMonth = new Date(y, m + 1, 0).getDate();
+    const today = new Date();
+
+    for (let i = 0; i < leading; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'day-cell empty';
+      grid.appendChild(empty);
+    }
+
+    for (let d = 1; d <= daysInMonth; d++) {
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      const key = dateKey(y, m, d);
+      const cellDate = new Date(y, m, d);
+
+      if (isSameDay(cellDate, today)) cell.classList.add('today');
+      if (state.workdays.workDays[key]) cell.classList.add('worked');
+
+      cell.textContent = d;
+      cell.addEventListener('click', () => toggleDay(key, cell));
+
+      grid.appendChild(cell);
+    }
+  }
+
+  function toggleDay(key, cell) {
+    if (state.workdays.workDays[key]) {
+      delete state.workdays.workDays[key];
+      cell.classList.remove('worked');
+    } else {
+      state.workdays.workDays[key] = true;
+      cell.classList.add('worked');
+    }
+    saveState();
+    renderStats(false);
+    renderYearChart();
+  }
+
+  function countWorkRange(fromDate, toDate) {
+    let count = 0;
+    for (const key of Object.keys(state.workdays.workDays)) {
+      if (!state.workdays.workDays[key]) continue;
+      const d = new Date(key + 'T00:00:00');
+      if (d >= fromDate && d <= toDate) count++;
+    }
+    return count;
+  }
+
+  function setDelta(el, current, previous) {
+    const diff = current - previous;
+    if (diff > 0) { el.textContent = `▲ ${diff}`; el.className = 'gauge-delta up'; }
+    else if (diff < 0) { el.textContent = `▽ ${Math.abs(diff)}`; el.className = 'gauge-delta down'; }
+    else { el.textContent = '— 0'; el.className = 'gauge-delta flat'; }
+  }
+
+  function renderStats(instant) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const weekStart = getMonday(today);
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6); weekEnd.setHours(23,59,59,999);
+    const prevWeekStart = new Date(weekStart); prevWeekStart.setDate(prevWeekStart.getDate() - 7);
+    const prevWeekEnd = new Date(weekStart); prevWeekEnd.setMilliseconds(-1);
+
+    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
+    const prevMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const prevMonthEnd = new Date(monthStart.getTime() - 1);
+
+    const yearStart = new Date(today.getFullYear(), 0, 1);
+    const yearEnd = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
+    const prevYearStart = new Date(today.getFullYear() - 1, 0, 1);
+    const prevYearEnd = new Date(yearStart.getTime() - 1);
+
+    const weekDays = countWorkRange(weekStart, weekEnd);
+    const monthDays = countWorkRange(monthStart, monthEnd);
+    const yearDays = countWorkRange(yearStart, yearEnd);
+    const prevWeekDays = countWorkRange(prevWeekStart, prevWeekEnd);
+    const prevMonthDays = countWorkRange(prevMonthStart, prevMonthEnd);
+    const prevYearDays = countWorkRange(prevYearStart, prevYearEnd);
+
+    const rate = state.workdays.dailyRate || 0;
+
+    if (instant) {
+      ['weekDays','monthDays','yearDays','weekEarnings','monthEarnings','yearEarnings'].forEach((id) => $(id).dataset.val = 0);
+    }
+
+    animateValue($('weekDays'), weekDays);
+    animateValue($('monthDays'), monthDays);
+    animateValue($('yearDays'), yearDays);
+    animateValue($('weekEarnings'), weekDays * rate);
+    animateValue($('monthEarnings'), monthDays * rate);
+    animateValue($('yearEarnings'), yearDays * rate);
+
+    setDelta($('weekDelta'), weekDays, prevWeekDays);
+    setDelta($('monthDelta'), monthDays, prevMonthDays);
+    setDelta($('yearDelta'), yearDays, prevYearDays);
+  }
+
+  function renderYearChart() {
+    const container = $('yearChart');
+    container.innerHTML = '';
+
+    const today = new Date();
+    const y = today.getFullYear();
+    const rate = state.workdays.dailyRate || 0;
+
+    const monthTotals = new Array(12).fill(0);
+    for (const key of Object.keys(state.workdays.workDays)) {
+      if (!state.workdays.workDays[key]) continue;
+      const [ky, km] = key.split('-').map(Number);
+      if (ky === y) monthTotals[km - 1]++;
+    }
+
+    const earnings = monthTotals.map((c) => c * rate);
+    const max = Math.max(...earnings, 1);
+
+    earnings.forEach((val, i) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'chart-bar-wrap' + (i === today.getMonth() ? ' current' : '');
+
+      const bar = document.createElement('div');
+      bar.className = 'chart-bar';
+      const heightPct = (val / max) * 100;
+      bar.style.height = '0%';
+
+      const label = document.createElement('div');
+      label.className = 'chart-bar-label';
+      label.textContent = MONTH_SHORT[i];
+
+      wrap.appendChild(bar);
+      wrap.appendChild(label);
+      container.appendChild(wrap);
+
+      requestAnimationFrame(() => { bar.style.height = `${heightPct}%`; });
+    });
+  }
+
+  /* ============ Vitals ============ */
+
+  function getVitalsDay(key) {
+    const defaults = { calories: 0, water: 0, steps: 0, weight: 0, protein: 0, carbs: 0, fat: 0 };
+    return { ...defaults, ...state.vitals.days[key] };
+  }
+
+  function mutateVitalsDay(key, fn) {
+    const entry = { ...getVitalsDay(key) };
+    fn(entry);
+    entry.calories = Math.max(0, Math.round(entry.calories));
+    entry.water = Math.max(0, Math.round(entry.water));
+    entry.steps = Math.max(0, Math.round(entry.steps));
+    entry.weight = Math.max(0, Math.round(entry.weight * 10) / 10);
+    entry.protein = Math.max(0, Math.round(entry.protein));
+    entry.carbs = Math.max(0, Math.round(entry.carbs));
+    entry.fat = Math.max(0, Math.round(entry.fat));
+    state.vitals.days[key] = entry;
+    saveState();
+  }
+
+  function getPreviousWeight(beforeKey) {
+    const keys = Object.keys(state.vitals.days)
+      .filter((k) => k < beforeKey && state.vitals.days[k].weight > 0)
+      .sort();
+    if (!keys.length) return null;
+    return state.vitals.days[keys[keys.length - 1]].weight;
+  }
+
+  function setMetricStatus(el, current, goal, kind) {
+    if (goal <= 0) { el.textContent = '—'; el.className = 'gauge-delta flat'; return; }
+    if (kind === 'lowerBetter') {
+      if (current > goal) { el.textContent = `+${formatNumber(current - goal)} над целта`; el.className = 'gauge-delta danger'; }
+      else { el.textContent = `${formatNumber(goal - current)} остават`; el.className = 'gauge-delta flat'; }
+    } else {
+      if (current >= goal) { el.textContent = '✓ изпълнена'; el.className = 'gauge-delta good'; }
+      else { el.textContent = `${formatNumber(goal - current)} остават`; el.className = 'gauge-delta flat'; }
+    }
+  }
+
+  function setWeightDelta(el, current, previous) {
+    if (!current) { el.textContent = '—'; el.className = 'gauge-delta flat'; return; }
+    if (previous === null) { el.textContent = 'първи запис'; el.className = 'gauge-delta flat'; return; }
+    const diff = Math.round((current - previous) * 10) / 10;
+    if (diff > 0) { el.textContent = `▲ ${diff.toFixed(1)} кг`; el.className = 'gauge-delta up'; }
+    else if (diff < 0) { el.textContent = `▽ ${Math.abs(diff).toFixed(1)} кг`; el.className = 'gauge-delta down'; }
+    else { el.textContent = '— 0.0 кг'; el.className = 'gauge-delta flat'; }
+  }
+
+  function renderVitalsToday(instant) {
+    $('goalCalories').value = state.vitals.goals.calories;
+    $('goalWater').value = state.vitals.goals.water;
+    $('goalSteps').value = state.vitals.goals.steps;
+    $('weightGoalInput').value = state.vitals.goals.weight;
+    $('proteinGoalInput').value = state.vitals.goals.protein;
+    $('carbsGoalInput').value = state.vitals.goals.carbs;
+    $('fatGoalInput').value = state.vitals.goals.fat;
+
+    const key = todayKey();
+    const entry = getVitalsDay(key);
+    const goals = state.vitals.goals;
+
+    if (instant) {
+      ['calValue','waterValue','stepsValue','proteinValue','carbsValue','fatValue'].forEach((id) => $(id).dataset.val = 0);
+    }
+
+    animateValue($('calValue'), entry.calories);
+    animateValue($('waterValue'), entry.water);
+    animateValue($('stepsValue'), entry.steps);
+    animateValue($('proteinValue'), entry.protein);
+    animateValue($('carbsValue'), entry.carbs);
+    animateValue($('fatValue'), entry.fat);
+
+    $('calGoalLabel').textContent = formatNumber(goals.calories);
+    $('waterGoalLabel').textContent = formatNumber(goals.water);
+    $('stepsGoalLabel').textContent = formatNumber(goals.steps);
+
+    $('calProgress').style.width = Math.min(100, (entry.calories / (goals.calories || 1)) * 100) + '%';
+    $('waterProgress').style.width = Math.min(100, (entry.water / (goals.water || 1)) * 100) + '%';
+    $('stepsProgress').style.width = Math.min(100, (entry.steps / (goals.steps || 1)) * 100) + '%';
+    $('proteinProgress').style.width = Math.min(100, (entry.protein / (goals.protein || 1)) * 100) + '%';
+    $('carbsProgress').style.width = Math.min(100, (entry.carbs / (goals.carbs || 1)) * 100) + '%';
+    $('fatProgress').style.width = Math.min(100, (entry.fat / (goals.fat || 1)) * 100) + '%';
+
+    setMetricStatus($('calStatus'), entry.calories, goals.calories, 'lowerBetter');
+    setMetricStatus($('waterStatus'), entry.water, goals.water, 'higherBetter');
+    setMetricStatus($('stepsStatus'), entry.steps, goals.steps, 'higherBetter');
+
+    $('weightValue').textContent = entry.weight > 0 ? entry.weight.toFixed(1) : '—';
+    setWeightDelta($('weightStatus'), entry.weight, getPreviousWeight(key));
+  }
+
+  function onGoalsChange() {
+    const cal = parseFloat($('goalCalories').value);
+    const water = parseFloat($('goalWater').value);
+    const steps = parseFloat($('goalSteps').value);
+    state.vitals.goals = {
+      ...state.vitals.goals,
+      calories: isNaN(cal) ? 0 : cal,
+      water: isNaN(water) ? 0 : water,
+      steps: isNaN(steps) ? 0 : steps
+    };
+    saveState();
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  function onInlineGoalChange() {
+    const weight = parseFloat($('weightGoalInput').value);
+    const protein = parseFloat($('proteinGoalInput').value);
+    const carbs = parseFloat($('carbsGoalInput').value);
+    const fat = parseFloat($('fatGoalInput').value);
+    state.vitals.goals = {
+      ...state.vitals.goals,
+      weight: isNaN(weight) ? 0 : weight,
+      protein: isNaN(protein) ? 0 : protein,
+      carbs: isNaN(carbs) ? 0 : carbs,
+      fat: isNaN(fat) ? 0 : fat
+    };
+    saveState();
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  /* ============ TDEE calculator ============ */
+
+  function calcTDEEValues() {
+    const c = state.vitals.calc;
+    const bmr = c.sex === 'male'
+      ? 10 * c.weight + 6.25 * c.height - 5 * c.age + 5
+      : 10 * c.weight + 6.25 * c.height - 5 * c.age - 161;
+    const tdee = bmr * c.activity;
+
+    const round10 = (n) => Math.round(n / 10) * 10;
+    return {
+      bmr,
+      tdee,
+      maintain: round10(tdee),
+      cut: round10(tdee * 0.8),
+      bulk: round10(tdee * 1.15)
+    };
+  }
+
+  function computeTDEE() {
+    const v = calcTDEEValues();
+
+    $('bmrValue').textContent = formatNumber(v.bmr);
+    $('tdeeValue').textContent = formatNumber(v.tdee);
+    $('cutValue').textContent = formatNumber(v.cut) + ' ккал';
+    $('maintainValue').textContent = formatNumber(v.maintain) + ' ккал';
+    $('bulkValue').textContent = formatNumber(v.bulk) + ' ккал';
+
+    computeTDEE._values = v;
+  }
+
+  function onCalcChange() {
+    state.vitals.calc = {
+      sex: $('calcSex').value,
+      age: parseFloat($('calcAge').value) || 0,
+      height: parseFloat($('calcHeight').value) || 0,
+      weight: parseFloat($('calcWeight').value) || 0,
+      activity: parseFloat($('calcActivity').value)
+    };
+    saveState();
+    computeTDEE();
+  }
+
+  function applyCalcGoal(kind) {
+    if (!computeTDEE._values) return;
+    $('goalCalories').value = computeTDEE._values[kind];
+    onGoalsChange();
+    showToast('Целта за калории е обновена');
+  }
+
+  function renderWeekChart(containerId, values, color) {
+    const container = $(containerId);
+    container.innerHTML = '';
+    const max = Math.max(...values.map((v) => v.value), 1);
+
+    values.forEach((v) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'week-bar-wrap' + (v.isToday ? ' today' : '');
+
+      const bar = document.createElement('div');
+      bar.className = 'week-bar';
+      bar.style.background = color;
+      bar.style.boxShadow = v.isToday ? `0 0 8px ${color}` : 'none';
+      const pct = (v.value / max) * 100;
+      bar.style.height = '0%';
+
+      const label = document.createElement('div');
+      label.className = 'week-bar-label';
+      label.textContent = v.label;
+
+      wrap.appendChild(bar);
+      wrap.appendChild(label);
+      container.appendChild(wrap);
+
+      requestAnimationFrame(() => { bar.style.height = `${pct}%`; });
+    });
+  }
+
+  function renderVitalsCharts() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = dateKey(d.getFullYear(), d.getMonth(), d.getDate());
+      days.push({ key, label: WEEKDAY_SHORT[(d.getDay() + 6) % 7], isToday: i === 0 });
+    }
+
+    renderWeekChart('weekChartCalories', days.map((d) => ({ ...d, value: getVitalsDay(d.key).calories })), 'var(--pink)');
+    renderWeekChart('weekChartWater', days.map((d) => ({ ...d, value: getVitalsDay(d.key).water })), 'var(--cyan)');
+    renderWeekChart('weekChartSteps', days.map((d) => ({ ...d, value: getVitalsDay(d.key).steps })), 'var(--violet)');
+  }
+
+  /* ============ Weight tab ============ */
+
+  function switchVitalsTab(tab) {
+    document.querySelectorAll('.vitals-tab[data-tab]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.tab === tab);
+    });
+    $('vitalsTabToday').classList.toggle('hidden', tab !== 'today');
+    $('vitalsTabWeight').classList.toggle('hidden', tab !== 'weight');
+    if (tab === 'weight') renderWeightTab();
+  }
+
+  function buildLineChartSVG(points, opts) {
+    const width = opts.width, height = opts.height;
+    const padL = 36, padR = 12, padT = 16, padB = 22;
+    const innerW = width - padL - padR;
+    const innerH = height - padT - padB;
+
+    const values = points.map((p) => p.value);
+    let min = Math.min(...values);
+    let max = Math.max(...values);
+    if (min === max) { min -= 1; max += 1; }
+    const pad = (max - min) * 0.1;
+    min -= pad; max += pad;
+    const range = max - min || 1;
+
+    const xFor = (i) => padL + (points.length === 1 ? innerW / 2 : (i / (points.length - 1)) * innerW);
+    const yFor = (v) => padT + innerH - ((v - min) / range) * innerH;
+
+    let linePath = '';
+    points.forEach((p, i) => {
+      const cmd = i === 0 ? 'M' : 'L';
+      linePath += `${cmd}${xFor(i).toFixed(1)},${yFor(p.value).toFixed(1)} `;
+    });
+    const baseline = (padT + innerH).toFixed(1);
+    const areaPath = `${linePath}L${xFor(points.length - 1).toFixed(1)},${baseline} L${xFor(0).toFixed(1)},${baseline} Z`;
+
+    const gridLevels = [0, 0.5, 1];
+    const gridLines = gridLevels.map((t) => {
+      const y = padT + innerH * t;
+      const val = max - (max - min) * t;
+      return `<line class="line-chart-grid" x1="${padL}" y1="${y.toFixed(1)}" x2="${width - padR}" y2="${y.toFixed(1)}" />
+              <text class="line-chart-grid-label" x="${padL - 6}" y="${(y + 3).toFixed(1)}" text-anchor="end">${val.toFixed(1)}</text>`;
+    }).join('');
+
+    const labelStep = Math.max(1, Math.round(points.length / 5));
+    const xLabels = points.map((p, i) => {
+      if (i % labelStep !== 0 && i !== points.length - 1) return '';
+      return `<text class="line-chart-axis-label" x="${xFor(i).toFixed(1)}" y="${height - 4}" text-anchor="middle">${p.label}</text>`;
+    }).join('');
+
+    const last = points[points.length - 1];
+    const lastX = xFor(points.length - 1);
+    const lastY = yFor(last.value);
+
+    return `
+      <svg viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="weightAreaGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#f3b64d" stop-opacity="0.35" />
+            <stop offset="100%" stop-color="#f3b64d" stop-opacity="0" />
+          </linearGradient>
+        </defs>
+        ${gridLines}
+        <path class="line-chart-area" d="${areaPath}" />
+        <path class="line-chart-line" d="${linePath}" />
+        <circle class="line-chart-dot" cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4" />
+        <text class="line-chart-endpoint-label" x="${Math.min(lastX + 8, width - padR - 34)}" y="${(lastY - 8).toFixed(1)}">${last.value.toFixed(1)}</text>
+        ${xLabels}
+      </svg>
+    `;
+  }
+
+  function renderWeightTab() {
+    $('weightGoalInput').value = state.vitals.goals.weight;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const days = [];
+    for (let i = 29; i >= 0; i--) {
+      const d = new Date(today);
+      d.setDate(d.getDate() - i);
+      const key = dateKey(d.getFullYear(), d.getMonth(), d.getDate());
+      days.push({ key, label: `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}` });
+    }
+
+    let last = getPreviousWeight(days[0].key) || 0;
+    const series = days.map((d) => {
+      const w = getVitalsDay(d.key).weight;
+      if (w > 0) last = w;
+      return { ...d, value: last };
+    });
+
+    const container = $('weightLineChart');
+    const hasData = series.some((p) => p.value > 0);
+
+    if (!hasData) {
+      container.innerHTML = '<div class="line-chart-empty">Все още няма записано тегло — въведи първата стойност горе</div>';
+      $('weightChartStats').textContent = '';
+      return;
+    }
+
+    const rect = container.getBoundingClientRect();
+    container.innerHTML = buildLineChartSVG(series, { width: Math.max(rect.width, 300), height: rect.height || 190 });
+
+    const recorded = series.filter((p) => p.value > 0);
+    const avg = recorded.reduce((s, p) => s + p.value, 0) / recorded.length;
+    const change = recorded.length > 1 ? recorded[recorded.length - 1].value - recorded[0].value : 0;
+    const changeStr = change > 0 ? `▲ ${change.toFixed(1)} кг` : change < 0 ? `▽ ${Math.abs(change).toFixed(1)} кг` : '— 0.0 кг';
+    $('weightChartStats').textContent = `СРЕДНО ${avg.toFixed(1)} КГ · ${changeStr}`;
+  }
+
+  function addMeal() {
+    const kcal = parseFloat($('mealCalories').value) || 0;
+    const protein = parseFloat($('mealProtein').value) || 0;
+    const carbs = parseFloat($('mealCarbs').value) || 0;
+    const fat = parseFloat($('mealFat').value) || 0;
+    if (!kcal && !protein && !carbs && !fat) return;
+    mutateVitalsDay(todayKey(), (e) => {
+      e.calories += kcal;
+      e.protein += protein;
+      e.carbs += carbs;
+      e.fat += fat;
+    });
+    ['mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  function resetNutrition() {
+    mutateVitalsDay(todayKey(), (e) => { e.calories = 0; e.protein = 0; e.carbs = 0; e.fat = 0; });
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  function setWeight() {
+    const val = parseFloat($('weightInput').value);
+    if (isNaN(val) || val < 0) return;
+    mutateVitalsDay(todayKey(), (e) => { e.weight = val; });
+    $('weightInput').value = '';
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  function addWater(amount) {
+    mutateVitalsDay(todayKey(), (e) => { e.water += amount; });
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  function resetWater() {
+    mutateVitalsDay(todayKey(), (e) => { e.water = 0; });
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  function setSteps() {
+    const val = parseFloat($('stepsInput').value);
+    if (isNaN(val) || val < 0) return;
+    mutateVitalsDay(todayKey(), (e) => { e.steps = val; });
+    $('stepsInput').value = '';
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  function addSteps(amount) {
+    mutateVitalsDay(todayKey(), (e) => { e.steps += amount; });
+    renderVitalsToday(false);
+    renderVitalsCharts();
+  }
+
+  /* ============ Garage ============ */
+
+  function genId(prefix) {
+    return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  }
+
+  function formatDateDisplay(iso) {
+    if (!iso) return '';
+    const [y, m, d] = iso.split('-');
+    return `${d}.${m}.${y}`;
+  }
+
+  function getActiveRecords() {
+    const id = state.garage.activeVehicleId;
+    if (!state.garage.records[id]) {
+      state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [] };
+    }
+    return state.garage.records[id];
+  }
+
+  function docStatus(expiry) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const exp = new Date(expiry + 'T00:00:00');
+    const diffDays = Math.round((exp - today) / 86400000);
+    if (diffDays < 0) return { cls: 'expired', label: 'Изтекъл' };
+    if (diffDays <= 30) return { cls: 'soon', label: `${diffDays} дни` };
+    return { cls: 'valid', label: 'Валиден' };
+  }
+
+  function createRecordRow({ date, desc, meta, cost, onDelete }) {
+    const row = document.createElement('div');
+    row.className = 'record-row';
+
+    const dateEl = document.createElement('span');
+    dateEl.className = 'record-row-date';
+    dateEl.textContent = date || '';
+
+    const descEl = document.createElement('span');
+    descEl.className = 'record-row-desc';
+    descEl.textContent = desc || '';
+
+    const metaEl = document.createElement('span');
+    metaEl.className = 'record-row-meta';
+    if (meta instanceof Node) metaEl.appendChild(meta);
+    else metaEl.textContent = meta || '';
+
+    const costEl = document.createElement('span');
+    costEl.className = 'record-row-cost';
+    costEl.textContent = cost || '';
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'record-row-del';
+    delBtn.textContent = '×';
+    delBtn.addEventListener('click', onDelete);
+
+    row.append(dateEl, descEl, metaEl, costEl, delBtn);
+    return row;
+  }
+
+  function renderEmptyRow(container, text) {
+    container.innerHTML = '';
+    const el = document.createElement('div');
+    el.className = 'record-empty';
+    el.textContent = text;
+    container.appendChild(el);
+  }
+
+  function renderRepairs() {
+    const list = getActiveRecords().repairs.slice().sort((a, b) => b.date.localeCompare(a.date));
+    const container = $('repairsList');
+    container.innerHTML = '';
+    if (!list.length) { renderEmptyRow(container, 'Няма записани ремонти'); return; }
+    list.forEach((r) => {
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(r.date),
+        desc: r.desc,
+        meta: r.km ? formatNumber(r.km) + ' km' : '',
+        cost: formatNumber(r.cost) + ' €',
+        onDelete: () => deleteRepair(r.id)
+      }));
+    });
+  }
+
+  function addRepair() {
+    const date = $('repairDate').value;
+    const desc = $('repairDesc').value.trim();
+    const km = parseFloat($('repairKm').value) || 0;
+    const cost = parseFloat($('repairCost').value) || 0;
+    if (!date || !desc) return;
+    getActiveRecords().repairs.push({ id: genId('r'), date, desc, km, cost });
+    saveState();
+    ['repairDate','repairDesc','repairKm','repairCost'].forEach((id) => $(id).value = '');
+    renderRepairs();
+    renderGarageOverview();
+  }
+
+  function deleteRepair(id) {
+    const rec = getActiveRecords();
+    rec.repairs = rec.repairs.filter((r) => r.id !== id);
+    saveState();
+    renderRepairs();
+    renderGarageOverview();
+  }
+
+  function renderFuel() {
+    const list = getActiveRecords().fuel.slice().sort((a, b) => b.date.localeCompare(a.date));
+    const container = $('fuelList');
+    container.innerHTML = '';
+    if (!list.length) {
+      renderEmptyRow(container, 'Няма записано гориво');
+      $('fuelStats').textContent = '';
+      return;
+    }
+    list.forEach((f) => {
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(f.date),
+        desc: f.liters ? formatNumber(f.liters) + ' л' : '',
+        meta: f.km ? formatNumber(f.km) + ' km' : '',
+        cost: formatNumber(f.cost) + ' €',
+        onDelete: () => deleteFuel(f.id)
+      }));
+    });
+    const totalCost = list.reduce((s, f) => s + f.cost, 0);
+    const totalLiters = list.reduce((s, f) => s + f.liters, 0);
+    const avgPrice = totalLiters ? totalCost / totalLiters : 0;
+    $('fuelStats').textContent = `ОБЩО ${formatNumber(totalCost)} € · СР. ЦЕНА ${avgPrice.toFixed(2)} €/Л`;
+  }
+
+  function addFuel() {
+    const date = $('fuelDate').value;
+    const liters = parseFloat($('fuelLiters').value) || 0;
+    const cost = parseFloat($('fuelCost').value) || 0;
+    const km = parseFloat($('fuelKm').value) || 0;
+    if (!date || (!liters && !cost)) return;
+    getActiveRecords().fuel.push({ id: genId('f'), date, liters, cost, km });
+    saveState();
+    ['fuelDate','fuelLiters','fuelCost','fuelKm'].forEach((id) => $(id).value = '');
+    renderFuel();
+    renderGarageOverview();
+  }
+
+  function deleteFuel(id) {
+    const rec = getActiveRecords();
+    rec.fuel = rec.fuel.filter((f) => f.id !== id);
+    saveState();
+    renderFuel();
+    renderGarageOverview();
+  }
+
+  function renderDocuments() {
+    const list = getActiveRecords().documents.slice().sort((a, b) => a.expiry.localeCompare(b.expiry));
+    const container = $('documentsList');
+    container.innerHTML = '';
+    if (!list.length) { renderEmptyRow(container, 'Няма добавени документи'); return; }
+    list.forEach((d) => {
+      const status = docStatus(d.expiry);
+      const chip = document.createElement('span');
+      chip.className = 'status-chip ' + status.cls;
+      chip.textContent = status.label;
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(d.expiry),
+        desc: d.type,
+        meta: chip,
+        cost: '',
+        onDelete: () => deleteDocument(d.id)
+      }));
+    });
+  }
+
+  function addDocument() {
+    const type = $('docType').value;
+    const expiry = $('docExpiry').value;
+    if (!expiry) return;
+    getActiveRecords().documents.push({ id: genId('d'), type, expiry });
+    saveState();
+    $('docExpiry').value = '';
+    renderDocuments();
+    renderGarageOverview();
+  }
+
+  function deleteDocument(id) {
+    const rec = getActiveRecords();
+    rec.documents = rec.documents.filter((d) => d.id !== id);
+    saveState();
+    renderDocuments();
+    renderGarageOverview();
+  }
+
+  function renderFines() {
+    const list = getActiveRecords().fines.slice().sort((a, b) => b.date.localeCompare(a.date));
+    const container = $('finesList');
+    container.innerHTML = '';
+    if (!list.length) { renderEmptyRow(container, 'Няма добавени фишове'); return; }
+    list.forEach((f) => {
+      const chip = document.createElement('span');
+      chip.className = 'status-chip ' + (f.paid ? 'paid' : 'unpaid');
+      chip.textContent = f.paid ? 'Платен' : 'Неплатен';
+      chip.title = 'Кликни, за да превключиш';
+      chip.addEventListener('click', () => toggleFinePaid(f.id));
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(f.date),
+        desc: f.desc,
+        meta: chip,
+        cost: formatNumber(f.amount) + ' €',
+        onDelete: () => deleteFine(f.id)
+      }));
+    });
+  }
+
+  function addFine() {
+    const date = $('fineDate').value;
+    const desc = $('fineDesc').value.trim();
+    const amount = parseFloat($('fineAmount').value) || 0;
+    if (!date || !amount) return;
+    getActiveRecords().fines.push({ id: genId('x'), date, desc, amount, paid: false });
+    saveState();
+    ['fineDate','fineDesc','fineAmount'].forEach((id) => $(id).value = '');
+    renderFines();
+    renderGarageOverview();
+  }
+
+  function deleteFine(id) {
+    const rec = getActiveRecords();
+    rec.fines = rec.fines.filter((f) => f.id !== id);
+    saveState();
+    renderFines();
+    renderGarageOverview();
+  }
+
+  function toggleFinePaid(id) {
+    const rec = getActiveRecords();
+    const f = rec.fines.find((x) => x.id === id);
+    if (f) f.paid = !f.paid;
+    saveState();
+    renderFines();
+    renderGarageOverview();
+  }
+
+  function renderGarageOverview() {
+    const records = getActiveRecords();
+    const year = String(new Date().getFullYear());
+
+    const repairsCost = records.repairs.filter((r) => r.date.startsWith(year)).reduce((s, r) => s + r.cost, 0);
+    const fuelCost = records.fuel.filter((f) => f.date.startsWith(year)).reduce((s, f) => s + f.cost, 0);
+    const finesUnpaid = records.fines.filter((f) => !f.paid).reduce((s, f) => s + f.amount, 0);
+
+    $('ovRepairsCost').textContent = formatNumber(repairsCost) + '€';
+    $('ovFuelCost').textContent = formatNumber(fuelCost) + '€';
+    $('ovFinesUnpaid').textContent = formatNumber(finesUnpaid) + '€';
+
+    const docsContainer = $('ovDocsAlerts');
+    docsContainer.innerHTML = '';
+    const alertDocs = records.documents
+      .map((d) => ({ ...d, status: docStatus(d.expiry) }))
+      .filter((d) => d.status.cls !== 'valid')
+      .sort((a, b) => a.expiry.localeCompare(b.expiry));
+
+    if (!alertDocs.length) {
+      const e = document.createElement('div');
+      e.className = 'garage-alert-empty';
+      e.textContent = 'Няма документи, изтичащи скоро';
+      docsContainer.appendChild(e);
+    } else {
+      alertDocs.forEach((d) => {
+        const item = document.createElement('div');
+        item.className = 'garage-alert-item';
+        const label = document.createElement('span');
+        label.textContent = `${d.type} — ${formatDateDisplay(d.expiry)}`;
+        const chip = document.createElement('span');
+        chip.className = 'status-chip ' + d.status.cls;
+        chip.textContent = d.status.label;
+        item.append(label, chip);
+        docsContainer.appendChild(item);
+      });
+    }
+
+    const finesContainer = $('ovFinesAlerts');
+    finesContainer.innerHTML = '';
+    const unpaidFines = records.fines.filter((f) => !f.paid).sort((a, b) => b.date.localeCompare(a.date));
+
+    if (!unpaidFines.length) {
+      const e = document.createElement('div');
+      e.className = 'garage-alert-empty';
+      e.textContent = 'Няма неплатени фишове';
+      finesContainer.appendChild(e);
+    } else {
+      unpaidFines.forEach((f) => {
+        const item = document.createElement('div');
+        item.className = 'garage-alert-item';
+        const label = document.createElement('span');
+        label.textContent = `${f.desc || 'Фиш'} — ${formatDateDisplay(f.date)}`;
+        const amt = document.createElement('span');
+        amt.className = 'record-row-cost';
+        amt.textContent = formatNumber(f.amount) + ' €';
+        item.append(label, amt);
+        finesContainer.appendChild(item);
+      });
+    }
+  }
+
+  function renderGarageAll() {
+    renderGarageOverview();
+    renderRepairs();
+    renderFuel();
+    renderDocuments();
+    renderFines();
+  }
+
+  function renderVehicleSelect() {
+    const select = $('vehicleSelect');
+    select.innerHTML = '';
+    state.garage.vehicles.forEach((v) => {
+      const opt = document.createElement('option');
+      opt.value = v.id;
+      opt.textContent = v.plate ? `${v.name} (${v.plate})` : v.name;
+      select.appendChild(opt);
+    });
+    select.value = state.garage.activeVehicleId;
+  }
+
+  function onVehicleChange() {
+    state.garage.activeVehicleId = $('vehicleSelect').value;
+    saveState();
+    renderGarageAll();
+  }
+
+  function toggleVehicleAddRow() {
+    $('vehicleAddRow').classList.toggle('hidden');
+  }
+
+  function confirmAddVehicle() {
+    const name = $('newVehicleName').value.trim();
+    const plate = $('newVehiclePlate').value.trim();
+    if (!name) return;
+    const id = genId('v');
+    state.garage.vehicles.push({ id, name, plate });
+    state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [] };
+    state.garage.activeVehicleId = id;
+    saveState();
+    $('newVehicleName').value = '';
+    $('newVehiclePlate').value = '';
+    $('vehicleAddRow').classList.add('hidden');
+    renderVehicleSelect();
+    renderGarageAll();
+  }
+
+  function cancelAddVehicle() {
+    $('newVehicleName').value = '';
+    $('newVehiclePlate').value = '';
+    $('vehicleAddRow').classList.add('hidden');
+  }
+
+  function switchGarageTab(tab) {
+    document.querySelectorAll('.vitals-tab[data-garage-tab]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.garageTab === tab);
+    });
+    const map = {
+      overview: 'garageTabOverview',
+      repairs: 'garageTabRepairs',
+      fuel: 'garageTabFuel',
+      documents: 'garageTabDocuments',
+      fines: 'garageTabFines'
+    };
+    Object.entries(map).forEach(([key, id]) => {
+      $(id).classList.toggle('hidden', key !== tab);
+    });
+  }
+
+  /* ============ Backup ============ */
+
+  async function exportData() {
+    const payload = JSON.stringify(state, null, 2);
+    if (window.claude && window.claude.downloads) {
+      try {
+        await window.claude.downloads.save({ filename: 'lifeos-backup.json', data: payload });
+        showToast('Резервно копие изтеглено');
+      } catch {
+        showToast('Изтеглянето беше отказано');
+      }
+    } else {
+      const blob = new Blob([payload], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'lifeos-backup.json'; a.click();
+      URL.revokeObjectURL(url);
+    }
+  }
+
+  function importData(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(reader.result);
+        if (!parsed.workdays || !parsed.vitals) throw new Error('bad shape');
+        state = {
+          workdays: { dailyRate: parsed.workdays.dailyRate, workDays: parsed.workdays.workDays },
+          vitals: {
+            goals: { ...state.vitals.goals, ...parsed.vitals.goals },
+            days: parsed.vitals.days,
+            calc: parsed.vitals.calc || state.vitals.calc
+          },
+          garage: (parsed.garage && parsed.garage.vehicles && parsed.garage.vehicles.length) ? {
+            vehicles: parsed.garage.vehicles,
+            activeVehicleId: parsed.garage.activeVehicleId || parsed.garage.vehicles[0].id,
+            records: parsed.garage.records || {}
+          } : state.garage
+        };
+        if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
+          state.garage.activeVehicleId = state.garage.vehicles[0].id;
+        }
+        saveState();
+        $('dailyRate').value = state.workdays.dailyRate;
+        $('calcSex').value = state.vitals.calc.sex;
+        $('calcAge').value = state.vitals.calc.age;
+        $('calcHeight').value = state.vitals.calc.height;
+        $('calcWeight').value = state.vitals.calc.weight;
+        $('calcActivity').value = state.vitals.calc.activity;
+        renderVehicleSelect();
+        showScreen(currentScreen);
+        showToast('Данните са възстановени');
+      } catch {
+        showToast('Невалиден файл');
+      }
+      e.target.value = '';
+    };
+    reader.readAsText(file);
+  }
+
+  /* ============ Init ============ */
+
+  /* ============ Auth ============ */
+
+  function initAuth() {
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        currentUser = data.session.user;
+        startApp();
+      }
+    });
+  }
+
+  function toggleAuthMode(e) {
+    if (e) e.preventDefault();
+    authMode = authMode === 'signin' ? 'signup' : 'signin';
+    $('authSubtitle').textContent = authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ';
+    $('authSubmitBtn').textContent = authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ';
+    $('authSwitchText').textContent = authMode === 'signin' ? 'Нямаш акаунт?' : 'Вече имаш акаунт?';
+    $('authSwitchLink').textContent = authMode === 'signin' ? 'Регистрирай се' : 'Влез';
+    $('authMessage').textContent = '';
+    $('authMessage').className = 'auth-message';
+  }
+
+  async function handleAuthSubmit() {
+    const email = $('authEmail').value.trim();
+    const password = $('authPassword').value;
+    const msg = $('authMessage');
+    const btn = $('authSubmitBtn');
+
+    if (!email || !password) {
+      msg.textContent = 'Въведи имейл и парола';
+      msg.className = 'auth-message error';
+      return;
+    }
+
+    btn.disabled = true;
+    msg.textContent = '';
+    msg.className = 'auth-message';
+
+    if (authMode === 'signin') {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      btn.disabled = false;
+      if (error) { msg.textContent = error.message; msg.className = 'auth-message error'; return; }
+      currentUser = data.user;
+      startApp();
+    } else {
+      const { data, error } = await sb.auth.signUp({ email, password });
+      btn.disabled = false;
+      if (error) { msg.textContent = error.message; msg.className = 'auth-message error'; return; }
+      if (data.session) {
+        currentUser = data.user;
+        startApp();
+      } else {
+        msg.textContent = 'Провери имейла си, за да потвърдиш акаунта.';
+        msg.className = 'auth-message ok';
+      }
+    }
+  }
+
+  async function handleLogout() {
+    await sb.auth.signOut();
+    currentUser = null;
+    location.reload();
+  }
+
+  function wireEvents() {
+    $('dailyRate').addEventListener('input', onRateChange);
+    $('goalCalories').addEventListener('input', onGoalsChange);
+    $('goalWater').addEventListener('input', onGoalsChange);
+    $('goalSteps').addEventListener('input', onGoalsChange);
+
+    $('prevMonth').addEventListener('click', () => shiftMonth(-1));
+    $('nextMonth').addEventListener('click', () => shiftMonth(1));
+    $('exportBtn').addEventListener('click', exportData);
+    $('importBtn').addEventListener('click', () => $('importFile').click());
+    $('importFile').addEventListener('change', importData);
+    $('homeBtn').addEventListener('click', () => showScreen('hub'));
+
+    document.querySelectorAll('.tile').forEach((tile) => {
+      tile.addEventListener('click', () => showScreen(tile.dataset.app));
+    });
+
+    document.querySelectorAll('.vitals-tab[data-tab]').forEach((btn) => {
+      btn.addEventListener('click', () => switchVitalsTab(btn.dataset.tab));
+    });
+
+    document.querySelectorAll('.vitals-tab[data-garage-tab]').forEach((btn) => {
+      btn.addEventListener('click', () => switchGarageTab(btn.dataset.garageTab));
+    });
+
+    $('nutritionResetBtn').addEventListener('click', resetNutrition);
+    $('waterResetBtn').addEventListener('click', resetWater);
+    $('stepsSetBtn').addEventListener('click', setSteps);
+    $('stepsInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') setSteps(); });
+    document.querySelectorAll('[data-water-add]').forEach((btn) => {
+      btn.addEventListener('click', () => addWater(parseFloat(btn.dataset.waterAdd)));
+    });
+    document.querySelectorAll('[data-steps-add]').forEach((btn) => {
+      btn.addEventListener('click', () => addSteps(parseFloat(btn.dataset.stepsAdd)));
+    });
+
+    $('mealAddBtn').addEventListener('click', addMeal);
+    ['mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addMeal(); });
+    });
+    $('weightSetBtn').addEventListener('click', setWeight);
+    $('weightInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') setWeight(); });
+    $('weightGoalInput').addEventListener('input', onInlineGoalChange);
+    $('proteinGoalInput').addEventListener('input', onInlineGoalChange);
+    $('carbsGoalInput').addEventListener('input', onInlineGoalChange);
+    $('fatGoalInput').addEventListener('input', onInlineGoalChange);
+
+    $('calcSex').addEventListener('change', onCalcChange);
+    $('calcAge').addEventListener('input', onCalcChange);
+    $('calcHeight').addEventListener('input', onCalcChange);
+    $('calcWeight').addEventListener('input', onCalcChange);
+    $('calcActivity').addEventListener('change', onCalcChange);
+    document.querySelectorAll('[data-apply-goal]').forEach((btn) => {
+      btn.addEventListener('click', () => applyCalcGoal(btn.dataset.applyGoal));
+    });
+
+    $('vehicleSelect').addEventListener('change', onVehicleChange);
+    $('addVehicleBtn').addEventListener('click', toggleVehicleAddRow);
+    $('confirmAddVehicleBtn').addEventListener('click', confirmAddVehicle);
+    $('cancelAddVehicleBtn').addEventListener('click', cancelAddVehicle);
+
+    $('repairAddBtn').addEventListener('click', addRepair);
+    $('repairDesc').addEventListener('keydown', (e) => { if (e.key === 'Enter') addRepair(); });
+    $('fuelAddBtn').addEventListener('click', addFuel);
+    $('docAddBtn').addEventListener('click', addDocument);
+    $('fineAddBtn').addEventListener('click', addFine);
+    $('fineDesc').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFine(); });
+
+    $('logoutBtn').addEventListener('click', handleLogout);
+    $('authSubmitBtn').addEventListener('click', handleAuthSubmit);
+    $('authSwitchLink').addEventListener('click', toggleAuthMode);
+    ['authEmail','authPassword'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') handleAuthSubmit(); });
+    });
+  }
+
+  async function startApp() {
+    await loadState();
+
+    const todayISO = new Date().toISOString().slice(0, 10);
+    $('repairDate').value = todayISO;
+    $('fuelDate').value = todayISO;
+    $('fineDate').value = todayISO;
+
+    $('dailyRate').value = state.workdays.dailyRate;
+    $('calcSex').value = state.vitals.calc.sex;
+    $('calcAge').value = state.vitals.calc.age;
+    $('calcHeight').value = state.vitals.calc.height;
+    $('calcWeight').value = state.vitals.calc.weight;
+    $('calcActivity').value = state.vitals.calc.activity;
+    renderVehicleSelect();
+
+    $('authScreen').classList.add('hidden');
+    $('appRoot').classList.remove('hidden');
+    $('userEmailLabel').textContent = currentUser ? currentUser.email : '';
+
+    showScreen('hub');
+  }
+
+  wireEvents();
+  initAuth();
+</script>
+</body>
+</html>
