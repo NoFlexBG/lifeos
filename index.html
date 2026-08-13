@@ -28,6 +28,7 @@
     --text-dim: #8683a8;
     --text-faint: #4c4966;
     --violet: #9b6bff;
+    --violet-rgb: 155, 107, 255;
     --violet-dim: rgba(155, 107, 255, 0.14);
     --pink: #ff5cc8;
     --pink-dim: rgba(255, 92, 200, 0.14);
@@ -50,16 +51,17 @@
   }
 
   :root[data-theme="light"] {
-    --bg: #e6e4ef;
-    --surface: #eeecf6;
-    --surface-2: #e2dfef;
-    --line: rgba(90, 60, 165, 0.16);
-    --line-strong: rgba(90, 60, 165, 0.3);
-    --text: #2a2740;
-    --text-dim: #6b6785;
-    --text-faint: #928dae;
-    --violet: #7c3aed;
-    --violet-dim: rgba(124, 58, 237, 0.12);
+    --bg: #eaf1fb;
+    --surface: #f5f9fd;
+    --surface-2: #e4edf8;
+    --line: rgba(37, 99, 235, 0.14);
+    --line-strong: rgba(37, 99, 235, 0.3);
+    --text: #16233d;
+    --text-dim: #59708c;
+    --text-faint: #93a7bf;
+    --violet: #2563eb;
+    --violet-rgb: 37, 99, 235;
+    --violet-dim: rgba(37, 99, 235, 0.12);
     --pink: #db2777;
     --pink-dim: rgba(219, 39, 119, 0.12);
     --cyan: #0891b2;
@@ -68,13 +70,13 @@
     --amber-dim: rgba(217, 119, 6, 0.14);
     --danger: #dc2626;
     --danger-dim: rgba(220, 38, 38, 0.12);
-    --panel-bg-top: rgba(255, 255, 255, 0.5);
-    --panel-bg-bottom: rgba(228, 225, 240, 0.46);
-    --gauge-bg: rgba(255, 255, 255, 0.4);
-    --menu-bg-top: rgba(246, 245, 251, 0.98);
-    --menu-bg-bottom: rgba(232, 229, 244, 0.98);
-    --day-empty-border: rgba(42, 39, 64, 0.07);
-    --day-empty-bg: rgba(42, 39, 64, 0.02);
+    --panel-bg-top: rgba(255, 255, 255, 0.55);
+    --panel-bg-bottom: rgba(222, 234, 250, 0.46);
+    --gauge-bg: rgba(255, 255, 255, 0.42);
+    --menu-bg-top: rgba(248, 251, 255, 0.98);
+    --menu-bg-bottom: rgba(224, 235, 250, 0.98);
+    --day-empty-border: rgba(22, 35, 61, 0.07);
+    --day-empty-bg: rgba(22, 35, 61, 0.02);
     --glow-opacity: 0.08;
   }
 
@@ -117,7 +119,7 @@
     right: 0;
     height: 140px;
     top: -140px;
-    background: linear-gradient(180deg, transparent, rgba(155, 107, 255, 0.05), transparent);
+    background: linear-gradient(180deg, transparent, rgba(var(--violet-rgb), 0.05), transparent);
     animation: sweep 9s ease-in-out infinite;
   }
 
@@ -214,7 +216,7 @@
     font-family: var(--font-mono);
     font-size: 13px;
     color: var(--violet);
-    box-shadow: 0 0 0 0 rgba(155, 107, 255, 0.5);
+    box-shadow: 0 0 0 0 rgba(var(--violet-rgb), 0.5);
     animation: markFlicker 3.2s ease-in-out 0.6s infinite;
     flex-shrink: 0;
   }
@@ -222,7 +224,7 @@
   #brandMark { cursor: pointer; }
 
   @keyframes markFlicker {
-    0%, 88%, 100% { box-shadow: 0 0 8px 0 rgba(155, 107, 255, 0.35); opacity: 1; }
+    0%, 88%, 100% { box-shadow: 0 0 8px 0 rgba(var(--violet-rgb), 0.35); opacity: 1; }
     90% { opacity: 0.4; }
     92% { opacity: 1; }
   }
@@ -395,7 +397,7 @@
     border-color: var(--line-strong);
   }
 
-  .tile[data-app="workdays"]:hover { box-shadow: 0 10px 30px -10px rgba(155, 107, 255, 0.35); }
+  .tile[data-app="workdays"]:hover { box-shadow: 0 10px 30px -10px rgba(var(--violet-rgb), 0.35); }
   .tile[data-app="vitals"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
   .tile[data-app="tdee"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
   .tile[data-app="garage"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
@@ -417,7 +419,7 @@
     border: 1px solid var(--line);
   }
 
-  .tile[data-app="workdays"] .tile-icon { color: var(--violet); border-color: rgba(155,107,255,0.4); }
+  .tile[data-app="workdays"] .tile-icon { color: var(--violet); border-color: rgba(var(--violet-rgb),0.4); }
   .tile[data-app="vitals"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
   .tile[data-app="tdee"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
   .tile[data-app="garage"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
@@ -608,7 +610,7 @@
 
   .gauge:hover {
     transform: translateX(2px);
-    box-shadow: -2px 0 14px -4px rgba(155, 107, 255, 0.25);
+    box-shadow: -2px 0 14px -4px rgba(var(--violet-rgb), 0.25);
   }
 
   .gauge[data-metric="calories"] { border-left-color: var(--pink); }
@@ -637,10 +639,10 @@
     white-space: nowrap;
   }
 
-  .gauge-delta.up { color: var(--violet); border-color: rgba(155,107,255,0.3); background: var(--violet-dim); }
+  .gauge-delta.up { color: var(--violet); border-color: rgba(var(--violet-rgb),0.3); background: var(--violet-dim); }
   .gauge-delta.down { color: var(--text-dim); border-color: var(--line); }
   .gauge-delta.flat { color: var(--text-faint); border-color: var(--line); }
-  .gauge-delta.good { color: var(--violet); border-color: rgba(155,107,255,0.3); background: var(--violet-dim); }
+  .gauge-delta.good { color: var(--violet); border-color: rgba(var(--violet-rgb),0.3); background: var(--violet-dim); }
   .gauge-delta.danger { color: var(--danger); border-color: rgba(255,107,107,0.3); background: var(--danger-dim); }
 
   .gauge-row {
@@ -1230,7 +1232,7 @@
   .chart-bar-wrap.current .chart-bar {
     background: var(--violet);
     opacity: 1;
-    box-shadow: 0 0 10px rgba(155, 107, 255, 0.4);
+    box-shadow: 0 0 10px rgba(var(--violet-rgb), 0.4);
   }
 
   .chart-bar-label {
@@ -1317,7 +1319,7 @@
   /* ============ Scrollbar ============ */
 
   ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-thumb { background: rgba(155, 107, 255, 0.25); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb { background: rgba(var(--violet-rgb), 0.25); border-radius: 4px; }
 
   /* ============ Toast ============ */
 
@@ -1642,7 +1644,7 @@
     cursor: default;
   }
 
-  .status-chip.valid { color: var(--violet); border-color: rgba(155,107,255,0.3); background: var(--violet-dim); }
+  .status-chip.valid { color: var(--violet); border-color: rgba(var(--violet-rgb),0.3); background: var(--violet-dim); }
   .status-chip.soon { color: var(--amber); border-color: rgba(243,182,77,0.3); background: var(--amber-dim); }
   .status-chip.expired { color: var(--danger); border-color: rgba(255,107,107,0.3); background: var(--danger-dim); }
   .status-chip.paid { color: var(--text-dim); border-color: var(--line); cursor: pointer; }
