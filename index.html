@@ -681,6 +681,90 @@
   .product-entry-row .mini-input.wide { width: 180px; }
   .product-entry-row .mini-input.narrow { width: 90px; }
 
+  .product-dropdown { position: relative; }
+
+  .product-dropdown-btn {
+    width: 180px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 10px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+
+  .product-dropdown-btn:hover,
+  .product-dropdown-btn.open { border-color: var(--line-strong); }
+
+  .product-dropdown-btn .caret {
+    color: var(--text-faint);
+    font-size: 9px;
+    transition: transform 0.15s ease;
+  }
+
+  .product-dropdown-btn.open .caret { transform: rotate(180deg); }
+
+  .product-dropdown-menu {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    min-width: 230px;
+    max-height: 260px;
+    overflow-y: auto;
+    background: linear-gradient(180deg, rgba(21, 23, 50, 0.97), rgba(14, 15, 30, 0.97));
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 6px;
+    z-index: 30;
+    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
+    transform-origin: top left;
+    animation: productPopIn 0.16s ease;
+  }
+
+  .product-dropdown-menu.hidden { display: none; }
+
+  @keyframes productPopIn {
+    from { opacity: 0; transform: scale(0.94) translateY(-4px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .product-dropdown-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+  }
+
+  .product-dropdown-item:hover { background: var(--violet-dim); color: var(--text); }
+
+  .product-dropdown-item-meta {
+    color: var(--text-faint);
+    font-size: 9.5px;
+    white-space: nowrap;
+  }
+
+  .product-dropdown-empty {
+    padding: 12px 10px;
+    color: var(--text-faint);
+    font-size: 11px;
+    text-align: center;
+  }
+
   .nutrition-history-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -1742,9 +1826,13 @@
             <div class="chart-head"><span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span></div>
 
             <div class="chip-row product-entry-row">
-              <select id="productSelect" class="mini-input wide">
-                <option value="">— избери продукт —</option>
-              </select>
+              <div class="product-dropdown" id="productDropdown">
+                <button type="button" class="product-dropdown-btn" id="productDropdownBtn">
+                  <span id="productDropdownLabel">— избери продукт —</span>
+                  <span class="caret">▾</span>
+                </button>
+                <div class="product-dropdown-menu hidden" id="productDropdownMenu"></div>
+              </div>
               <input type="number" id="productGrams" class="mini-input narrow" placeholder="г/мл" min="0" />
               <button class="chip" id="productAddBtn">Добави</button>
             </div>
@@ -2910,14 +2998,15 @@
     ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
   }
 
+  let selectedProductId = '';
+
   function addFromProduct() {
-    const productId = $('productSelect').value;
     const grams = parseFloat($('productGrams').value);
 
-    if (!productId) { showToast('Избери продукт'); return; }
+    if (!selectedProductId) { showToast('Избери продукт'); return; }
     if (!grams || grams <= 0) { showToast('Въведи грамове/мл'); return; }
 
-    const product = state.vitals.products.find((p) => p.id === productId);
+    const product = state.vitals.products.find((p) => p.id === selectedProductId);
     if (!product) return;
 
     const ratio = grams / 100;
@@ -2929,6 +3018,27 @@
       product.fat * ratio
     );
     $('productGrams').value = '';
+  }
+
+  function closeProductDropdown() {
+    $('productDropdownMenu').classList.add('hidden');
+    $('productDropdownBtn').classList.remove('open');
+  }
+
+  function toggleProductDropdown() {
+    const menu = $('productDropdownMenu');
+    const isHidden = menu.classList.contains('hidden');
+    closeProductDropdown();
+    if (isHidden) {
+      menu.classList.remove('hidden');
+      $('productDropdownBtn').classList.add('open');
+    }
+  }
+
+  function selectProduct(id, name) {
+    selectedProductId = id;
+    $('productDropdownLabel').textContent = name;
+    closeProductDropdown();
   }
 
   function renderProducts() {
@@ -2950,16 +3060,33 @@
       });
     }
 
-    const select = $('productSelect');
-    const currentVal = select.value;
-    select.innerHTML = '<option value="">— избери продукт —</option>';
-    list.forEach((p) => {
-      const opt = document.createElement('option');
-      opt.value = p.id;
-      opt.textContent = p.name;
-      select.appendChild(opt);
-    });
-    if (list.some((p) => p.id === currentVal)) select.value = currentVal;
+    if (!list.some((p) => p.id === selectedProductId)) {
+      selectedProductId = '';
+      $('productDropdownLabel').textContent = '— избери продукт —';
+    }
+
+    const menu = $('productDropdownMenu');
+    menu.innerHTML = '';
+
+    if (!list.length) {
+      const empty = document.createElement('div');
+      empty.className = 'product-dropdown-empty';
+      empty.textContent = 'Няма добавени продукти';
+      menu.appendChild(empty);
+    } else {
+      list.forEach((p) => {
+        const item = document.createElement('div');
+        item.className = 'product-dropdown-item';
+        const nameEl = document.createElement('span');
+        nameEl.textContent = p.name;
+        const metaEl = document.createElement('span');
+        metaEl.className = 'product-dropdown-item-meta';
+        metaEl.textContent = `${formatNumber(p.calories)} ккал/100г`;
+        item.append(nameEl, metaEl);
+        item.addEventListener('click', () => selectProduct(p.id, p.name));
+        menu.appendChild(item);
+      });
+    }
   }
 
   function addProduct() {
@@ -3733,6 +3860,11 @@
     });
     $('productAddBtn').addEventListener('click', addFromProduct);
     $('productGrams').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFromProduct(); });
+    $('productDropdownBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleProductDropdown(); });
+    document.addEventListener('click', (e) => {
+      if (!$('productDropdown').contains(e.target)) closeProductDropdown();
+    });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProductDropdown(); });
     $('productSaveBtn').addEventListener('click', addProduct);
     ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addProduct(); });
