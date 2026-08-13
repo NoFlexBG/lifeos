@@ -1136,6 +1136,7 @@
   }
 
   .chart-bar-wrap {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -1190,6 +1191,7 @@
   }
 
   .week-bar-wrap {
+    position: relative;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -1214,6 +1216,32 @@
     font-family: var(--font-mono);
     font-size: 8px;
     color: var(--text-faint);
+  }
+
+  .week-bar-tooltip {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%) translateY(4px);
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    z-index: 5;
+  }
+
+  .week-bar-wrap:hover .week-bar-tooltip,
+  .chart-bar-wrap:hover .week-bar-tooltip {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
   }
 
   /* ============ Scrollbar ============ */
@@ -2773,6 +2801,11 @@
       const wrap = document.createElement('div');
       wrap.className = 'chart-bar-wrap' + (i === today.getMonth() ? ' current' : '');
 
+      const tooltip = document.createElement('div');
+      tooltip.className = 'week-bar-tooltip';
+      tooltip.textContent = `${formatNumber(val)} €`;
+      wrap.appendChild(tooltip);
+
       const bar = document.createElement('div');
       bar.className = 'chart-bar';
       const heightPct = (val / max) * 100;
@@ -2964,7 +2997,7 @@
     showToast('Целта за калории е обновена');
   }
 
-  function renderWeekChart(containerId, values, color) {
+  function renderWeekChart(containerId, values, color, unit) {
     const container = $(containerId);
     container.innerHTML = '';
     const max = Math.max(...values.map((v) => v.value), 1);
@@ -2972,6 +3005,11 @@
     values.forEach((v) => {
       const wrap = document.createElement('div');
       wrap.className = 'week-bar-wrap' + (v.isToday ? ' today' : '');
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'week-bar-tooltip';
+      tooltip.textContent = `${formatNumber(v.value)}${unit ? ' ' + unit : ''}`;
+      wrap.appendChild(tooltip);
 
       const bar = document.createElement('div');
       bar.className = 'week-bar';
@@ -3004,9 +3042,9 @@
       days.push({ key, label: WEEKDAY_SHORT[(d.getDay() + 6) % 7], isToday: i === 0 });
     }
 
-    renderWeekChart('weekChartCalories', days.map((d) => ({ ...d, value: getVitalsDay(d.key).calories })), 'var(--pink)');
-    renderWeekChart('weekChartWater', days.map((d) => ({ ...d, value: getVitalsDay(d.key).water })), 'var(--cyan)');
-    renderWeekChart('weekChartSteps', days.map((d) => ({ ...d, value: getVitalsDay(d.key).steps })), 'var(--violet)');
+    renderWeekChart('weekChartCalories', days.map((d) => ({ ...d, value: getVitalsDay(d.key).calories })), 'var(--pink)', 'ккал');
+    renderWeekChart('weekChartWater', days.map((d) => ({ ...d, value: getVitalsDay(d.key).water })), 'var(--cyan)', 'мл');
+    renderWeekChart('weekChartSteps', days.map((d) => ({ ...d, value: getVitalsDay(d.key).steps })), 'var(--violet)', 'крачки');
   }
 
   /* ============ Weight tab ============ */
