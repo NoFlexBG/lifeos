@@ -806,6 +806,30 @@
     text-align: center;
   }
 
+  .sort-dropdown-btn {
+    width: auto;
+    padding: 5px 10px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .sort-dropdown .product-dropdown-menu {
+    left: auto;
+    right: 0;
+    min-width: 180px;
+    max-height: none;
+  }
+
+  .product-dropdown-item.active-sort {
+    color: var(--violet);
+    justify-content: space-between;
+  }
+
+  .product-dropdown-item.active-sort::after {
+    content: '✓';
+    color: var(--violet);
+  }
+
   .nutrition-history-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -2106,7 +2130,18 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)</span></div>
+            <div class="chart-head">
+              <span class="gauge-label">МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)</span>
+              <div class="product-dropdown sort-dropdown" id="productSortDropdown">
+                <button type="button" class="product-dropdown-btn sort-dropdown-btn" id="productSortBtn">
+                  <span id="productSortLabel">Име (А-Я)</span>
+                  <span class="caret">▾</span>
+                </button>
+                <div class="product-dropdown-menu hidden" id="productSortMenu">
+                  <div class="product-dropdown-list" id="productSortList"></div>
+                </div>
+              </div>
+            </div>
 
             <div class="record-form">
               <input type="text" id="productName" class="mini-input wide" placeholder="Име на продукт" />
@@ -3198,6 +3233,68 @@
   }
 
   let selectedProductId = '';
+  let productSortMode = 'name-asc';
+
+  const PRODUCT_SORT_OPTIONS = [
+    { id: 'name-asc', label: 'Име (А-Я)' },
+    { id: 'name-desc', label: 'Име (Я-А)' },
+    { id: 'calories-asc', label: 'Калории ↑' },
+    { id: 'calories-desc', label: 'Калории ↓' },
+    { id: 'protein-desc', label: 'Протеини ↓' },
+    { id: 'carbs-desc', label: 'Въглехидрати ↓' },
+    { id: 'fat-desc', label: 'Мазнини ↓' }
+  ];
+
+  function sortProductsList(list) {
+    const sorted = list.slice();
+    switch (productSortMode) {
+      case 'name-desc': return sorted.sort((a, b) => b.name.localeCompare(a.name, 'bg'));
+      case 'calories-asc': return sorted.sort((a, b) => a.calories - b.calories);
+      case 'calories-desc': return sorted.sort((a, b) => b.calories - a.calories);
+      case 'protein-desc': return sorted.sort((a, b) => b.protein - a.protein);
+      case 'carbs-desc': return sorted.sort((a, b) => b.carbs - a.carbs);
+      case 'fat-desc': return sorted.sort((a, b) => b.fat - a.fat);
+      default: return sorted.sort((a, b) => a.name.localeCompare(b.name, 'bg'));
+    }
+  }
+
+  function closeProductSortMenu() {
+    $('productSortMenu').classList.add('hidden');
+    $('productSortBtn').classList.remove('open');
+  }
+
+  function toggleProductSortMenu() {
+    const menu = $('productSortMenu');
+    const isHidden = menu.classList.contains('hidden');
+    closeProductDropdown();
+    closeProductSortMenu();
+    if (isHidden) {
+      menu.classList.remove('hidden');
+      $('productSortBtn').classList.add('open');
+    }
+  }
+
+  function selectProductSort(id) {
+    productSortMode = id;
+    const opt = PRODUCT_SORT_OPTIONS.find((o) => o.id === id);
+    $('productSortLabel').textContent = opt.label;
+    closeProductSortMenu();
+    renderProducts();
+  }
+
+  function renderProductSortMenu() {
+    const listEl = $('productSortList');
+    listEl.innerHTML = '';
+    PRODUCT_SORT_OPTIONS.forEach((opt) => {
+      const item = document.createElement('div');
+      item.className = 'product-dropdown-item' + (opt.id === productSortMode ? ' active-sort' : '');
+      const nameEl = document.createElement('span');
+      nameEl.textContent = opt.label;
+      item.appendChild(nameEl);
+      item.addEventListener('click', () => selectProductSort(opt.id));
+      listEl.appendChild(item);
+    });
+  }
 
   function addFromProduct() {
     const grams = parseFloat($('productGrams').value);
@@ -3289,7 +3386,8 @@
   }
 
   function renderProducts() {
-    const list = state.vitals.products.slice().sort((a, b) => a.name.localeCompare(b.name, 'bg'));
+    const list = sortProductsList(state.vitals.products);
+    renderProductSortMenu();
     const container = $('productsList');
     container.innerHTML = '';
 
@@ -4172,11 +4270,13 @@
         closeProductDropdown();
       }
     });
+    $('productSortBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleProductSortMenu(); });
     document.addEventListener('click', (e) => {
       if (!$('productDropdown').contains(e.target)) closeProductDropdown();
+      if (!$('productSortDropdown').contains(e.target)) closeProductSortMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closePhotoLightbox(); }
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); }
     });
     $('productSaveBtn').addEventListener('click', addProduct);
     ['productName','productCalories','productProtein','productCarbs','productFat','productRefGrams'].forEach((id) => {
