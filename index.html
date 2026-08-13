@@ -716,9 +716,10 @@
     position: absolute;
     top: calc(100% + 6px);
     left: 0;
-    min-width: 230px;
-    max-height: 260px;
-    overflow-y: auto;
+    min-width: 250px;
+    max-height: 320px;
+    display: flex;
+    flex-direction: column;
     background: linear-gradient(180deg, rgba(21, 23, 50, 0.97), rgba(14, 15, 30, 0.97));
     border: 1px solid var(--line-strong);
     border-radius: 8px;
@@ -727,6 +728,46 @@
     box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6);
     transform-origin: top left;
     animation: productPopIn 0.16s ease;
+  }
+
+  .product-search-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 6px 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+
+  .product-search-icon {
+    color: var(--text-faint);
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .product-search-input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .product-search-input::placeholder { color: var(--text-faint); }
+
+  .product-dropdown-list {
+    overflow-y: auto;
+    min-height: 0;
+  }
+
+  .product-search-highlight {
+    color: var(--violet);
+    background: var(--violet-dim);
+    border-radius: 3px;
   }
 
   .product-dropdown-menu.hidden { display: none; }
@@ -1860,7 +1901,13 @@
                   <span id="productDropdownLabel">— избери продукт —</span>
                   <span class="caret">▾</span>
                 </button>
-                <div class="product-dropdown-menu hidden" id="productDropdownMenu"></div>
+                <div class="product-dropdown-menu hidden" id="productDropdownMenu">
+                  <div class="product-search-row">
+                    <span class="product-search-icon">⌕</span>
+                    <input type="text" id="productSearchInput" class="product-search-input" placeholder="Търси продукт..." autocomplete="off" />
+                  </div>
+                  <div class="product-dropdown-list" id="productDropdownList"></div>
+                </div>
               </div>
               <input type="number" id="productGrams" class="mini-input narrow" placeholder="г/мл" min="0" />
               <button class="chip" id="productAddBtn">Добави</button>
@@ -3066,6 +3113,9 @@
     if (isHidden) {
       menu.classList.remove('hidden');
       $('productDropdownBtn').classList.add('open');
+      $('productSearchInput').value = '';
+      filterProductDropdown('');
+      $('productSearchInput').focus();
     }
   }
 
@@ -3073,6 +3123,51 @@
     selectedProductId = id;
     $('productDropdownLabel').textContent = name;
     closeProductDropdown();
+  }
+
+  function highlightMatch(text, query) {
+    if (!query) return document.createTextNode(text);
+    const idx = text.toLowerCase().indexOf(query.toLowerCase());
+    if (idx === -1) return document.createTextNode(text);
+    const frag = document.createDocumentFragment();
+    frag.appendChild(document.createTextNode(text.slice(0, idx)));
+    const mark = document.createElement('span');
+    mark.className = 'product-search-highlight';
+    mark.textContent = text.slice(idx, idx + query.length);
+    frag.appendChild(mark);
+    frag.appendChild(document.createTextNode(text.slice(idx + query.length)));
+    return frag;
+  }
+
+  function filterProductDropdown(query) {
+    const q = query.trim().toLowerCase();
+    const list = state.vitals.products
+      .filter((p) => p.name.toLowerCase().includes(q))
+      .sort((a, b) => a.name.localeCompare(b.name, 'bg'));
+
+    const listEl = $('productDropdownList');
+    listEl.innerHTML = '';
+
+    if (!list.length) {
+      const empty = document.createElement('div');
+      empty.className = 'product-dropdown-empty';
+      empty.textContent = state.vitals.products.length ? 'Няма съвпадения' : 'Няма добавени продукти';
+      listEl.appendChild(empty);
+      return;
+    }
+
+    list.forEach((p) => {
+      const item = document.createElement('div');
+      item.className = 'product-dropdown-item';
+      const nameEl = document.createElement('span');
+      nameEl.appendChild(highlightMatch(p.name, q));
+      const metaEl = document.createElement('span');
+      metaEl.className = 'product-dropdown-item-meta';
+      metaEl.textContent = `${formatNumber(p.calories)} ккал/100г`;
+      item.append(nameEl, metaEl);
+      item.addEventListener('click', () => selectProduct(p.id, p.name));
+      listEl.appendChild(item);
+    });
   }
 
   function renderProducts() {
@@ -3099,28 +3194,7 @@
       $('productDropdownLabel').textContent = '— избери продукт —';
     }
 
-    const menu = $('productDropdownMenu');
-    menu.innerHTML = '';
-
-    if (!list.length) {
-      const empty = document.createElement('div');
-      empty.className = 'product-dropdown-empty';
-      empty.textContent = 'Няма добавени продукти';
-      menu.appendChild(empty);
-    } else {
-      list.forEach((p) => {
-        const item = document.createElement('div');
-        item.className = 'product-dropdown-item';
-        const nameEl = document.createElement('span');
-        nameEl.textContent = p.name;
-        const metaEl = document.createElement('span');
-        metaEl.className = 'product-dropdown-item-meta';
-        metaEl.textContent = `${formatNumber(p.calories)} ккал/100г`;
-        item.append(nameEl, metaEl);
-        item.addEventListener('click', () => selectProduct(p.id, p.name));
-        menu.appendChild(item);
-      });
-    }
+    filterProductDropdown($('productSearchInput').value || '');
   }
 
   function addProduct() {
@@ -3905,6 +3979,16 @@
     $('productAddBtn').addEventListener('click', addFromProduct);
     $('productGrams').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFromProduct(); });
     $('productDropdownBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleProductDropdown(); });
+    $('productSearchInput').addEventListener('click', (e) => e.stopPropagation());
+    $('productSearchInput').addEventListener('input', (e) => filterProductDropdown(e.target.value));
+    $('productSearchInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const first = $('productDropdownList').querySelector('.product-dropdown-item');
+        if (first) first.click();
+      } else if (e.key === 'Escape') {
+        closeProductDropdown();
+      }
+    });
     document.addEventListener('click', (e) => {
       if (!$('productDropdown').contains(e.target)) closeProductDropdown();
     });
