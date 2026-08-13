@@ -3697,11 +3697,36 @@
 
   const PHOTO_BUCKET = 'vehicle-photos';
   const MAX_PHOTO_MB = 8;
+  const PHOTO_MAX_DIM = 1600;
+  const signedUrlCache = {};
 
-  function photoExt(file) {
-    const fromName = (file.name.split('.').pop() || '').toLowerCase();
-    if (fromName && fromName.length <= 5) return fromName;
-    return (file.type.split('/')[1] || 'jpg').toLowerCase();
+  async function compressImage(file, maxDim, quality) {
+    const bitmap = await createImageBitmap(file);
+    let { width, height } = bitmap;
+    if (width > maxDim || height > maxDim) {
+      const ratio = Math.min(maxDim / width, maxDim / height);
+      width = Math.round(width * ratio);
+      height = Math.round(height * ratio);
+    }
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    canvas.getContext('2d').drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+    return new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('toBlob failed'))), 'image/jpeg', quality);
+    });
+  }
+
+  function getSignedPhotoUrl(path) {
+    const cached = signedUrlCache[path];
+    if (cached && cached.expiresAt > Date.now() + 60000) {
+      return Promise.resolve({ data: { signedUrl: cached.url }, error: null });
+    }
+    return sb.storage.from(PHOTO_BUCKET).createSignedUrl(path, 3600).then((res) => {
+      if (res.data) signedUrlCache[path] = { url: res.data.signedUrl, expiresAt: Date.now() + 3600 * 1000 };
+      return res;
+    });
   }
 
   async function uploadPhotos(fileList) {
@@ -3719,9 +3744,17 @@
         continue;
       }
 
+      hint.textContent = `Обработка ${uploaded + 1}/${files.length}...`;
+      let blob;
+      try {
+        blob = await compressImage(file, PHOTO_MAX_DIM, 0.82);
+      } catch {
+        blob = file;
+      }
+
       hint.textContent = `Качване ${uploaded + 1}/${files.length}...`;
-      const path = `${currentUser.id}/${vehicleId}/${genId('p')}.${photoExt(file)}`;
-      const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, file);
+      const path = `${currentUser.id}/${vehicleId}/${genId('p')}.jpg`;
+      const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
 
       if (error) {
         showToast('Грешка при качване на снимка');
@@ -3745,6 +3778,7 @@
     if (!photo) return;
 
     await sb.storage.from(PHOTO_BUCKET).remove([photo.path]);
+    delete signedUrlCache[photo.path];
     rec.photos = rec.photos.filter((p) => p.id !== photoId);
     saveState();
     renderPhotos();
@@ -3770,7 +3804,7 @@
       item.textContent = '…';
       container.appendChild(item);
 
-      sb.storage.from(PHOTO_BUCKET).createSignedUrl(photo.path, 3600).then(({ data, error }) => {
+      getSignedPhotoUrl(photo.path).then(({ data, error }) => {
         item.classList.remove('loading');
         item.textContent = '';
         if (error || !data) return;
