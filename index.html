@@ -1346,7 +1346,11 @@
     height: 100%;
     object-fit: cover;
     display: block;
+    cursor: pointer;
+    transition: filter 0.15s ease;
   }
+
+  .photo-item img:hover { filter: brightness(1.1); }
 
   .photo-item.loading {
     display: flex;
@@ -1376,6 +1380,71 @@
   }
 
   .photo-del:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ============ Photo lightbox ============ */
+
+  .photo-lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 10, 0.88);
+    backdrop-filter: blur(6px);
+    padding: 30px;
+    animation: lightboxFadeIn 0.18s ease;
+  }
+
+  .photo-lightbox.hidden { display: none; }
+
+  @keyframes lightboxFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .photo-lightbox-inner {
+    position: relative;
+    max-width: min(92vw, 900px);
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    animation: productPopIn 0.18s ease;
+  }
+
+  .photo-lightbox-inner img {
+    max-width: 100%;
+    max-height: 76vh;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    box-shadow: 0 20px 60px -15px rgba(0, 0, 0, 0.7);
+    object-fit: contain;
+    display: block;
+  }
+
+  .photo-lightbox-close {
+    position: absolute;
+    top: -16px;
+    right: -16px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line-strong);
+    background: var(--surface-2);
+    color: var(--text);
+    font-size: 17px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .photo-lightbox-close:hover { border-color: var(--danger); color: var(--danger); }
+
+  .photo-lightbox-actions { display: flex; gap: 10px; }
 
   .record-form {
     display: flex;
@@ -2274,6 +2343,16 @@
       <div class="admin-signature">Направено от Добромир Мъхов</div>
     </section>
 
+  </div>
+</div>
+
+<div class="photo-lightbox hidden" id="photoLightbox">
+  <div class="photo-lightbox-inner">
+    <button class="photo-lightbox-close" id="photoLightboxClose" aria-label="Затвори">×</button>
+    <img id="photoLightboxImg" src="" alt="" />
+    <div class="photo-lightbox-actions">
+      <button class="chip" id="photoLightboxDownload">⭳ Изтегли</button>
+    </div>
   </div>
 </div>
 
@@ -3812,6 +3891,7 @@
         const img = document.createElement('img');
         img.src = data.signedUrl;
         img.loading = 'lazy';
+        img.addEventListener('click', () => openPhotoLightbox(data.signedUrl, photo.path));
         item.appendChild(img);
 
         const delBtn = document.createElement('button');
@@ -3821,6 +3901,36 @@
         item.appendChild(delBtn);
       });
     });
+  }
+
+  function openPhotoLightbox(url, path) {
+    $('photoLightboxImg').src = url;
+    $('photoLightboxImg').dataset.url = url;
+    $('photoLightboxImg').dataset.filename = path.split('/').pop() || 'photo.jpg';
+    $('photoLightbox').classList.remove('hidden');
+  }
+
+  function closePhotoLightbox() {
+    $('photoLightbox').classList.add('hidden');
+    $('photoLightboxImg').src = '';
+  }
+
+  async function downloadCurrentPhoto() {
+    const img = $('photoLightboxImg');
+    const url = img.dataset.url;
+    if (!url) return;
+    try {
+      const res = await fetch(url);
+      const blob = await res.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = objectUrl;
+      a.download = img.dataset.filename || 'photo.jpg';
+      a.click();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      showToast('Грешка при изтегляне');
+    }
   }
 
   /* ============ Backup ============ */
@@ -4026,7 +4136,9 @@
     document.addEventListener('click', (e) => {
       if (!$('productDropdown').contains(e.target)) closeProductDropdown();
     });
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProductDropdown(); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') { closeProductDropdown(); closePhotoLightbox(); }
+    });
     $('productSaveBtn').addEventListener('click', addProduct);
     ['productName','productCalories','productProtein','productCarbs','productFat','productRefGrams'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addProduct(); });
@@ -4062,6 +4174,12 @@
     $('photoUploadInput').addEventListener('change', (e) => {
       uploadPhotos(e.target.files);
       e.target.value = '';
+    });
+
+    $('photoLightboxClose').addEventListener('click', closePhotoLightbox);
+    $('photoLightboxDownload').addEventListener('click', downloadCurrentPhoto);
+    $('photoLightbox').addEventListener('click', (e) => {
+      if (e.target === $('photoLightbox')) closePhotoLightbox();
     });
 
     $('logoutBtn').addEventListener('click', handleLogout);
