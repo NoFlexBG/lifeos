@@ -678,6 +678,16 @@
   .meal-entry-row .mini-input { width: 64px; }
   .meal-entry-row .mini-input.wide { width: 180px; }
 
+  .product-entry-row .mini-input.wide { width: 180px; }
+  .product-entry-row .mini-input.narrow { width: 90px; }
+
+  .nutrition-history-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
   .chip-row {
     display: flex;
     gap: 7px;
@@ -1329,6 +1339,7 @@
     .rate-box, .goals-box, .vehicle-box { padding: 6px 8px; }
     .goals-box { gap: 8px; }
     .vitals-tab { padding: 6px 12px; font-size: 10px; letter-spacing: 1.5px; }
+    .nutrition-history-row { grid-template-columns: 1fr; }
   }
 
   @media (max-width: 560px) {
@@ -1672,6 +1683,7 @@
         <div class="vitals-tabs">
           <button class="vitals-tab active" data-tab="today">ДНЕС</button>
           <button class="vitals-tab" data-tab="weight">ТЕГЛО</button>
+          <button class="vitals-tab" data-tab="products">ПРОДУКТИ</button>
         </div>
 
         <div class="vitals-tab-panel" id="vitalsTabToday">
@@ -1723,53 +1735,63 @@
           </div>
         </div>
 
-        <div class="console-panel chart-panel nutrition-panel">
-          <span class="corner tl"></span><span class="corner tr"></span>
-          <span class="corner bl"></span><span class="corner br"></span>
-          <div class="chart-head"><span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span></div>
+        <div class="nutrition-history-row">
+          <div class="console-panel chart-panel nutrition-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span></div>
 
-          <div class="chip-row meal-entry-row">
-            <input type="text" id="mealDesc" class="mini-input wide" placeholder="Какво прие?" />
-            <input type="number" id="mealCalories" class="mini-input" placeholder="ккал" min="0" />
-            <input type="number" id="mealProtein" class="mini-input" placeholder="Б (г)" min="0" />
-            <input type="number" id="mealCarbs" class="mini-input" placeholder="В (г)" min="0" />
-            <input type="number" id="mealFat" class="mini-input" placeholder="М (г)" min="0" />
-            <button class="chip" id="mealAddBtn">Добави хранене</button>
-          </div>
-
-          <div class="macro-row" data-macro="protein">
-            <div class="macro-row-head">
-              <span>ПРОТЕИНИ</span>
-              <span><span id="proteinValue">0</span> / <input id="proteinGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+            <div class="chip-row product-entry-row">
+              <select id="productSelect" class="mini-input wide">
+                <option value="">— избери продукт —</option>
+              </select>
+              <input type="number" id="productGrams" class="mini-input narrow" placeholder="г/мл" min="0" />
+              <button class="chip" id="productAddBtn">Добави</button>
             </div>
-            <div class="progress-track thin"><div class="progress-fill" id="proteinProgress"></div></div>
-          </div>
 
-          <div class="macro-row" data-macro="carbs">
-            <div class="macro-row-head">
-              <span>ВЪГЛЕХИДРАТИ</span>
-              <span><span id="carbsValue">0</span> / <input id="carbsGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+            <div class="chip-row meal-entry-row">
+              <input type="text" id="mealDesc" class="mini-input wide" placeholder="Какво прие?" />
+              <input type="number" id="mealCalories" class="mini-input" placeholder="ккал" min="0" />
+              <input type="number" id="mealProtein" class="mini-input" placeholder="Б (г)" min="0" />
+              <input type="number" id="mealCarbs" class="mini-input" placeholder="В (г)" min="0" />
+              <input type="number" id="mealFat" class="mini-input" placeholder="М (г)" min="0" />
+              <button class="chip" id="mealAddBtn">Добави хранене</button>
             </div>
-            <div class="progress-track thin"><div class="progress-fill" id="carbsProgress"></div></div>
-          </div>
 
-          <div class="macro-row" data-macro="fat">
-            <div class="macro-row-head">
-              <span>МАЗНИНИ</span>
-              <span><span id="fatValue">0</span> / <input id="fatGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+            <div class="macro-row" data-macro="protein">
+              <div class="macro-row-head">
+                <span>ПРОТЕИНИ</span>
+                <span><span id="proteinValue">0</span> / <input id="proteinGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+              </div>
+              <div class="progress-track thin"><div class="progress-fill" id="proteinProgress"></div></div>
             </div>
-            <div class="progress-track thin"><div class="progress-fill" id="fatProgress"></div></div>
-          </div>
-        </div>
 
-        <div class="console-panel chart-panel">
-          <span class="corner tl"></span><span class="corner tr"></span>
-          <span class="corner bl"></span><span class="corner br"></span>
-          <div class="chart-head">
-            <span class="gauge-label">ИСТОРИЯ ДНЕС</span>
-            <span class="weight-chart-stats" id="mealHistoryCount"></span>
+            <div class="macro-row" data-macro="carbs">
+              <div class="macro-row-head">
+                <span>ВЪГЛЕХИДРАТИ</span>
+                <span><span id="carbsValue">0</span> / <input id="carbsGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+              </div>
+              <div class="progress-track thin"><div class="progress-fill" id="carbsProgress"></div></div>
+            </div>
+
+            <div class="macro-row" data-macro="fat">
+              <div class="macro-row-head">
+                <span>МАЗНИНИ</span>
+                <span><span id="fatValue">0</span> / <input id="fatGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+              </div>
+              <div class="progress-track thin"><div class="progress-fill" id="fatProgress"></div></div>
+            </div>
           </div>
-          <div class="record-list" id="mealHistoryList"></div>
+
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label">ИСТОРИЯ ДНЕС</span>
+              <span class="weight-chart-stats" id="mealHistoryCount"></span>
+            </div>
+            <div class="record-list" id="mealHistoryList"></div>
+          </div>
         </div>
 
         <div class="console-panel chart-panel">
@@ -1815,6 +1837,25 @@
               <span class="weight-chart-stats" id="weightChartStats"></span>
             </div>
             <div id="weightLineChart" class="line-chart"></div>
+          </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="vitalsTabProducts">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)</span></div>
+
+            <div class="record-form">
+              <input type="text" id="productName" class="mini-input wide" placeholder="Име на продукт" />
+              <input type="number" id="productCalories" class="mini-input narrow" placeholder="ккал" min="0" />
+              <input type="number" id="productProtein" class="mini-input narrow" placeholder="Б (г)" min="0" />
+              <input type="number" id="productCarbs" class="mini-input narrow" placeholder="В (г)" min="0" />
+              <input type="number" id="productFat" class="mini-input narrow" placeholder="М (г)" min="0" />
+              <button class="chip" id="productSaveBtn">Добави продукт</button>
+            </div>
+
+            <div class="record-list" id="productsList"></div>
           </div>
         </div>
       </div>
@@ -2088,7 +2129,8 @@
     vitals: {
       goals: { calories: 2200, water: 2000, steps: 10000, weight: 75, protein: 150, carbs: 250, fat: 70 },
       days: {},
-      calc: { sex: 'male', age: 30, height: 175, weight: 75, activity: 1.55 }
+      calc: { sex: 'male', age: 30, height: 175, weight: 75, activity: 1.55 },
+      products: []
     },
     garage: {
       vehicles: [{ id: 'v1', name: 'Моята кола', plate: '' }],
@@ -2121,7 +2163,8 @@
           vitals: {
             goals: { ...defaults.vitals.goals, ...(parsed.vitals && parsed.vitals.goals) },
             days: (parsed.vitals && parsed.vitals.days) || {},
-            calc: { ...defaults.vitals.calc, ...(parsed.vitals && parsed.vitals.calc) }
+            calc: { ...defaults.vitals.calc, ...(parsed.vitals && parsed.vitals.calc) },
+            products: (parsed.vitals && parsed.vitals.products) || []
           },
           garage: {
             vehicles: (parsed.garage && parsed.garage.vehicles && parsed.garage.vehicles.length) ? parsed.garage.vehicles : defaults.garage.vehicles,
@@ -2233,7 +2276,7 @@
 
     if (name === 'hub') renderHub();
     if (name === 'workdays') { renderCalendar(); renderStats(true); renderYearChart(); }
-    if (name === 'vitals') { renderVitalsToday(true); renderVitalsCharts(); renderMealHistory(); switchVitalsTab('today'); }
+    if (name === 'vitals') { renderVitalsToday(true); renderVitalsCharts(); renderMealHistory(); renderProducts(); switchVitalsTab('today'); }
     if (name === 'tdee') computeTDEE();
     if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
     if (name === 'admin') renderAdmin();
@@ -2726,7 +2769,9 @@
     });
     $('vitalsTabToday').classList.toggle('hidden', tab !== 'today');
     $('vitalsTabWeight').classList.toggle('hidden', tab !== 'weight');
+    $('vitalsTabProducts').classList.toggle('hidden', tab !== 'products');
     if (tab === 'weight') renderWeightTab();
+    if (tab === 'products') renderProducts();
   }
 
   function buildLineChartSVG(points, opts) {
@@ -2833,16 +2878,7 @@
     $('weightChartStats').textContent = `СРЕДНО ${avg.toFixed(1)} КГ · ${changeStr}`;
   }
 
-  function addMeal() {
-    const desc = $('mealDesc').value.trim();
-    const kcal = parseFloat($('mealCalories').value) || 0;
-    const protein = parseFloat($('mealProtein').value) || 0;
-    const carbs = parseFloat($('mealCarbs').value) || 0;
-    const fat = parseFloat($('mealFat').value) || 0;
-
-    if (!desc) { showToast('Напиши какво си приел'); return; }
-    if (!kcal && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
-
+  function commitMeal(desc, kcal, protein, carbs, fat) {
     const now = new Date();
     const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
@@ -2855,10 +2891,97 @@
       e.meals.push({ id: genId('m'), time, desc, calories: kcal, protein, carbs, fat });
     });
 
-    ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
     renderVitalsToday(false);
     renderVitalsCharts();
     renderMealHistory();
+  }
+
+  function addMeal() {
+    const desc = $('mealDesc').value.trim();
+    const kcal = parseFloat($('mealCalories').value) || 0;
+    const protein = parseFloat($('mealProtein').value) || 0;
+    const carbs = parseFloat($('mealCarbs').value) || 0;
+    const fat = parseFloat($('mealFat').value) || 0;
+
+    if (!desc) { showToast('Напиши какво си приел'); return; }
+    if (!kcal && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
+
+    commitMeal(desc, kcal, protein, carbs, fat);
+    ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
+  }
+
+  function addFromProduct() {
+    const productId = $('productSelect').value;
+    const grams = parseFloat($('productGrams').value);
+
+    if (!productId) { showToast('Избери продукт'); return; }
+    if (!grams || grams <= 0) { showToast('Въведи грамове/мл'); return; }
+
+    const product = state.vitals.products.find((p) => p.id === productId);
+    if (!product) return;
+
+    const ratio = grams / 100;
+    commitMeal(
+      `${product.name} (${formatNumber(grams)}г)`,
+      product.calories * ratio,
+      product.protein * ratio,
+      product.carbs * ratio,
+      product.fat * ratio
+    );
+    $('productGrams').value = '';
+  }
+
+  function renderProducts() {
+    const list = state.vitals.products.slice().sort((a, b) => a.name.localeCompare(b.name, 'bg'));
+    const container = $('productsList');
+    container.innerHTML = '';
+
+    if (!list.length) {
+      renderEmptyRow(container, 'Няма добавени продукти');
+    } else {
+      list.forEach((p) => {
+        container.appendChild(createRecordRow({
+          date: '',
+          desc: p.name,
+          meta: `Б${p.protein} В${p.carbs} М${p.fat}`,
+          cost: formatNumber(p.calories) + ' ккал/100г',
+          onDelete: () => deleteProduct(p.id)
+        }));
+      });
+    }
+
+    const select = $('productSelect');
+    const currentVal = select.value;
+    select.innerHTML = '<option value="">— избери продукт —</option>';
+    list.forEach((p) => {
+      const opt = document.createElement('option');
+      opt.value = p.id;
+      opt.textContent = p.name;
+      select.appendChild(opt);
+    });
+    if (list.some((p) => p.id === currentVal)) select.value = currentVal;
+  }
+
+  function addProduct() {
+    const name = $('productName').value.trim();
+    const calories = parseFloat($('productCalories').value) || 0;
+    const protein = parseFloat($('productProtein').value) || 0;
+    const carbs = parseFloat($('productCarbs').value) || 0;
+    const fat = parseFloat($('productFat').value) || 0;
+
+    if (!name) { showToast('Въведи име на продукта'); return; }
+    if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
+
+    state.vitals.products.push({ id: genId('pr'), name, calories, protein, carbs, fat });
+    saveState();
+    ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => $(id).value = '');
+    renderProducts();
+  }
+
+  function deleteProduct(id) {
+    state.vitals.products = state.vitals.products.filter((p) => p.id !== id);
+    saveState();
+    renderProducts();
   }
 
   function deleteMeal(id) {
@@ -3454,7 +3577,8 @@
           vitals: {
             goals: { ...state.vitals.goals, ...parsed.vitals.goals },
             days: parsed.vitals.days,
-            calc: parsed.vitals.calc || state.vitals.calc
+            calc: parsed.vitals.calc || state.vitals.calc,
+            products: parsed.vitals.products || []
           },
           garage: (parsed.garage && parsed.garage.vehicles && parsed.garage.vehicles.length) ? {
             vehicles: parsed.garage.vehicles,
@@ -3606,6 +3730,12 @@
     $('mealAddBtn').addEventListener('click', addMeal);
     ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addMeal(); });
+    });
+    $('productAddBtn').addEventListener('click', addFromProduct);
+    $('productGrams').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFromProduct(); });
+    $('productSaveBtn').addEventListener('click', addProduct);
+    ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addProduct(); });
     });
     $('weightSetBtn').addEventListener('click', setWeight);
     $('weightInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') setWeight(); });
