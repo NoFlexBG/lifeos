@@ -1348,6 +1348,34 @@
   .record-form .mini-input.narrow { width: 76px; }
   .record-form .mini-input.wide { width: 170px; }
 
+  .product-ref-field {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 10px;
+  }
+
+  .product-ref-field label {
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .product-ref-field input {
+    width: 44px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--pink);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    text-align: center;
+  }
+
   .record-list {
     margin-top: 16px;
     display: flex;
@@ -1941,6 +1969,11 @@
               <input type="number" id="productProtein" class="mini-input narrow" placeholder="Б (г)" min="0" />
               <input type="number" id="productCarbs" class="mini-input narrow" placeholder="В (г)" min="0" />
               <input type="number" id="productFat" class="mini-input narrow" placeholder="М (г)" min="0" />
+              <div class="product-ref-field">
+                <label for="productRefGrams">стойностите са за</label>
+                <input type="number" id="productRefGrams" value="100" min="1" />
+                <label for="productRefGrams">г</label>
+              </div>
               <button class="chip" id="productSaveBtn">Добави продукт</button>
             </div>
 
@@ -3054,7 +3087,7 @@
         container.appendChild(createRecordRow({
           date: '',
           desc: p.name,
-          meta: `Б${p.protein} В${p.carbs} М${p.fat}`,
+          meta: `Б${Math.round(p.protein)} В${Math.round(p.carbs)} М${Math.round(p.fat)}`,
           cost: formatNumber(p.calories) + ' ккал/100г',
           onDelete: () => deleteProduct(p.id)
         }));
@@ -3096,13 +3129,23 @@
     const protein = parseFloat($('productProtein').value) || 0;
     const carbs = parseFloat($('productCarbs').value) || 0;
     const fat = parseFloat($('productFat').value) || 0;
+    const refGrams = parseFloat($('productRefGrams').value) || 100;
 
     if (!name) { showToast('Въведи име на продукта'); return; }
     if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
 
-    state.vitals.products.push({ id: genId('pr'), name, calories, protein, carbs, fat });
+    const ratio = 100 / refGrams;
+    state.vitals.products.push({
+      id: genId('pr'),
+      name,
+      calories: calories * ratio,
+      protein: protein * ratio,
+      carbs: carbs * ratio,
+      fat: fat * ratio
+    });
     saveState();
     ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => $(id).value = '');
+    $('productRefGrams').value = 100;
     renderProducts();
   }
 
@@ -3867,7 +3910,7 @@
     });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeProductDropdown(); });
     $('productSaveBtn').addEventListener('click', addProduct);
-    ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => {
+    ['productName','productCalories','productProtein','productCarbs','productFat','productRefGrams'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addProduct(); });
     });
     $('weightSetBtn').addEventListener('click', setWeight);
