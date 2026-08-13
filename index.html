@@ -7,8 +7,9 @@
 <script>
   (function () {
     try {
-      if (localStorage.getItem('lifeos_theme') === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
+      const t = localStorage.getItem('lifeos_theme');
+      if (t === 'light' || t === 'matrix') {
+        document.documentElement.setAttribute('data-theme', t);
       }
     } catch {}
   })();
@@ -78,6 +79,37 @@
     --day-empty-border: rgba(22, 35, 61, 0.07);
     --day-empty-bg: rgba(22, 35, 61, 0.02);
     --glow-opacity: 0.08;
+  }
+
+  :root[data-theme="matrix"] {
+    --bg: #000000;
+    --surface: #030a04;
+    --surface-2: #05130a;
+    --line: rgba(0, 255, 65, 0.18);
+    --line-strong: rgba(0, 255, 65, 0.4);
+    --text: #00ff41;
+    --text-dim: #00b82f;
+    --text-faint: #037a1e;
+    --violet: #00ff41;
+    --violet-rgb: 0, 255, 65;
+    --violet-dim: rgba(0, 255, 65, 0.14);
+    --pink: #39ff14;
+    --pink-dim: rgba(57, 255, 20, 0.14);
+    --cyan: #00ffaa;
+    --cyan-dim: rgba(0, 255, 170, 0.14);
+    --amber: #adff2f;
+    --amber-dim: rgba(173, 255, 47, 0.14);
+    --danger: #ff2b2b;
+    --danger-dim: rgba(255, 43, 43, 0.14);
+    --panel-bg-top: rgba(0, 20, 6, 0.6);
+    --panel-bg-bottom: rgba(0, 8, 3, 0.55);
+    --gauge-bg: rgba(0, 20, 6, 0.5);
+    --menu-bg-top: rgba(0, 15, 5, 0.97);
+    --menu-bg-bottom: rgba(0, 6, 2, 0.97);
+    --day-empty-border: rgba(0, 255, 65, 0.08);
+    --day-empty-bg: rgba(0, 255, 65, 0.02);
+    --glow-opacity: 0.12;
+    --font-sans: var(--font-mono);
   }
 
   * { box-sizing: border-box; }
@@ -1862,6 +1894,60 @@
     box-shadow: 0 0 8px var(--amber-dim);
   }
 
+  .theme-label { cursor: pointer; user-select: none; }
+  .theme-label:hover { color: var(--text); }
+
+  .matrix-rain {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    display: block;
+  }
+
+  .matrix-rain.hidden { display: none; }
+
+  .matrix-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 10, 0.88);
+    backdrop-filter: blur(6px);
+    padding: 30px;
+    animation: lightboxFadeIn 0.18s ease;
+  }
+
+  .matrix-modal.hidden { display: none; }
+
+  .matrix-modal-inner {
+    max-width: min(92vw, 380px);
+    padding: 26px 24px;
+    text-align: center;
+    animation: productPopIn 0.18s ease;
+  }
+
+  .matrix-modal-text {
+    margin: 0 0 18px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.4px;
+  }
+
+  .matrix-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .matrix-modal-actions .chip {
+    padding: 8px 22px;
+    font-size: 11.5px;
+  }
+
   #userEmailLabel {
     max-width: 140px;
     overflow: hidden;
@@ -1945,7 +2031,7 @@
         <button class="icon-btn" id="settingsBtn" title="Настройки">⚙</button>
         <div class="settings-menu hidden" id="settingsMenu">
           <div class="settings-row">
-            <span>ТЕМА</span>
+            <span id="themeLabel" class="theme-label">ТЕМА</span>
             <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата">
               <span class="theme-toggle-icon">☀</span>
               <span class="theme-toggle-icon">☾</span>
@@ -2576,6 +2662,20 @@
   </div>
 </div>
 
+<canvas id="matrixRain" class="matrix-rain hidden"></canvas>
+
+<div class="matrix-modal hidden" id="matrixModal">
+  <div class="console-panel matrix-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <p class="matrix-modal-text">Искаш ли да видиш нещо яко?</p>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="matrixYesBtn">ДА</button>
+      <button class="chip" id="matrixNoBtn">НЕ</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -2789,13 +2889,14 @@
   /* ============ Settings & theme ============ */
 
   function applyTheme(theme) {
-    if (theme === 'light') {
-      document.documentElement.setAttribute('data-theme', 'light');
+    if (theme === 'light' || theme === 'matrix') {
+      document.documentElement.setAttribute('data-theme', theme);
     } else {
       document.documentElement.removeAttribute('data-theme');
     }
     $('themeToggle').setAttribute('aria-checked', theme === 'light' ? 'true' : 'false');
     try { localStorage.setItem('lifeos_theme', theme); } catch {}
+    if (theme === 'matrix') startMatrixRain(); else stopMatrixRain();
   }
 
   function toggleTheme() {
@@ -2806,7 +2907,57 @@
   function initTheme() {
     let saved = null;
     try { saved = localStorage.getItem('lifeos_theme'); } catch {}
-    applyTheme(saved === 'light' ? 'light' : 'dark');
+    applyTheme(saved === 'light' || saved === 'matrix' ? saved : 'dark');
+  }
+
+  function openMatrixModal() { $('matrixModal').classList.remove('hidden'); }
+  function closeMatrixModal() { $('matrixModal').classList.add('hidden'); }
+
+  let matrixRainState = null;
+
+  function startMatrixRain() {
+    const canvas = $('matrixRain');
+    canvas.classList.remove('hidden');
+    const ctx = canvas.getContext('2d');
+    const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノ0123456789ﾊﾋﾌﾍﾎﾏﾐﾑﾒﾓﾔﾕﾖﾗﾘﾙﾚﾛ';
+    const fontSize = 16;
+    let columns, drops;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      columns = Math.floor(canvas.width / fontSize);
+      drops = new Array(columns).fill(0).map(() => Math.random() * -50);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff41';
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < columns; i++) {
+        const char = chars[Math.floor(Math.random() * chars.length)];
+        ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+
+    if (matrixRainState) clearInterval(matrixRainState.interval);
+    const interval = setInterval(draw, 40);
+    matrixRainState = { interval, resize };
+  }
+
+  function stopMatrixRain() {
+    const canvas = $('matrixRain');
+    canvas.classList.add('hidden');
+    if (matrixRainState) {
+      clearInterval(matrixRainState.interval);
+      window.removeEventListener('resize', matrixRainState.resize);
+      matrixRainState = null;
+    }
   }
 
   function closeSettingsMenu() {
@@ -4424,6 +4575,9 @@
 
     $('settingsBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleSettingsMenu(); });
     $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
+    $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
+    $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); closeSettingsMenu(); });
+    $('matrixNoBtn').addEventListener('click', closeMatrixModal);
 
     document.querySelectorAll('.tile').forEach((tile) => {
       tile.addEventListener('click', () => showScreen(tile.dataset.app));
