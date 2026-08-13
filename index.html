@@ -676,6 +676,7 @@
   .macro-row[data-macro="fat"] .progress-fill { background: var(--cyan); }
 
   .meal-entry-row .mini-input { width: 64px; }
+  .meal-entry-row .mini-input.wide { width: 180px; }
 
   .chip-row {
     display: flex;
@@ -1728,6 +1729,7 @@
           <div class="chart-head"><span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span></div>
 
           <div class="chip-row meal-entry-row">
+            <input type="text" id="mealDesc" class="mini-input wide" placeholder="Какво прие?" />
             <input type="number" id="mealCalories" class="mini-input" placeholder="ккал" min="0" />
             <input type="number" id="mealProtein" class="mini-input" placeholder="Б (г)" min="0" />
             <input type="number" id="mealCarbs" class="mini-input" placeholder="В (г)" min="0" />
@@ -1758,6 +1760,16 @@
             </div>
             <div class="progress-track thin"><div class="progress-fill" id="fatProgress"></div></div>
           </div>
+        </div>
+
+        <div class="console-panel chart-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head">
+            <span class="gauge-label">ИСТОРИЯ ДНЕС</span>
+            <span class="weight-chart-stats" id="mealHistoryCount"></span>
+          </div>
+          <div class="record-list" id="mealHistoryList"></div>
         </div>
 
         <div class="console-panel chart-panel">
@@ -2221,7 +2233,7 @@
 
     if (name === 'hub') renderHub();
     if (name === 'workdays') { renderCalendar(); renderStats(true); renderYearChart(); }
-    if (name === 'vitals') { renderVitalsToday(true); renderVitalsCharts(); switchVitalsTab('today'); }
+    if (name === 'vitals') { renderVitalsToday(true); renderVitalsCharts(); renderMealHistory(); switchVitalsTab('today'); }
     if (name === 'tdee') computeTDEE();
     if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
     if (name === 'admin') renderAdmin();
@@ -2490,7 +2502,7 @@
   /* ============ Vitals ============ */
 
   function getVitalsDay(key) {
-    const defaults = { calories: 0, water: 0, steps: 0, weight: 0, protein: 0, carbs: 0, fat: 0 };
+    const defaults = { calories: 0, water: 0, steps: 0, weight: 0, protein: 0, carbs: 0, fat: 0, meals: [] };
     return { ...defaults, ...state.vitals.days[key] };
   }
 
@@ -2822,26 +2834,75 @@
   }
 
   function addMeal() {
+    const desc = $('mealDesc').value.trim();
     const kcal = parseFloat($('mealCalories').value) || 0;
     const protein = parseFloat($('mealProtein').value) || 0;
     const carbs = parseFloat($('mealCarbs').value) || 0;
     const fat = parseFloat($('mealFat').value) || 0;
-    if (!kcal && !protein && !carbs && !fat) return;
+
+    if (!desc) { showToast('Напиши какво си приел'); return; }
+    if (!kcal && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
+
+    const now = new Date();
+    const time = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
     mutateVitalsDay(todayKey(), (e) => {
       e.calories += kcal;
       e.protein += protein;
       e.carbs += carbs;
       e.fat += fat;
+      if (!e.meals) e.meals = [];
+      e.meals.push({ id: genId('m'), time, desc, calories: kcal, protein, carbs, fat });
     });
-    ['mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
+
+    ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
     renderVitalsToday(false);
     renderVitalsCharts();
+    renderMealHistory();
+  }
+
+  function deleteMeal(id) {
+    mutateVitalsDay(todayKey(), (e) => {
+      if (!e.meals) return;
+      const m = e.meals.find((x) => x.id === id);
+      if (!m) return;
+      e.calories -= m.calories;
+      e.protein -= m.protein;
+      e.carbs -= m.carbs;
+      e.fat -= m.fat;
+      e.meals = e.meals.filter((x) => x.id !== id);
+    });
+    renderVitalsToday(false);
+    renderVitalsCharts();
+    renderMealHistory();
+  }
+
+  function renderMealHistory() {
+    const entry = getVitalsDay(todayKey());
+    const meals = (entry.meals || []).slice().reverse();
+    const container = $('mealHistoryList');
+    container.innerHTML = '';
+
+    $('mealHistoryCount').textContent = meals.length ? `${meals.length} ДОБАВЯНИЯ` : '';
+
+    if (!meals.length) { renderEmptyRow(container, 'Няма добавяния днес'); return; }
+
+    meals.forEach((m) => {
+      container.appendChild(createRecordRow({
+        date: m.time,
+        desc: m.desc,
+        meta: `Б${Math.round(m.protein)} В${Math.round(m.carbs)} М${Math.round(m.fat)}`,
+        cost: formatNumber(m.calories) + ' ккал',
+        onDelete: () => deleteMeal(m.id)
+      }));
+    });
   }
 
   function resetNutrition() {
-    mutateVitalsDay(todayKey(), (e) => { e.calories = 0; e.protein = 0; e.carbs = 0; e.fat = 0; });
+    mutateVitalsDay(todayKey(), (e) => { e.calories = 0; e.protein = 0; e.carbs = 0; e.fat = 0; e.meals = []; });
     renderVitalsToday(false);
     renderVitalsCharts();
+    renderMealHistory();
   }
 
   function setWeight() {
@@ -3543,7 +3604,7 @@
     });
 
     $('mealAddBtn').addEventListener('click', addMeal);
-    ['mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => {
+    ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addMeal(); });
     });
     $('weightSetBtn').addEventListener('click', setWeight);
