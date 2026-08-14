@@ -1228,6 +1228,12 @@
     align-items: baseline;
   }
 
+  .chart-head-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
   .year-chart {
     flex: 1;
     display: flex;
@@ -2443,29 +2449,18 @@
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
               <span class="gauge-label">МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)</span>
-              <div class="product-dropdown sort-dropdown" id="productSortDropdown">
-                <button type="button" class="product-dropdown-btn sort-dropdown-btn" id="productSortBtn">
-                  <span id="productSortLabel">Име (А-Я)</span>
-                  <span class="caret">▾</span>
-                </button>
-                <div class="product-dropdown-menu hidden" id="productSortMenu">
-                  <div class="product-dropdown-list" id="productSortList"></div>
+              <div class="chart-head-actions">
+                <button class="chip" id="productDbAddBtn">+ Добави продукт</button>
+                <div class="product-dropdown sort-dropdown" id="productSortDropdown">
+                  <button type="button" class="product-dropdown-btn sort-dropdown-btn" id="productSortBtn">
+                    <span id="productSortLabel">Име (А-Я)</span>
+                    <span class="caret">▾</span>
+                  </button>
+                  <div class="product-dropdown-menu hidden" id="productSortMenu">
+                    <div class="product-dropdown-list" id="productSortList"></div>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div class="record-form">
-              <input type="text" id="productName" class="mini-input wide" placeholder="Име на продукт" />
-              <input type="number" id="productCalories" class="mini-input narrow" placeholder="ккал" min="0" />
-              <input type="number" id="productProtein" class="mini-input narrow" placeholder="Б (г)" min="0" />
-              <input type="number" id="productCarbs" class="mini-input narrow" placeholder="В (г)" min="0" />
-              <input type="number" id="productFat" class="mini-input narrow" placeholder="М (г)" min="0" />
-              <div class="product-ref-field">
-                <label for="productRefGrams">стойностите са за</label>
-                <input type="number" id="productRefGrams" value="100" min="1" />
-                <label for="productRefGrams">г</label>
-              </div>
-              <button class="chip" id="productSaveBtn">Добави продукт</button>
             </div>
 
             <div class="record-list" id="productsList"></div>
@@ -2749,7 +2744,7 @@
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
-    <span class="gauge-label">РЕДАКТИРАЙ ПРОДУКТ</span>
+    <span class="gauge-label" id="productEditModalTitle">РЕДАКТИРАЙ ПРОДУКТ</span>
     <div class="product-edit-form">
       <div class="product-edit-field">
         <label for="editProductName">Име</label>
@@ -3868,31 +3863,18 @@
     filterProductDropdown($('productSearchInput').value || '');
   }
 
-  function addProduct() {
-    const name = $('productName').value.trim();
-    const calories = parseFloat($('productCalories').value) || 0;
-    const protein = parseFloat($('productProtein').value) || 0;
-    const carbs = parseFloat($('productCarbs').value) || 0;
-    const fat = parseFloat($('productFat').value) || 0;
-    const refGrams = parseFloat($('productRefGrams').value) || 100;
-
-    if (!name) { showToast('Въведи име на продукта'); return; }
-    if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
-
-    const ratio = 100 / refGrams;
-    state.vitals.products.push({
-      id: genId('pr'),
-      name,
-      calories: calories * ratio,
-      protein: protein * ratio,
-      carbs: carbs * ratio,
-      fat: fat * ratio
-    });
-
-    saveState();
-    ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => $(id).value = '');
-    $('productRefGrams').value = 100;
-    renderProducts();
+  function openProductAddModal() {
+    editingProductId = '';
+    $('editProductName').value = '';
+    $('editProductCalories').value = '';
+    $('editProductProtein').value = '';
+    $('editProductCarbs').value = '';
+    $('editProductFat').value = '';
+    $('editProductRefGrams').value = 100;
+    $('productEditModalTitle').textContent = 'ДОБАВИ ПРОДУКТ';
+    $('productEditSaveBtn').textContent = 'Добави';
+    $('productEditModal').classList.remove('hidden');
+    $('editProductName').focus();
   }
 
   function openProductEditModal(id) {
@@ -3905,6 +3887,8 @@
     $('editProductCarbs').value = Math.round(p.carbs * 10) / 10;
     $('editProductFat').value = Math.round(p.fat * 10) / 10;
     $('editProductRefGrams').value = 100;
+    $('productEditModalTitle').textContent = 'РЕДАКТИРАЙ ПРОДУКТ';
+    $('productEditSaveBtn').textContent = 'Запиши';
     $('productEditModal').classList.remove('hidden');
   }
 
@@ -3913,10 +3897,7 @@
     $('productEditModal').classList.add('hidden');
   }
 
-  function saveProductEditFromModal() {
-    const p = state.vitals.products.find((x) => x.id === editingProductId);
-    if (!p) { closeProductEditModal(); return; }
-
+  function saveProductFromModal() {
     const name = $('editProductName').value.trim();
     const calories = parseFloat($('editProductCalories').value) || 0;
     const protein = parseFloat($('editProductProtein').value) || 0;
@@ -3928,13 +3909,20 @@
     if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
 
     const ratio = 100 / refGrams;
-    Object.assign(p, {
+    const values = {
       name,
       calories: calories * ratio,
       protein: protein * ratio,
       carbs: carbs * ratio,
       fat: fat * ratio
-    });
+    };
+
+    if (editingProductId) {
+      const p = state.vitals.products.find((x) => x.id === editingProductId);
+      if (p) Object.assign(p, values);
+    } else {
+      state.vitals.products.push({ id: genId('pr'), ...values });
+    }
 
     saveState();
     closeProductEditModal();
@@ -4798,14 +4786,11 @@
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); }
     });
-    $('productSaveBtn').addEventListener('click', addProduct);
+    $('productDbAddBtn').addEventListener('click', openProductAddModal);
     $('productEditCancelBtn').addEventListener('click', closeProductEditModal);
-    $('productEditSaveBtn').addEventListener('click', saveProductEditFromModal);
+    $('productEditSaveBtn').addEventListener('click', saveProductFromModal);
     ['editProductName','editProductCalories','editProductProtein','editProductCarbs','editProductFat','editProductRefGrams'].forEach((id) => {
-      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') saveProductEditFromModal(); });
-    });
-    ['productName','productCalories','productProtein','productCarbs','productFat','productRefGrams'].forEach((id) => {
-      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addProduct(); });
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') saveProductFromModal(); });
     });
     $('weightSetBtn').addEventListener('click', setWeight);
     $('weightInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') setWeight(); });
