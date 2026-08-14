@@ -1967,6 +1967,56 @@
     font-size: 11.5px;
   }
 
+  .product-edit-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 10, 0.88);
+    backdrop-filter: blur(6px);
+    padding: 30px;
+    animation: lightboxFadeIn 0.18s ease;
+  }
+
+  .product-edit-modal.hidden { display: none; }
+
+  .product-edit-modal-inner {
+    width: 100%;
+    max-width: min(92vw, 420px);
+    padding: 24px 22px;
+    animation: productPopIn 0.18s ease;
+  }
+
+  .product-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .product-edit-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .product-edit-field { display: flex; flex-direction: column; gap: 5px; }
+
+  .product-edit-field label {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+  }
+
+  .product-edit-field .mini-input { width: 100%; }
+
+  .product-edit-modal .product-ref-field { align-self: flex-start; }
+
+  .product-edit-modal .matrix-modal-actions { margin-top: 18px; justify-content: flex-end; }
+
   #userEmailLabel {
     max-width: 140px;
     overflow: hidden;
@@ -2416,7 +2466,6 @@
                 <label for="productRefGrams">г</label>
               </div>
               <button class="chip" id="productSaveBtn">Добави продукт</button>
-              <button class="chip hidden" id="productCancelEditBtn">Отказ</button>
             </div>
 
             <div class="record-list" id="productsList"></div>
@@ -2692,6 +2741,47 @@
     <div class="matrix-modal-actions">
       <button class="chip" id="matrixYesBtn">ДА</button>
       <button class="chip" id="matrixNoBtn">НЕ</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="productEditModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label">РЕДАКТИРАЙ ПРОДУКТ</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="editProductName">Име</label>
+        <input type="text" id="editProductName" class="mini-input" placeholder="Име на продукт" />
+      </div>
+      <div class="product-edit-row">
+        <div class="product-edit-field">
+          <label for="editProductCalories">Ккал</label>
+          <input type="number" id="editProductCalories" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="editProductProtein">Б (г)</label>
+          <input type="number" id="editProductProtein" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="editProductCarbs">В (г)</label>
+          <input type="number" id="editProductCarbs" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="editProductFat">М (г)</label>
+          <input type="number" id="editProductFat" class="mini-input" min="0" />
+        </div>
+      </div>
+      <div class="product-ref-field">
+        <label for="editProductRefGrams">стойностите са за</label>
+        <input type="number" id="editProductRefGrams" value="100" min="1" />
+        <label for="editProductRefGrams">г</label>
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="productEditCancelBtn">Отказ</button>
+      <button class="chip" id="productEditSaveBtn">Запиши</button>
     </div>
   </div>
 </div>
@@ -3765,7 +3855,7 @@
           meta: `Б${Math.round(p.protein)} В${Math.round(p.carbs)} М${Math.round(p.fat)}`,
           cost: formatNumber(p.calories) + ' ккал/100г',
           onDelete: () => deleteProduct(p.id),
-          onEdit: () => editProduct(p.id)
+          onEdit: () => openProductEditModal(p.id)
         }));
       });
     }
@@ -3790,21 +3880,14 @@
     if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
 
     const ratio = 100 / refGrams;
-    const values = {
+    state.vitals.products.push({
+      id: genId('pr'),
       name,
       calories: calories * ratio,
       protein: protein * ratio,
       carbs: carbs * ratio,
       fat: fat * ratio
-    };
-
-    if (editingProductId) {
-      const p = state.vitals.products.find((x) => x.id === editingProductId);
-      if (p) Object.assign(p, values);
-      cancelEditProduct();
-    } else {
-      state.vitals.products.push({ id: genId('pr'), ...values });
-    }
+    });
 
     saveState();
     ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => $(id).value = '');
@@ -3812,32 +3895,55 @@
     renderProducts();
   }
 
-  function editProduct(id) {
+  function openProductEditModal(id) {
     const p = state.vitals.products.find((x) => x.id === id);
     if (!p) return;
     editingProductId = id;
-    $('productName').value = p.name;
-    $('productCalories').value = Math.round(p.calories * 10) / 10;
-    $('productProtein').value = Math.round(p.protein * 10) / 10;
-    $('productCarbs').value = Math.round(p.carbs * 10) / 10;
-    $('productFat').value = Math.round(p.fat * 10) / 10;
-    $('productRefGrams').value = 100;
-    $('productSaveBtn').textContent = 'Запази промените';
-    $('productCancelEditBtn').classList.remove('hidden');
-    $('productName').focus();
+    $('editProductName').value = p.name;
+    $('editProductCalories').value = Math.round(p.calories * 10) / 10;
+    $('editProductProtein').value = Math.round(p.protein * 10) / 10;
+    $('editProductCarbs').value = Math.round(p.carbs * 10) / 10;
+    $('editProductFat').value = Math.round(p.fat * 10) / 10;
+    $('editProductRefGrams').value = 100;
+    $('productEditModal').classList.remove('hidden');
   }
 
-  function cancelEditProduct() {
+  function closeProductEditModal() {
     editingProductId = '';
-    $('productSaveBtn').textContent = 'Добави продукт';
-    $('productCancelEditBtn').classList.add('hidden');
-    ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => $(id).value = '');
-    $('productRefGrams').value = 100;
+    $('productEditModal').classList.add('hidden');
+  }
+
+  function saveProductEditFromModal() {
+    const p = state.vitals.products.find((x) => x.id === editingProductId);
+    if (!p) { closeProductEditModal(); return; }
+
+    const name = $('editProductName').value.trim();
+    const calories = parseFloat($('editProductCalories').value) || 0;
+    const protein = parseFloat($('editProductProtein').value) || 0;
+    const carbs = parseFloat($('editProductCarbs').value) || 0;
+    const fat = parseFloat($('editProductFat').value) || 0;
+    const refGrams = parseFloat($('editProductRefGrams').value) || 100;
+
+    if (!name) { showToast('Въведи име на продукта'); return; }
+    if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
+
+    const ratio = 100 / refGrams;
+    Object.assign(p, {
+      name,
+      calories: calories * ratio,
+      protein: protein * ratio,
+      carbs: carbs * ratio,
+      fat: fat * ratio
+    });
+
+    saveState();
+    closeProductEditModal();
+    renderProducts();
   }
 
   function deleteProduct(id) {
     state.vitals.products = state.vitals.products.filter((p) => p.id !== id);
-    if (editingProductId === id) cancelEditProduct();
+    if (editingProductId === id) closeProductEditModal();
     saveState();
     renderProducts();
   }
@@ -4690,10 +4796,14 @@
       if (!$('settingsDropdown').contains(e.target)) closeSettingsMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); }
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); }
     });
     $('productSaveBtn').addEventListener('click', addProduct);
-    $('productCancelEditBtn').addEventListener('click', cancelEditProduct);
+    $('productEditCancelBtn').addEventListener('click', closeProductEditModal);
+    $('productEditSaveBtn').addEventListener('click', saveProductEditFromModal);
+    ['editProductName','editProductCalories','editProductProtein','editProductCarbs','editProductFat','editProductRefGrams'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') saveProductEditFromModal(); });
+    });
     ['productName','productCalories','productProtein','productCarbs','productFat','productRefGrams'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addProduct(); });
     });
