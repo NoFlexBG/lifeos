@@ -1952,6 +1952,8 @@
     padding: 26px 24px;
     text-align: center;
     animation: productPopIn 0.18s ease;
+    background: var(--surface);
+    backdrop-filter: none;
   }
 
   .matrix-modal-text {
@@ -1993,6 +1995,14 @@
     max-width: min(92vw, 420px);
     padding: 24px 22px;
     animation: productPopIn 0.18s ease;
+    background: var(--surface);
+    backdrop-filter: none;
+  }
+
+  #productEditModalTitle {
+    font-size: 14px;
+    letter-spacing: 1.5px;
+    color: var(--text);
   }
 
   .product-edit-form {
@@ -2012,7 +2022,7 @@
 
   .product-edit-field label {
     font-family: var(--font-mono);
-    font-size: 9.5px;
+    font-size: 10.5px;
     letter-spacing: 1px;
     color: var(--text-dim);
   }
@@ -2022,6 +2032,13 @@
   .product-edit-modal .product-ref-field { align-self: flex-start; }
 
   .product-edit-modal .matrix-modal-actions { margin-top: 18px; justify-content: flex-end; }
+
+  .product-edit-modal #productEditSaveBtn {
+    background: var(--violet);
+    border-color: var(--violet);
+    color: #05050a;
+    font-weight: 600;
+  }
 
   #userEmailLabel {
     max-width: 140px;
