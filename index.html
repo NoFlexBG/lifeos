@@ -1664,6 +1664,25 @@
 
   .record-row-del:hover { border-color: var(--danger); color: var(--danger); }
 
+  .record-row-has-edit { grid-template-columns: 90px 1fr auto auto 22px 22px; }
+
+  .record-row-edit {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-faint);
+    font-size: 10.5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .record-row-edit:hover { border-color: var(--violet); color: var(--violet); }
+
   .record-empty { color: var(--text-faint); font-size: 12px; padding: 8px 2px; }
 
   .status-chip {
@@ -2397,6 +2416,7 @@
                 <label for="productRefGrams">г</label>
               </div>
               <button class="chip" id="productSaveBtn">Добави продукт</button>
+              <button class="chip hidden" id="productCancelEditBtn">Отказ</button>
             </div>
 
             <div class="record-list" id="productsList"></div>
@@ -3576,6 +3596,7 @@
   }
 
   let selectedProductId = '';
+  let editingProductId = '';
   let productSortMode = 'name-asc';
 
   const PRODUCT_SORT_OPTIONS = [
@@ -3743,7 +3764,8 @@
           desc: p.name,
           meta: `Б${Math.round(p.protein)} В${Math.round(p.carbs)} М${Math.round(p.fat)}`,
           cost: formatNumber(p.calories) + ' ккал/100г',
-          onDelete: () => deleteProduct(p.id)
+          onDelete: () => deleteProduct(p.id),
+          onEdit: () => editProduct(p.id)
         }));
       });
     }
@@ -3768,22 +3790,54 @@
     if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
 
     const ratio = 100 / refGrams;
-    state.vitals.products.push({
-      id: genId('pr'),
+    const values = {
       name,
       calories: calories * ratio,
       protein: protein * ratio,
       carbs: carbs * ratio,
       fat: fat * ratio
-    });
+    };
+
+    if (editingProductId) {
+      const p = state.vitals.products.find((x) => x.id === editingProductId);
+      if (p) Object.assign(p, values);
+      cancelEditProduct();
+    } else {
+      state.vitals.products.push({ id: genId('pr'), ...values });
+    }
+
     saveState();
     ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => $(id).value = '');
     $('productRefGrams').value = 100;
     renderProducts();
   }
 
+  function editProduct(id) {
+    const p = state.vitals.products.find((x) => x.id === id);
+    if (!p) return;
+    editingProductId = id;
+    $('productName').value = p.name;
+    $('productCalories').value = Math.round(p.calories * 10) / 10;
+    $('productProtein').value = Math.round(p.protein * 10) / 10;
+    $('productCarbs').value = Math.round(p.carbs * 10) / 10;
+    $('productFat').value = Math.round(p.fat * 10) / 10;
+    $('productRefGrams').value = 100;
+    $('productSaveBtn').textContent = 'Запази промените';
+    $('productCancelEditBtn').classList.remove('hidden');
+    $('productName').focus();
+  }
+
+  function cancelEditProduct() {
+    editingProductId = '';
+    $('productSaveBtn').textContent = 'Добави продукт';
+    $('productCancelEditBtn').classList.add('hidden');
+    ['productName','productCalories','productProtein','productCarbs','productFat'].forEach((id) => $(id).value = '');
+    $('productRefGrams').value = 100;
+  }
+
   function deleteProduct(id) {
     state.vitals.products = state.vitals.products.filter((p) => p.id !== id);
+    if (editingProductId === id) cancelEditProduct();
     saveState();
     renderProducts();
   }
@@ -3899,9 +3953,10 @@
     return { cls: 'valid', label: 'Валиден' };
   }
 
-  function createRecordRow({ date, desc, meta, cost, onDelete }) {
+  function createRecordRow({ date, desc, meta, cost, onDelete, onEdit }) {
     const row = document.createElement('div');
     row.className = 'record-row';
+    if (onEdit) row.classList.add('record-row-has-edit');
 
     const dateEl = document.createElement('span');
     dateEl.className = 'record-row-date';
@@ -3925,7 +3980,16 @@
     delBtn.textContent = '×';
     delBtn.addEventListener('click', onDelete);
 
-    row.append(dateEl, descEl, metaEl, costEl, delBtn);
+    if (onEdit) {
+      const editBtn = document.createElement('button');
+      editBtn.className = 'record-row-edit';
+      editBtn.textContent = '✎';
+      editBtn.title = 'Редактирай';
+      editBtn.addEventListener('click', onEdit);
+      row.append(dateEl, descEl, metaEl, costEl, editBtn, delBtn);
+    } else {
+      row.append(dateEl, descEl, metaEl, costEl, delBtn);
+    }
     return row;
   }
 
@@ -4629,6 +4693,7 @@
       if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); }
     });
     $('productSaveBtn').addEventListener('click', addProduct);
+    $('productCancelEditBtn').addEventListener('click', cancelEditProduct);
     ['productName','productCalories','productProtein','productCarbs','productFat','productRefGrams'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addProduct(); });
     });
