@@ -1222,13 +1222,28 @@
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
   }
 
   .chart-head-actions {
     display: flex;
     align-items: center;
     gap: 8px;
+    flex-wrap: wrap;
   }
+
+  .product-list-search {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 10px;
+  }
+
+  .product-list-search .product-search-input { width: 130px; }
 
   .year-chart {
     flex: 1;
@@ -2474,6 +2489,10 @@
             <div class="chart-head">
               <span class="gauge-label">МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)</span>
               <div class="chart-head-actions">
+                <div class="product-list-search">
+                  <span class="product-search-icon">⌕</span>
+                  <input type="text" id="productListSearchInput" class="product-search-input" placeholder="Търси храна..." autocomplete="off" />
+                </div>
                 <button class="chip" id="productDbAddBtn">+ Добави продукт</button>
                 <div class="product-dropdown sort-dropdown" id="productSortDropdown">
                   <button type="button" class="product-dropdown-btn sort-dropdown-btn" id="productSortBtn">
@@ -3953,13 +3972,15 @@
   }
 
   function renderProducts() {
-    const list = sortProductsList(state.vitals.products);
+    const term = ($('productListSearchInput').value || '').trim().toLowerCase();
+    let list = sortProductsList(state.vitals.products);
+    if (term) list = list.filter((p) => p.name.toLowerCase().includes(term));
     renderProductSortMenu();
     const container = $('productsList');
     container.innerHTML = '';
 
     if (!list.length) {
-      renderEmptyRow(container, 'Няма добавени продукти');
+      renderEmptyRow(container, term ? 'Няма съвпадения' : 'Няма добавени продукти');
     } else {
       list.forEach((p) => {
         container.appendChild(createRecordRow({
@@ -4899,6 +4920,7 @@
       }
     });
     $('productSortBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleProductSortMenu(); });
+    $('productListSearchInput').addEventListener('input', renderProducts);
     document.addEventListener('click', (e) => {
       if (!$('productDropdown').contains(e.target)) closeProductDropdown();
       if (!$('productSortDropdown').contains(e.target)) closeProductSortMenu();
