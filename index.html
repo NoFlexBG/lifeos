@@ -1273,6 +1273,41 @@
     vertical-align: middle;
   }
 
+  .coin-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .coin-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+
+  .coin-row-label {
+    font-family: var(--font-mono);
+    color: var(--amber);
+    font-size: 13px;
+    min-width: 50px;
+  }
+
+  .coin-row-input { width: 64px; text-align: center; }
+
+  .coin-row-subtotal {
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    font-size: 11px;
+    min-width: 60px;
+    text-align: right;
+  }
+
   .product-dropdown-category-filter {
     display: flex;
     flex-wrap: wrap;
@@ -2072,12 +2107,6 @@
     gap: 10px;
   }
 
-  .product-edit-row-2 {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
-  }
-
   .product-edit-field { display: flex; flex-direction: column; gap: 5px; }
 
   .product-edit-field label {
@@ -2093,8 +2122,7 @@
 
   .product-edit-modal .matrix-modal-actions { margin-top: 18px; justify-content: flex-end; }
 
-  .product-edit-modal #productEditSaveBtn,
-  .product-edit-modal #savingsAddSaveBtn {
+  .product-edit-modal #productEditSaveBtn {
     background: var(--violet);
     border-color: var(--violet);
     color: #05050a;
@@ -2316,7 +2344,7 @@
           <div class="tile-desc">Спестени пари</div>
           <div class="tile-preview">
             <div class="tile-stat"><span class="tile-stat-value" id="hubSavingsTotal">0€</span><span class="tile-stat-label">ОБЩО СПЕСТЕНО</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubSavingsMonth">0€</span><span class="tile-stat-label">ТОЗИ МЕСЕЦ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubSavingsToGoal">0€</span><span class="tile-stat-label">ДО ЦЕЛТА</span></div>
           </div>
         </div>
       </div>
@@ -2650,7 +2678,7 @@
               <span class="gauge-label">ОБЩО СПЕСТЕНО</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsTotalValue">0</span><span class="gauge-unit">€</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsTotalValue">0.00</span><span class="gauge-unit">€</span></div>
             </div>
           </div>
 
@@ -2660,40 +2688,19 @@
               <span class="gauge-delta flat" id="savingsGoalStatus">—</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsGoalCurrentValue">0</span><span class="gauge-unit">/ <input id="savingsGoalInput" class="inline-goal-input" type="number" min="0" /> €</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsGoalCurrentValue">0.00</span><span class="gauge-unit">/ <input id="savingsGoalInput" class="inline-goal-input" type="number" min="0" /> €</span></div>
             </div>
             <div class="progress-track"><div class="progress-fill" id="savingsGoalProgress"></div></div>
           </div>
-
-          <div class="gauge" data-metric="savings-month">
-            <div class="gauge-top">
-              <span class="gauge-label">ТОЗИ МЕСЕЦ</span>
-            </div>
-            <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsMonthValue">0</span><span class="gauge-unit">€</span></div>
-            </div>
-          </div>
         </div>
 
-        <div class="nutrition-history-row">
-          <div class="console-panel chart-panel">
-            <span class="corner tl"></span><span class="corner tr"></span>
-            <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head">
-              <span class="gauge-label">СПЕСТЯВАНИЯ ПО МЕСЕЦИ</span>
-            </div>
-            <div id="savingsYearChart" class="year-chart"></div>
+        <div class="console-panel chart-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head">
+            <span class="gauge-label">БРОЙКА ПО МОНЕТИ И БАНКНОТИ</span>
           </div>
-
-          <div class="console-panel chart-panel">
-            <span class="corner tl"></span><span class="corner tr"></span>
-            <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head">
-              <span class="gauge-label">ИСТОРИЯ</span>
-              <button class="chip" id="savingsAddOpenBtn">+ Добави спестяване</button>
-            </div>
-            <div class="record-list" id="savingsList"></div>
-          </div>
+          <div class="coin-grid" id="coinGrid"></div>
         </div>
       </div>
     </section>
@@ -3019,34 +3026,6 @@
   </div>
 </div>
 
-<div class="product-edit-modal hidden" id="savingsAddModal">
-  <div class="console-panel product-edit-modal-inner">
-    <span class="corner tl"></span><span class="corner tr"></span>
-    <span class="corner bl"></span><span class="corner br"></span>
-    <span class="gauge-label" id="savingsAddModalTitle">ДОБАВИ СПЕСТЯВАНЕ</span>
-    <div class="product-edit-form">
-      <div class="product-edit-row-2">
-        <div class="product-edit-field">
-          <label for="savingsAmountInput">Сума (€)</label>
-          <input type="number" id="savingsAmountInput" class="mini-input" min="0" step="0.01" />
-        </div>
-        <div class="product-edit-field">
-          <label for="savingsDateInput">Дата</label>
-          <input type="date" id="savingsDateInput" class="mini-input" />
-        </div>
-      </div>
-      <div class="product-edit-field">
-        <label for="savingsNoteInput">Бележка (по избор)</label>
-        <input type="text" id="savingsNoteInput" class="mini-input" placeholder="напр. Джобни пари" />
-      </div>
-    </div>
-    <div class="matrix-modal-actions">
-      <button class="chip" id="savingsAddCancelBtn">Отказ</button>
-      <button class="chip" id="savingsAddSaveBtn">Добави</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
 <script>
@@ -3076,7 +3055,7 @@
       activeVehicleId: 'v1',
       records: { v1: { repairs: [], fuel: [], documents: [], fines: [], photos: [] } }
     },
-    savings: { goal: 1000, entries: [] }
+    savings: { goal: 1000, coins: {} }
   };
 
   let viewDate = new Date();
@@ -3113,7 +3092,7 @@
           },
           savings: {
             goal: (parsed.savings && parsed.savings.goal) || defaults.savings.goal,
-            entries: (parsed.savings && parsed.savings.entries) || []
+            coins: (parsed.savings && parsed.savings.coins) || {}
           }
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
@@ -3259,8 +3238,9 @@
     $('hubGarageFines').textContent = formatNumber(unpaidFinesTotal) + '€';
     $('hubGarageDocs').textContent = docsAlertCount;
 
-    $('hubSavingsTotal').textContent = formatNumber(getSavingsTotal()) + '€';
-    $('hubSavingsMonth').textContent = formatNumber(getSavingsMonthTotal()) + '€';
+    const savingsTotal = getSavingsTotal();
+    $('hubSavingsTotal').textContent = formatMoney(savingsTotal) + '€';
+    $('hubSavingsToGoal').textContent = formatMoney(Math.max(0, (state.savings.goal || 0) - savingsTotal)) + '€';
   }
 
   function onBrandMarkClick() {
@@ -3585,147 +3565,70 @@
 
   /* ============ Savings ============ */
 
-  let editingSavingsId = '';
+  const COIN_DENOMINATIONS = [2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01];
 
-  function getSavingsTotal() {
-    return state.savings.entries.reduce((sum, e) => sum + e.amount, 0);
+  function formatMoney(n) {
+    return (n || 0).toLocaleString('bg-BG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  function getSavingsMonthTotal() {
-    const now = new Date();
-    const prefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-    return state.savings.entries
-      .filter((e) => e.date.startsWith(prefix))
-      .reduce((sum, e) => sum + e.amount, 0);
+  function getSavingsTotal() {
+    return COIN_DENOMINATIONS.reduce((sum, d) => sum + (state.savings.coins[d] || 0) * d, 0);
   }
 
   function renderSavingsOverview() {
     const total = getSavingsTotal();
     const goal = state.savings.goal || 0;
-    $('savingsTotalValue').textContent = formatNumber(total);
-    $('savingsGoalCurrentValue').textContent = formatNumber(total);
+    $('savingsTotalValue').textContent = formatMoney(total);
+    $('savingsGoalCurrentValue').textContent = formatMoney(total);
     $('savingsGoalInput').value = goal;
-    $('savingsMonthValue').textContent = formatNumber(getSavingsMonthTotal());
     $('savingsGoalProgress').style.width = Math.min(100, (total / (goal || 1)) * 100) + '%';
     setMetricStatus($('savingsGoalStatus'), total, goal, 'higherBetter');
   }
 
-  function renderSavingsYearChart() {
-    const container = $('savingsYearChart');
+  function renderCoinGrid() {
+    const container = $('coinGrid');
     container.innerHTML = '';
 
-    const today = new Date();
-    const y = today.getFullYear();
-    const monthTotals = new Array(12).fill(0);
-    state.savings.entries.forEach((e) => {
-      const [ey, em] = e.date.split('-').map(Number);
-      if (ey === y) monthTotals[em - 1] += e.amount;
-    });
+    COIN_DENOMINATIONS.forEach((d) => {
+      const row = document.createElement('div');
+      row.className = 'coin-row';
 
-    const max = Math.max(...monthTotals, 1);
+      const label = document.createElement('span');
+      label.className = 'coin-row-label';
+      label.textContent = formatMoney(d) + ' €';
 
-    monthTotals.forEach((val, i) => {
-      const wrap = document.createElement('div');
-      wrap.className = 'chart-bar-wrap' + (i === today.getMonth() ? ' current' : '');
+      const input = document.createElement('input');
+      input.type = 'number';
+      input.className = 'mini-input coin-row-input';
+      input.min = '0';
+      input.step = '1';
+      input.value = state.savings.coins[d] || 0;
 
-      const tooltip = document.createElement('div');
-      tooltip.className = 'week-bar-tooltip';
-      tooltip.textContent = `${formatNumber(val)} €`;
-      wrap.appendChild(tooltip);
+      const subtotal = document.createElement('span');
+      subtotal.className = 'coin-row-subtotal';
+      subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' €';
 
-      const bar = document.createElement('div');
-      bar.className = 'chart-bar';
-      const heightPct = (val / max) * 100;
-      bar.style.height = '0%';
+      input.addEventListener('input', () => {
+        const count = Math.max(0, parseInt(input.value) || 0);
+        state.savings.coins[d] = count;
+        subtotal.textContent = formatMoney(count * d) + ' €';
+        saveState();
+        renderSavingsOverview();
+        renderHubIfVisible();
+      });
 
-      const label = document.createElement('div');
-      label.className = 'chart-bar-label';
-      label.textContent = MONTH_SHORT[i];
-
-      wrap.appendChild(bar);
-      wrap.appendChild(label);
-      container.appendChild(wrap);
-
-      requestAnimationFrame(() => { bar.style.height = `${heightPct}%`; });
+      row.append(label, input, subtotal);
+      container.appendChild(row);
     });
   }
 
-  function renderSavingsList() {
-    const list = state.savings.entries.slice().sort((a, b) => b.date.localeCompare(a.date));
-    const container = $('savingsList');
-    container.innerHTML = '';
-    if (!list.length) { renderEmptyRow(container, 'Няма записани спестявания'); return; }
-    list.forEach((e) => {
-      container.appendChild(createRecordRow({
-        date: formatDateDisplay(e.date),
-        desc: e.note || 'Спестяване',
-        meta: '',
-        cost: formatNumber(e.amount) + ' €',
-        onDelete: () => deleteSavingsEntry(e.id),
-        onEdit: () => openSavingsEditModal(e.id)
-      }));
-    });
+  function renderHubIfVisible() {
+    if (currentScreen === 'hub') renderHub();
   }
 
   function renderSavingsAll() {
+    renderCoinGrid();
     renderSavingsOverview();
-    renderSavingsYearChart();
-    renderSavingsList();
-  }
-
-  function openSavingsAddModal() {
-    editingSavingsId = '';
-    $('savingsAmountInput').value = '';
-    $('savingsDateInput').value = todayKey();
-    $('savingsNoteInput').value = '';
-    $('savingsAddModalTitle').textContent = 'ДОБАВИ СПЕСТЯВАНЕ';
-    $('savingsAddSaveBtn').textContent = 'Добави';
-    $('savingsAddModal').classList.remove('hidden');
-    $('savingsAmountInput').focus();
-  }
-
-  function openSavingsEditModal(id) {
-    const entry = state.savings.entries.find((e) => e.id === id);
-    if (!entry) return;
-    editingSavingsId = id;
-    $('savingsAmountInput').value = entry.amount;
-    $('savingsDateInput').value = entry.date;
-    $('savingsNoteInput').value = entry.note || '';
-    $('savingsAddModalTitle').textContent = 'РЕДАКТИРАЙ СПЕСТЯВАНЕ';
-    $('savingsAddSaveBtn').textContent = 'Запиши';
-    $('savingsAddModal').classList.remove('hidden');
-  }
-
-  function closeSavingsAddModal() {
-    editingSavingsId = '';
-    $('savingsAddModal').classList.add('hidden');
-  }
-
-  function saveSavingsFromModal() {
-    const amount = parseFloat($('savingsAmountInput').value);
-    const date = $('savingsDateInput').value;
-    const note = $('savingsNoteInput').value.trim();
-
-    if (!amount || amount <= 0) { showToast('Въведи сума'); return; }
-    if (!date) { showToast('Избери дата'); return; }
-
-    if (editingSavingsId) {
-      const entry = state.savings.entries.find((e) => e.id === editingSavingsId);
-      if (entry) Object.assign(entry, { amount, date, note });
-    } else {
-      state.savings.entries.push({ id: genId('sv'), amount, date, note });
-    }
-
-    saveState();
-    closeSavingsAddModal();
-    renderSavingsAll();
-  }
-
-  function deleteSavingsEntry(id) {
-    state.savings.entries = state.savings.entries.filter((e) => e.id !== id);
-    if (editingSavingsId === id) closeSavingsAddModal();
-    saveState();
-    renderSavingsAll();
   }
 
   function onSavingsGoalChange() {
@@ -5185,7 +5088,7 @@
           } : state.garage,
           savings: parsed.savings ? {
             goal: parsed.savings.goal || state.savings.goal,
-            entries: parsed.savings.entries || []
+            coins: parsed.savings.coins || {}
           } : state.savings
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
@@ -5363,13 +5266,7 @@
       if (!$('settingsDropdown').contains(e.target)) closeSettingsMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); closeSavingsAddModal(); }
-    });
-    $('savingsAddOpenBtn').addEventListener('click', openSavingsAddModal);
-    $('savingsAddCancelBtn').addEventListener('click', closeSavingsAddModal);
-    $('savingsAddSaveBtn').addEventListener('click', saveSavingsFromModal);
-    ['savingsAmountInput','savingsDateInput','savingsNoteInput'].forEach((id) => {
-      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') saveSavingsFromModal(); });
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); }
     });
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
     $('productDbAddBtn').addEventListener('click', openProductAddModal);
