@@ -1271,6 +1271,21 @@
     vertical-align: middle;
   }
 
+  .product-dropdown-category-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 0 6px 8px;
+    margin-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+
+  .category-chip-sm {
+    padding: 3px 9px;
+    font-size: 9.5px;
+  }
+
   .year-chart {
     flex: 1;
     display: flex;
@@ -2880,6 +2895,7 @@
               <span class="product-search-icon">⌕</span>
               <input type="text" id="productSearchInput" class="product-search-input" placeholder="Търси продукт..." autocomplete="off" />
             </div>
+            <div class="product-dropdown-category-filter" id="productDropdownCategoryFilter"></div>
             <div class="product-dropdown-list" id="productDropdownList"></div>
           </div>
         </div>
@@ -3852,6 +3868,7 @@
   let editingProductId = '';
   let productSortMode = 'name-asc';
   let productCategoryFilter = '';
+  let productDropdownCategoryFilter = '';
 
   const PRODUCT_CATEGORIES = [
     { id: 'fruits', label: 'Плодове' },
@@ -4002,6 +4019,8 @@
       menu.classList.remove('hidden');
       $('productDropdownBtn').classList.add('open');
       $('productSearchInput').value = '';
+      productDropdownCategoryFilter = '';
+      renderProductDropdownCategoryFilter();
       filterProductDropdown('');
       $('productSearchInput').focus();
     }
@@ -4027,11 +4046,39 @@
     return frag;
   }
 
+  function renderProductDropdownCategoryFilter() {
+    const container = $('productDropdownCategoryFilter');
+    container.innerHTML = '';
+
+    const allChip = document.createElement('button');
+    allChip.type = 'button';
+    allChip.className = 'chip category-chip category-chip-sm' + (productDropdownCategoryFilter === '' ? ' active' : '');
+    allChip.textContent = 'Всички';
+    allChip.addEventListener('click', (e) => { e.stopPropagation(); selectProductDropdownCategory(''); });
+    container.appendChild(allChip);
+
+    PRODUCT_CATEGORIES.forEach((c) => {
+      const chip = document.createElement('button');
+      chip.type = 'button';
+      chip.className = 'chip category-chip category-chip-sm' + (productDropdownCategoryFilter === c.id ? ' active' : '');
+      chip.textContent = c.label;
+      chip.addEventListener('click', (e) => { e.stopPropagation(); selectProductDropdownCategory(c.id); });
+      container.appendChild(chip);
+    });
+  }
+
+  function selectProductDropdownCategory(id) {
+    productDropdownCategoryFilter = id;
+    renderProductDropdownCategoryFilter();
+    filterProductDropdown($('productSearchInput').value || '');
+  }
+
   function filterProductDropdown(query) {
     const q = query.trim().toLowerCase();
-    const list = state.vitals.products
+    let list = state.vitals.products
       .filter((p) => p.name.toLowerCase().includes(q))
       .sort((a, b) => a.name.localeCompare(b.name, 'bg'));
+    if (productDropdownCategoryFilter) list = list.filter((p) => (p.category || 'other') === productDropdownCategoryFilter);
 
     const listEl = $('productDropdownList');
     listEl.innerHTML = '';
@@ -4049,6 +4096,13 @@
       item.className = 'product-dropdown-item';
       const nameEl = document.createElement('span');
       nameEl.appendChild(highlightMatch(p.name, q));
+      const catLabel = getCategoryLabel(p.category);
+      if (catLabel) {
+        const badge = document.createElement('span');
+        badge.className = 'product-category-badge';
+        badge.textContent = catLabel;
+        nameEl.appendChild(badge);
+      }
       const metaEl = document.createElement('span');
       metaEl.className = 'product-dropdown-item-meta';
       metaEl.textContent = `${formatNumber(p.calories)} ккал/100г`;
