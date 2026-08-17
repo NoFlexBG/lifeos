@@ -757,12 +757,6 @@
   .macro-row[data-macro="carbs"] .progress-fill { background: var(--amber); }
   .macro-row[data-macro="fat"] .progress-fill { background: var(--cyan); }
 
-  .meal-entry-row .mini-input { width: 64px; }
-  .meal-entry-row .mini-input.wide { width: 180px; }
-
-  .product-entry-row .mini-input.wide { width: 180px; }
-  .product-entry-row .mini-input.narrow { width: 90px; }
-
   .product-dropdown { position: relative; }
 
   .product-dropdown-btn {
@@ -2042,6 +2036,41 @@
     font-weight: 600;
   }
 
+  .meal-add-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 55;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(5, 5, 10, 0.88);
+    backdrop-filter: blur(6px);
+    padding: 30px;
+    animation: lightboxFadeIn 0.18s ease;
+  }
+
+  .meal-add-modal.hidden { display: none; }
+
+  .meal-add-mode-tabs {
+    display: flex;
+    gap: 8px;
+    margin: 16px 0 0;
+  }
+
+  #mealAddModeProduct .product-dropdown,
+  #mealAddModeProduct .product-dropdown-btn { width: 100%; }
+
+  #mealAddModeProduct .product-dropdown-menu { width: 100%; }
+
+  .meal-add-modal .matrix-modal-actions { margin-top: 18px; justify-content: flex-end; }
+
+  .meal-add-modal #mealAddSaveBtn {
+    background: var(--violet);
+    border-color: var(--violet);
+    color: #05050a;
+    font-weight: 600;
+  }
+
   #userEmailLabel {
     max-width: 140px;
     overflow: hidden;
@@ -2351,33 +2380,9 @@
           <div class="console-panel chart-panel nutrition-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span></div>
-
-            <div class="chip-row product-entry-row">
-              <div class="product-dropdown" id="productDropdown">
-                <button type="button" class="product-dropdown-btn" id="productDropdownBtn">
-                  <span id="productDropdownLabel">— избери продукт —</span>
-                  <span class="caret">▾</span>
-                </button>
-                <div class="product-dropdown-menu hidden" id="productDropdownMenu">
-                  <div class="product-search-row">
-                    <span class="product-search-icon">⌕</span>
-                    <input type="text" id="productSearchInput" class="product-search-input" placeholder="Търси продукт..." autocomplete="off" />
-                  </div>
-                  <div class="product-dropdown-list" id="productDropdownList"></div>
-                </div>
-              </div>
-              <input type="number" id="productGrams" class="mini-input narrow" placeholder="г/мл" min="0" />
-              <button class="chip" id="productAddBtn">Добави</button>
-            </div>
-
-            <div class="chip-row meal-entry-row">
-              <input type="text" id="mealDesc" class="mini-input wide" placeholder="Какво прие?" />
-              <input type="number" id="mealCalories" class="mini-input" placeholder="ккал" min="0" />
-              <input type="number" id="mealProtein" class="mini-input" placeholder="Б (г)" min="0" />
-              <input type="number" id="mealCarbs" class="mini-input" placeholder="В (г)" min="0" />
-              <input type="number" id="mealFat" class="mini-input" placeholder="М (г)" min="0" />
-              <button class="chip" id="mealAddBtn">Добави хранене</button>
+            <div class="chart-head">
+              <span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span>
+              <button class="chip" id="mealAddOpenBtn">+ Добави хранене</button>
             </div>
 
             <div class="macro-row" data-macro="protein">
@@ -2796,6 +2801,72 @@
     <div class="matrix-modal-actions">
       <button class="chip" id="productEditCancelBtn">Отказ</button>
       <button class="chip" id="productEditSaveBtn">Запиши</button>
+    </div>
+  </div>
+</div>
+
+<div class="meal-add-modal hidden" id="mealAddModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label">ДОБАВИ ХРАНЕНЕ</span>
+
+    <div class="meal-add-mode-tabs">
+      <button type="button" class="vitals-tab active" data-meal-mode="product">ОТ ПРОДУКТ</button>
+      <button type="button" class="vitals-tab" data-meal-mode="manual">РЪЧНО</button>
+    </div>
+
+    <div class="product-edit-form" id="mealAddModeProduct">
+      <div class="product-edit-field">
+        <label for="productDropdownBtn">Продукт</label>
+        <div class="product-dropdown" id="productDropdown">
+          <button type="button" class="product-dropdown-btn" id="productDropdownBtn">
+            <span id="productDropdownLabel">— избери продукт —</span>
+            <span class="caret">▾</span>
+          </button>
+          <div class="product-dropdown-menu hidden" id="productDropdownMenu">
+            <div class="product-search-row">
+              <span class="product-search-icon">⌕</span>
+              <input type="text" id="productSearchInput" class="product-search-input" placeholder="Търси продукт..." autocomplete="off" />
+            </div>
+            <div class="product-dropdown-list" id="productDropdownList"></div>
+          </div>
+        </div>
+      </div>
+      <div class="product-edit-field">
+        <label for="productGrams">Грамове / мл</label>
+        <input type="number" id="productGrams" class="mini-input" placeholder="напр. 150" min="0" />
+      </div>
+    </div>
+
+    <div class="product-edit-form hidden" id="mealAddModeManual">
+      <div class="product-edit-field">
+        <label for="mealDesc">Какво прие?</label>
+        <input type="text" id="mealDesc" class="mini-input" placeholder="напр. Пилешко филе на скара" />
+      </div>
+      <div class="product-edit-row">
+        <div class="product-edit-field">
+          <label for="mealCalories">Ккал</label>
+          <input type="number" id="mealCalories" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="mealProtein">Б (г)</label>
+          <input type="number" id="mealProtein" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="mealCarbs">В (г)</label>
+          <input type="number" id="mealCarbs" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="mealFat">М (г)</label>
+          <input type="number" id="mealFat" class="mini-input" min="0" />
+        </div>
+      </div>
+    </div>
+
+    <div class="matrix-modal-actions">
+      <button class="chip" id="mealAddCancelBtn">Отказ</button>
+      <button class="chip" id="mealAddSaveBtn">Добави</button>
     </div>
   </div>
 </div>
@@ -3697,6 +3768,33 @@
 
     commitMeal(desc, kcal, protein, carbs, fat);
     ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
+    closeMealAddModal();
+  }
+
+  let mealAddMode = 'product';
+
+  function switchMealAddMode(mode) {
+    mealAddMode = mode;
+    document.querySelectorAll('.meal-add-mode-tabs .vitals-tab').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.mealMode === mode);
+    });
+    $('mealAddModeProduct').classList.toggle('hidden', mode !== 'product');
+    $('mealAddModeManual').classList.toggle('hidden', mode !== 'manual');
+  }
+
+  function openMealAddModal() {
+    switchMealAddMode('product');
+    $('mealAddModal').classList.remove('hidden');
+  }
+
+  function closeMealAddModal() {
+    $('mealAddModal').classList.add('hidden');
+    closeProductDropdown();
+  }
+
+  function saveMealFromModal() {
+    if (mealAddMode === 'product') addFromProduct();
+    else addMeal();
   }
 
   let selectedProductId = '';
@@ -3782,6 +3880,7 @@
       product.fat * ratio
     );
     $('productGrams').value = '';
+    closeMealAddModal();
   }
 
   function closeProductDropdown() {
@@ -4779,12 +4878,15 @@
       btn.addEventListener('click', () => addSteps(parseFloat(btn.dataset.stepsAdd)));
     });
 
-    $('mealAddBtn').addEventListener('click', addMeal);
-    ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => {
-      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addMeal(); });
+    $('mealAddOpenBtn').addEventListener('click', openMealAddModal);
+    $('mealAddCancelBtn').addEventListener('click', closeMealAddModal);
+    $('mealAddSaveBtn').addEventListener('click', saveMealFromModal);
+    document.querySelectorAll('.meal-add-mode-tabs .vitals-tab').forEach((btn) => {
+      btn.addEventListener('click', () => switchMealAddMode(btn.dataset.mealMode));
     });
-    $('productAddBtn').addEventListener('click', addFromProduct);
-    $('productGrams').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFromProduct(); });
+    ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat','productGrams'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') saveMealFromModal(); });
+    });
     $('productDropdownBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleProductDropdown(); });
     $('productSearchInput').addEventListener('click', (e) => e.stopPropagation());
     $('productSearchInput').addEventListener('input', (e) => filterProductDropdown(e.target.value));
@@ -4803,7 +4905,7 @@
       if (!$('settingsDropdown').contains(e.target)) closeSettingsMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); }
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); }
     });
     $('productDbAddBtn').addEventListener('click', openProductAddModal);
     $('productEditCancelBtn').addEventListener('click', closeProductEditModal);
