@@ -644,6 +644,15 @@
     transition: box-shadow 0.2s ease, transform 0.2s ease;
   }
 
+  .gauge-pair {
+    display: flex;
+    gap: 10px;
+  }
+
+  .gauge-pair .gauge { flex: 1; min-width: 0; padding: 12px 14px; }
+  .gauge-pair .gauge-value { font-size: 20px; }
+  .gauge-pair .gauge-row { flex-wrap: wrap; row-gap: 4px; }
+
   .gauge:hover {
     transform: translateX(2px);
     box-shadow: -2px 0 14px -4px rgba(var(--violet-rgb), 0.25);
@@ -2380,14 +2389,27 @@
         </section>
 
         <aside class="gauges">
-          <div class="gauge">
-            <div class="gauge-top">
-              <span class="gauge-label">ТАЗИ СЕДМИЦА</span>
-              <span class="gauge-delta flat" id="weekDelta">—</span>
+          <div class="gauge-pair">
+            <div class="gauge">
+              <div class="gauge-top">
+                <span class="gauge-label">1 - 15</span>
+                <span class="gauge-delta flat" id="firstHalfDelta">—</span>
+              </div>
+              <div class="gauge-row">
+                <div class="gauge-value-wrap"><span class="gauge-value" id="firstHalfDays">0</span><span class="gauge-unit">дни</span></div>
+                <div class="gauge-value-wrap"><span class="gauge-value money" id="firstHalfEarnings">0</span><span class="gauge-unit">€</span></div>
+              </div>
             </div>
-            <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value" id="weekDays">0</span><span class="gauge-unit">дни</span></div>
-              <div class="gauge-value-wrap"><span class="gauge-value money" id="weekEarnings">0</span><span class="gauge-unit">€</span></div>
+
+            <div class="gauge">
+              <div class="gauge-top">
+                <span class="gauge-label">16 - КРАЙ</span>
+                <span class="gauge-delta flat" id="secondHalfDelta">—</span>
+              </div>
+              <div class="gauge-row">
+                <div class="gauge-value-wrap"><span class="gauge-value" id="secondHalfDays">0</span><span class="gauge-unit">дни</span></div>
+                <div class="gauge-value-wrap"><span class="gauge-value money" id="secondHalfEarnings">0</span><span class="gauge-unit">€</span></div>
+              </div>
             </div>
           </div>
 
@@ -3479,42 +3501,52 @@
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const weekStart = getMonday(today);
-    const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6); weekEnd.setHours(23,59,59,999);
-    const prevWeekStart = new Date(weekStart); prevWeekStart.setDate(prevWeekStart.getDate() - 7);
-    const prevWeekEnd = new Date(weekStart); prevWeekEnd.setMilliseconds(-1);
-
     const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
     const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
     const prevMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
     const prevMonthEnd = new Date(monthStart.getTime() - 1);
+
+    const firstHalfStart = monthStart;
+    const firstHalfEnd = new Date(today.getFullYear(), today.getMonth(), 15, 23, 59, 59, 999);
+    const secondHalfStart = new Date(today.getFullYear(), today.getMonth(), 16);
+    const secondHalfEnd = monthEnd;
+
+    const prevFirstHalfStart = prevMonthStart;
+    const prevFirstHalfEnd = new Date(prevMonthStart.getFullYear(), prevMonthStart.getMonth(), 15, 23, 59, 59, 999);
+    const prevSecondHalfStart = new Date(prevMonthStart.getFullYear(), prevMonthStart.getMonth(), 16);
+    const prevSecondHalfEnd = prevMonthEnd;
 
     const yearStart = new Date(today.getFullYear(), 0, 1);
     const yearEnd = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
     const prevYearStart = new Date(today.getFullYear() - 1, 0, 1);
     const prevYearEnd = new Date(yearStart.getTime() - 1);
 
-    const weekDays = countWorkRange(weekStart, weekEnd);
+    const firstHalfDays = countWorkRange(firstHalfStart, firstHalfEnd);
+    const secondHalfDays = countWorkRange(secondHalfStart, secondHalfEnd);
     const monthDays = countWorkRange(monthStart, monthEnd);
     const yearDays = countWorkRange(yearStart, yearEnd);
-    const prevWeekDays = countWorkRange(prevWeekStart, prevWeekEnd);
+    const prevFirstHalfDays = countWorkRange(prevFirstHalfStart, prevFirstHalfEnd);
+    const prevSecondHalfDays = countWorkRange(prevSecondHalfStart, prevSecondHalfEnd);
     const prevMonthDays = countWorkRange(prevMonthStart, prevMonthEnd);
     const prevYearDays = countWorkRange(prevYearStart, prevYearEnd);
 
     const rate = state.workdays.dailyRate || 0;
 
     if (instant) {
-      ['weekDays','monthDays','yearDays','weekEarnings','monthEarnings','yearEarnings'].forEach((id) => $(id).dataset.val = 0);
+      ['firstHalfDays','secondHalfDays','monthDays','yearDays','firstHalfEarnings','secondHalfEarnings','monthEarnings','yearEarnings'].forEach((id) => $(id).dataset.val = 0);
     }
 
-    animateValue($('weekDays'), weekDays);
+    animateValue($('firstHalfDays'), firstHalfDays);
+    animateValue($('secondHalfDays'), secondHalfDays);
     animateValue($('monthDays'), monthDays);
     animateValue($('yearDays'), yearDays);
-    animateValue($('weekEarnings'), weekDays * rate);
+    animateValue($('firstHalfEarnings'), firstHalfDays * rate);
+    animateValue($('secondHalfEarnings'), secondHalfDays * rate);
     animateValue($('monthEarnings'), monthDays * rate);
     animateValue($('yearEarnings'), yearDays * rate);
 
-    setDelta($('weekDelta'), weekDays, prevWeekDays);
+    setDelta($('firstHalfDelta'), firstHalfDays, prevFirstHalfDays);
+    setDelta($('secondHalfDelta'), secondHalfDays, prevSecondHalfDays);
     setDelta($('monthDelta'), monthDays, prevMonthDays);
     setDelta($('yearDelta'), yearDays, prevYearDays);
   }
