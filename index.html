@@ -1847,9 +1847,28 @@
 
   .auth-brand {
     display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 12px;
-    margin-bottom: 22px;
+    margin-bottom: 26px;
+    text-align: center;
+  }
+
+  .auth-brand .brand-mark {
+    width: 52px;
+    height: 52px;
+    font-size: 22px;
+    border-radius: 8px;
+  }
+
+  .auth-brand .brand-text h1 {
+    font-size: 30px;
+    letter-spacing: 6px;
+  }
+
+  .auth-brand .brand-sub {
+    display: block;
+    margin-top: 4px;
   }
 
   .auth-fields {
@@ -2370,7 +2389,7 @@
     <div class="auth-brand">
       <div class="brand-mark">◆</div>
       <div class="brand-text">
-        <h1 style="font-size:17px;letter-spacing:4px;">LIFEOS</h1>
+        <h1>LIFEOS</h1>
         <span class="brand-sub" id="authSubtitle">ВХОД</span>
       </div>
     </div>
@@ -4319,7 +4338,7 @@
     const expensesTotal = getExpensesTotal();
     const balance = advancesTotal - expensesTotal;
 
-    $('reportEmployee').textContent = currentUser ? currentUser.email : '';
+    $('reportEmployee').textContent = getProfileDisplayName();
     $('reportDate').textContent = 'Генериран на ' + formatDateDisplay(todayKey());
 
     const rows = $('reportExpenseRows');
@@ -4354,11 +4373,11 @@
   /* ============ Profile ============ */
 
   function getProfileDisplayName() {
-    return (state.profile.name || '').trim() || (currentUser ? currentUser.email : '');
+    return (state.profile.name || '').trim() || 'Моят профил';
   }
 
   function getProfileInitial() {
-    const name = getProfileDisplayName();
+    const name = (state.profile.name || '').trim();
     return name ? name.charAt(0).toUpperCase() : '?';
   }
 
