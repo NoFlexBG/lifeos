@@ -1926,6 +1926,48 @@
     color: var(--text-dim);
   }
 
+  .profile-avatar-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--violet-dim);
+    color: var(--violet);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    overflow: hidden;
+    flex-shrink: 0;
+    transition: border-color 0.15s ease;
+  }
+
+  .profile-avatar-btn:hover { border-color: var(--violet); }
+
+  .profile-avatar-btn img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .profile-avatar-btn-lg {
+    width: 72px;
+    height: 72px;
+    font-size: 26px;
+  }
+
+  .profile-modal-avatar-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  #profileEmailDisplay { opacity: 0.6; cursor: not-allowed; }
+
   /* ============ Settings menu ============ */
 
   .settings-dropdown { position: relative; }
@@ -2116,6 +2158,12 @@
   .product-edit-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  .product-edit-row-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 10px;
   }
 
@@ -2323,6 +2371,10 @@
         </div>
       </div>
       <div class="user-box">
+        <button class="profile-avatar-btn" id="profileAvatarBtn" title="Профил">
+          <img id="profileAvatarImg" class="hidden" alt="" />
+          <span id="profileAvatarInitial">?</span>
+        </button>
         <span id="userEmailLabel"></span>
         <button class="icon-btn" id="logoutBtn" title="Изход">⏻</button>
       </div>
@@ -3261,6 +3313,39 @@
   </table>
 </div>
 
+<div class="product-edit-modal hidden" id="profileModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label">ПРОФИЛ</span>
+
+    <div class="profile-modal-avatar-row">
+      <button class="profile-avatar-btn profile-avatar-btn-lg" id="profileModalAvatarBtn" title="Смени снимка">
+        <img id="profileModalAvatarImg" class="hidden" alt="" />
+        <span id="profileModalAvatarInitial">?</span>
+      </button>
+      <button class="chip" id="profileAvatarUploadBtn">Смени снимка</button>
+    </div>
+    <input type="file" id="profileAvatarFileInput" accept="image/*" class="hidden" />
+
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="profileNameInput">Име</label>
+        <input type="text" id="profileNameInput" class="mini-input" placeholder="Твоето име" maxlength="40" />
+      </div>
+      <div class="product-edit-field">
+        <label for="profileEmailDisplay">Имейл</label>
+        <input type="text" id="profileEmailDisplay" class="mini-input" disabled />
+      </div>
+    </div>
+
+    <div class="matrix-modal-actions">
+      <button class="chip" id="profileCancelBtn">Отказ</button>
+      <button class="chip" id="profileSaveBtn">Запази</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -3291,7 +3376,8 @@
       records: { v1: { repairs: [], fuel: [], documents: [], fines: [], photos: [] } }
     },
     savings: { goal: 1000, coins: {} },
-    company: { advances: [], expenses: [] }
+    company: { advances: [], expenses: [] },
+    profile: { name: '', avatarPath: '' }
   };
 
   let viewDate = new Date();
@@ -3333,6 +3419,10 @@
           company: {
             advances: (parsed.company && parsed.company.advances) || [],
             expenses: (parsed.company && parsed.company.expenses) || []
+          },
+          profile: {
+            name: (parsed.profile && parsed.profile.name) || '',
+            avatarPath: (parsed.profile && parsed.profile.avatarPath) || ''
           }
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
@@ -4173,6 +4263,88 @@
     $('reportBalance').textContent = formatMoney(balance) + ' €';
 
     window.print();
+  }
+
+  /* ============ Profile ============ */
+
+  function getProfileDisplayName() {
+    return (state.profile.name || '').trim() || (currentUser ? currentUser.email : '');
+  }
+
+  function getProfileInitial() {
+    const name = getProfileDisplayName();
+    return name ? name.charAt(0).toUpperCase() : '?';
+  }
+
+  function renderAvatarInto(imgEl, initialEl, path) {
+    if (!path) {
+      imgEl.classList.add('hidden');
+      imgEl.src = '';
+      initialEl.classList.remove('hidden');
+      initialEl.textContent = getProfileInitial();
+      return;
+    }
+    getSignedPhotoUrl(path).then(({ data, error }) => {
+      if (error || !data) {
+        imgEl.classList.add('hidden');
+        initialEl.classList.remove('hidden');
+        initialEl.textContent = getProfileInitial();
+        return;
+      }
+      imgEl.src = data.signedUrl;
+      imgEl.classList.remove('hidden');
+      initialEl.classList.add('hidden');
+    });
+  }
+
+  function renderProfileIdentity() {
+    $('userEmailLabel').textContent = getProfileDisplayName();
+    renderAvatarInto($('profileAvatarImg'), $('profileAvatarInitial'), state.profile.avatarPath);
+  }
+
+  function openProfileModal() {
+    $('profileNameInput').value = state.profile.name || '';
+    $('profileEmailDisplay').value = currentUser ? currentUser.email : '';
+    renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), state.profile.avatarPath);
+    $('profileModal').classList.remove('hidden');
+    $('profileNameInput').focus();
+  }
+
+  function closeProfileModal() {
+    $('profileModal').classList.add('hidden');
+  }
+
+  function saveProfileFromModal() {
+    state.profile.name = $('profileNameInput').value.trim();
+    saveState();
+    renderProfileIdentity();
+    closeProfileModal();
+  }
+
+  async function uploadProfileAvatar(file) {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast('Само снимки'); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`Файлът е над ${MAX_PHOTO_MB}MB`); return; }
+
+    let blob;
+    try { blob = await compressImage(file, 400, 0.85); } catch { blob = file; }
+
+    const path = `${currentUser.id}/profile/avatar.jpg`;
+    const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+    if (error) { showToast('Грешка при качване на снимка'); return; }
+
+    delete signedUrlCache[path];
+    state.profile.avatarPath = path;
+    saveState();
+    renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), path);
+    renderAvatarInto($('profileAvatarImg'), $('profileAvatarInitial'), path);
+    showToast('Снимката е обновена');
+  }
+
+  function onProfileAvatarFileSelected(evt) {
+    const file = evt.target.files[0];
+    evt.target.value = '';
+    uploadProfileAvatar(file);
   }
 
   /* ============ Vitals ============ */
@@ -5646,7 +5818,11 @@
           company: parsed.company ? {
             advances: parsed.company.advances || [],
             expenses: parsed.company.expenses || []
-          } : state.company
+          } : state.company,
+          profile: parsed.profile ? {
+            name: parsed.profile.name || '',
+            avatarPath: parsed.profile.avatarPath || ''
+          } : state.profile
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
           state.garage.activeVehicleId = state.garage.vehicles[0].id;
@@ -5823,8 +5999,15 @@
       if (!$('settingsDropdown').contains(e.target)) closeSettingsMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); }
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); closeProfileModal(); }
     });
+    $('profileAvatarBtn').addEventListener('click', openProfileModal);
+    $('profileModalAvatarBtn').addEventListener('click', () => $('profileAvatarFileInput').click());
+    $('profileAvatarUploadBtn').addEventListener('click', () => $('profileAvatarFileInput').click());
+    $('profileAvatarFileInput').addEventListener('change', onProfileAvatarFileSelected);
+    $('profileCancelBtn').addEventListener('click', closeProfileModal);
+    $('profileSaveBtn').addEventListener('click', saveProfileFromModal);
+    $('profileNameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveProfileFromModal(); });
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
     document.querySelectorAll('.vitals-tab[data-company-tab]').forEach((btn) => {
       btn.addEventListener('click', () => switchCompanyTab(btn.dataset.companyTab));
@@ -5915,7 +6098,7 @@
 
     $('authScreen').classList.add('hidden');
     $('appRoot').classList.remove('hidden');
-    $('userEmailLabel').textContent = currentUser ? currentUser.email : '';
+    renderProfileIdentity();
 
     showScreen('hub');
   }
