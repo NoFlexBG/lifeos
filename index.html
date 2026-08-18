@@ -3386,7 +3386,6 @@
     </div>
     <div class="report-meta">
       <span id="reportEmployee"></span>
-      <span id="reportDate"></span>
     </div>
   </div>
 
@@ -4339,7 +4338,6 @@
     const balance = advancesTotal - expensesTotal;
 
     $('reportEmployee').textContent = getProfileDisplayName();
-    $('reportDate').textContent = 'Генериран на ' + formatDateDisplay(todayKey());
 
     const rows = $('reportExpenseRows');
     rows.innerHTML = '';
