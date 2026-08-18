@@ -436,6 +436,7 @@
   .tile[data-app="tdee"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
   .tile[data-app="garage"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
   .tile[data-app="savings"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
+  .tile[data-app="company"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
 
   .tile-top {
     display: flex;
@@ -459,6 +460,7 @@
   .tile[data-app="tdee"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
   .tile[data-app="garage"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
   .tile[data-app="savings"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
+  .tile[data-app="company"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
 
   .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
   .tile:hover .tile-arrow { transform: translateX(3px); color: var(--text-dim); }
@@ -1524,6 +1526,7 @@
   .garage-stat[data-accent="amber"] .garage-stat-value { color: var(--amber); }
   .garage-stat[data-accent="cyan"] .garage-stat-value { color: var(--cyan); }
   .garage-stat[data-accent="pink"] .garage-stat-value { color: var(--pink); }
+  .garage-stat[data-accent="violet"] .garage-stat-value { color: var(--violet); }
 
   .garage-alert-list {
     display: flex;
@@ -1768,8 +1771,6 @@
 
   .record-row-del:hover { border-color: var(--danger); color: var(--danger); }
 
-  .record-row-has-edit { grid-template-columns: 90px 1fr auto auto 22px 22px; }
-
   .record-row-edit {
     width: 20px;
     height: 20px;
@@ -1786,6 +1787,8 @@
   }
 
   .record-row-edit:hover { border-color: var(--violet); color: var(--violet); }
+
+  .record-row-edit.has-receipt { border-color: var(--cyan); color: var(--cyan); }
 
   .record-empty { color: var(--text-faint); font-size: 12px; padding: 8px 2px; }
 
@@ -2183,6 +2186,59 @@
   @media (max-width: 640px) {
     #userEmailLabel { display: none; }
   }
+
+  /* ============ Company report (print) ============ */
+
+  .report-view { display: none; }
+
+  @media print {
+    body * { visibility: hidden; }
+    .report-view, .report-view * { visibility: visible; }
+    .report-view {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      color: #111;
+      padding: 30px;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .report-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      border-bottom: 2px solid #111;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .report-title { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+
+    .report-meta { display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; color: #444; gap: 2px; }
+
+    .report-table { width: 100%; border-collapse: collapse; margin-bottom: 22px; }
+
+    .report-table th, .report-table td {
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 1px solid #ccc;
+      font-size: 13px;
+    }
+
+    .report-table th { border-bottom: 2px solid #111; font-weight: 700; }
+    .report-table td:last-child, .report-table th:last-child { text-align: right; }
+    .report-table tfoot td { font-weight: 700; border-top: 2px solid #111; border-bottom: none; }
+
+    .report-summary { width: 300px; margin-left: auto; border-collapse: collapse; margin-bottom: 40px; }
+    .report-summary td { padding: 6px 10px; font-size: 13px; }
+    .report-summary td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .report-summary-balance td { font-weight: 700; font-size: 15px; border-top: 2px solid #111; }
+
+    .report-signature { display: flex; justify-content: space-between; margin-top: 60px; font-size: 13px; }
+  }
 </style>
 </head>
 <body>
@@ -2354,6 +2410,21 @@
           <div class="tile-preview">
             <div class="tile-stat"><span class="tile-stat-value" id="hubTdeeBmr">0</span><span class="tile-stat-label">BMR</span></div>
             <div class="tile-stat"><span class="tile-stat-value" id="hubTdeeValue">0</span><span class="tile-stat-label">TDEE (ККАЛ)</span></div>
+          </div>
+        </div>
+
+        <div class="console-panel tile" data-app="company">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">▤</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">EXPENSES</div>
+          <div class="tile-desc">Служебни пари и отчитане</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubCompanyBalance">0€</span><span class="tile-stat-label">ТЕКУЩ БАЛАНС</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubCompanyMonthSpent">0€</span><span class="tile-stat-label">ПОХАРЧЕНО ТОЗИ МЕСЕЦ</span></div>
           </div>
         </div>
       </div>
@@ -2727,6 +2798,68 @@
       </div>
     </section>
 
+    <!-- ============ COMPANY EXPENSES ============ -->
+    <section id="screen-company" class="screen hidden">
+      <div class="vitals-body">
+        <div class="vitals-tabs">
+          <button class="vitals-tab active" data-company-tab="overview">ОБЗОР</button>
+          <button class="vitals-tab" data-company-tab="advances">АВАНСИ</button>
+          <button class="vitals-tab" data-company-tab="expenses">РАЗХОДИ</button>
+        </div>
+
+        <div class="vitals-tab-panel" id="companyTabOverview">
+          <div class="garage-stats-row">
+            <div class="console-panel garage-stat" data-accent="violet">
+              <span class="gauge-label">ТЕКУЩ БАЛАНС</span>
+              <div class="garage-stat-value" id="companyBalanceValue">0.00€</div>
+            </div>
+            <div class="console-panel garage-stat" data-accent="cyan">
+              <span class="gauge-label">ПОЛУЧЕНИ АВАНСИ</span>
+              <div class="garage-stat-value" id="companyAdvancesTotal">0.00€</div>
+            </div>
+            <div class="console-panel garage-stat" data-accent="amber">
+              <span class="gauge-label">ПОХАРЧЕНО</span>
+              <div class="garage-stat-value" id="companyExpensesTotal">0.00€</div>
+            </div>
+          </div>
+
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head"><span class="gauge-label">ОТЧЕТ</span></div>
+            <p class="tdee-note">Свали чист документ с всички разходи, готов за печат или запис като PDF — за да го предадеш на шефа.</p>
+            <div class="chip-row">
+              <button class="chip" id="companyReportBtn">⭳ Свали отчет</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="companyTabAdvances">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label">АВАНСИ</span>
+              <button class="chip" id="advanceAddOpenBtn">+ Добави аванс</button>
+            </div>
+            <div class="record-list" id="advancesList"></div>
+          </div>
+        </div>
+
+        <div class="vitals-tab-panel hidden" id="companyTabExpenses">
+          <div class="console-panel chart-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label">РАЗХОДИ</span>
+              <button class="chip" id="expenseAddOpenBtn">+ Добави разход</button>
+            </div>
+            <div class="record-list" id="expensesList"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ GARAGE ============ -->
     <section id="screen-garage" class="screen hidden">
       <div class="garage-body">
@@ -3048,6 +3181,93 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="advanceModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" id="advanceModalTitle">ДОБАВИ АВАНС</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="advanceAmountInput">Сума (€)</label>
+        <input type="number" id="advanceAmountInput" class="mini-input" min="0" step="0.01" />
+      </div>
+      <div class="product-edit-field">
+        <label for="advanceDateInput">Дата</label>
+        <input type="date" id="advanceDateInput" class="mini-input" />
+      </div>
+      <div class="product-edit-field">
+        <label for="advanceNoteInput">Бележка (по избор)</label>
+        <input type="text" id="advanceNoteInput" class="mini-input" placeholder="напр. Аванс за командировка" />
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="advanceCancelBtn">Отказ</button>
+      <button class="chip" id="advanceSaveBtn">Добави</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="expenseModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" id="expenseModalTitle">ДОБАВИ РАЗХОД</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="expenseDescInput">За какво</label>
+        <input type="text" id="expenseDescInput" class="mini-input" placeholder="напр. Гориво, паркинг, материали" />
+      </div>
+      <div class="product-edit-row-2">
+        <div class="product-edit-field">
+          <label for="expenseAmountInput">Сума (€)</label>
+          <input type="number" id="expenseAmountInput" class="mini-input" min="0" step="0.01" />
+        </div>
+        <div class="product-edit-field">
+          <label for="expenseDateInput">Дата</label>
+          <input type="date" id="expenseDateInput" class="mini-input" />
+        </div>
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="expenseCancelBtn">Отказ</button>
+      <button class="chip" id="expenseSaveBtn">Добави</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="expenseReceiptFileInput" accept="image/*" class="hidden" />
+
+<div class="report-view" id="companyReportView">
+  <div class="report-header">
+    <div class="report-title">СЛУЖЕБЕН ОТЧЕТ</div>
+    <div class="report-meta">
+      <span id="reportEmployee"></span>
+      <span id="reportDate"></span>
+    </div>
+  </div>
+
+  <table class="report-table">
+    <thead>
+      <tr><th>Дата</th><th>Описание</th><th>Сума</th></tr>
+    </thead>
+    <tbody id="reportExpenseRows"></tbody>
+    <tfoot>
+      <tr><td colspan="2">Общо похарчено</td><td id="reportTotalSpent">0.00 €</td></tr>
+    </tfoot>
+  </table>
+
+  <table class="report-summary">
+    <tr><td>Общо получени аванси</td><td id="reportTotalAdvances">0.00 €</td></tr>
+    <tr><td>Общо похарчено</td><td id="reportTotalSpent2">0.00 €</td></tr>
+    <tr class="report-summary-balance"><td>Текущ баланс</td><td id="reportBalance">0.00 €</td></tr>
+  </table>
+
+  <div class="report-signature">
+    <div class="report-signature-line">Подпис: ______________________</div>
+    <div class="report-signature-line">Дата: ______________________</div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -3077,7 +3297,8 @@
       activeVehicleId: 'v1',
       records: { v1: { repairs: [], fuel: [], documents: [], fines: [], photos: [] } }
     },
-    savings: { goal: 1000, coins: {} }
+    savings: { goal: 1000, coins: {} },
+    company: { advances: [], expenses: [] }
   };
 
   let viewDate = new Date();
@@ -3115,6 +3336,10 @@
           savings: {
             goal: (parsed.savings && parsed.savings.goal) || defaults.savings.goal,
             coins: (parsed.savings && parsed.savings.coins) || {}
+          },
+          company: {
+            advances: (parsed.company && parsed.company.advances) || [],
+            expenses: (parsed.company && parsed.company.expenses) || []
           }
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
@@ -3207,7 +3432,7 @@
     $('goalsBox').classList.toggle('hidden', name !== 'vitals');
     $('vehicleBox').classList.toggle('hidden', name !== 'garage');
 
-    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', admin: 'ADMIN' };
+    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', company: 'EXPENSES', admin: 'ADMIN' };
     const subs = {
       hub: 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР',
       workdays: 'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ',
@@ -3215,6 +3440,7 @@
       tdee: 'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД',
       garage: 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ',
       savings: 'СПЕСТЕНИ ПАРИ',
+      company: 'СЛУЖЕБНИ ПАРИ',
       admin: 'СЛУЖЕБНО ТАБЛО'
     };
     $('brandTitle').textContent = titles[name];
@@ -3226,6 +3452,7 @@
     if (name === 'tdee') computeTDEE();
     if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
     if (name === 'savings') renderSavingsAll();
+    if (name === 'company') { renderCompanyAll(); switchCompanyTab('overview'); }
     if (name === 'admin') renderAdmin();
   }
 
@@ -3263,6 +3490,9 @@
     const savingsTotal = getSavingsTotal();
     $('hubSavingsTotal').textContent = formatMoney(savingsTotal) + '€';
     $('hubSavingsToGoal').textContent = formatMoney(Math.max(0, (state.savings.goal || 0) - savingsTotal)) + '€';
+
+    $('hubCompanyBalance').textContent = formatMoney(getCompanyBalance()) + '€';
+    $('hubCompanyMonthSpent').textContent = formatMoney(getCompanyMonthSpent()) + '€';
   }
 
   function onBrandMarkClick() {
@@ -3668,6 +3898,288 @@
     state.savings.goal = isNaN(goal) ? 0 : goal;
     saveState();
     renderSavingsOverview();
+  }
+
+  /* ============ Company expenses ============ */
+
+  let editingAdvanceId = '';
+  let editingExpenseId = '';
+  let pendingReceiptExpenseId = '';
+
+  function switchCompanyTab(tab) {
+    document.querySelectorAll('.vitals-tab[data-company-tab]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.companyTab === tab);
+    });
+    $('companyTabOverview').classList.toggle('hidden', tab !== 'overview');
+    $('companyTabAdvances').classList.toggle('hidden', tab !== 'advances');
+    $('companyTabExpenses').classList.toggle('hidden', tab !== 'expenses');
+  }
+
+  function getAdvancesTotal() {
+    return state.company.advances.reduce((sum, a) => sum + a.amount, 0);
+  }
+
+  function getExpensesTotal() {
+    return state.company.expenses.reduce((sum, e) => sum + e.amount, 0);
+  }
+
+  function getCompanyBalance() {
+    return getAdvancesTotal() - getExpensesTotal();
+  }
+
+  function getCompanyMonthSpent() {
+    const now = new Date();
+    const prefix = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    return state.company.expenses
+      .filter((e) => e.date.startsWith(prefix))
+      .reduce((sum, e) => sum + e.amount, 0);
+  }
+
+  function renderCompanyOverview() {
+    $('companyBalanceValue').textContent = formatMoney(getCompanyBalance()) + '€';
+    $('companyAdvancesTotal').textContent = formatMoney(getAdvancesTotal()) + '€';
+    $('companyExpensesTotal').textContent = formatMoney(getExpensesTotal()) + '€';
+  }
+
+  function renderAdvancesList() {
+    const list = state.company.advances.slice().sort((a, b) => b.date.localeCompare(a.date));
+    const container = $('advancesList');
+    container.innerHTML = '';
+    if (!list.length) { renderEmptyRow(container, 'Няма записани аванси'); return; }
+    list.forEach((a) => {
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(a.date),
+        desc: a.note || 'Аванс',
+        meta: '',
+        cost: formatMoney(a.amount) + ' €',
+        onDelete: () => deleteAdvance(a.id),
+        onEdit: () => openAdvanceEditModal(a.id)
+      }));
+    });
+  }
+
+  function renderExpensesList() {
+    const list = state.company.expenses.slice().sort((a, b) => b.date.localeCompare(a.date));
+    const container = $('expensesList');
+    container.innerHTML = '';
+    if (!list.length) { renderEmptyRow(container, 'Няма записани разходи'); return; }
+    list.forEach((e) => {
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(e.date),
+        desc: e.desc,
+        meta: '',
+        cost: formatMoney(e.amount) + ' €',
+        onDelete: () => deleteExpense(e.id),
+        onEdit: () => openExpenseEditModal(e.id),
+        onPhoto: () => onExpensePhotoClick(e.id),
+        hasPhoto: !!e.receiptPath
+      }));
+    });
+  }
+
+  function renderCompanyAll() {
+    renderCompanyOverview();
+    renderAdvancesList();
+    renderExpensesList();
+  }
+
+  function openAdvanceModal() {
+    editingAdvanceId = '';
+    $('advanceAmountInput').value = '';
+    $('advanceDateInput').value = todayKey();
+    $('advanceNoteInput').value = '';
+    $('advanceModalTitle').textContent = 'ДОБАВИ АВАНС';
+    $('advanceSaveBtn').textContent = 'Добави';
+    $('advanceModal').classList.remove('hidden');
+    $('advanceAmountInput').focus();
+  }
+
+  function openAdvanceEditModal(id) {
+    const a = state.company.advances.find((x) => x.id === id);
+    if (!a) return;
+    editingAdvanceId = id;
+    $('advanceAmountInput').value = a.amount;
+    $('advanceDateInput').value = a.date;
+    $('advanceNoteInput').value = a.note || '';
+    $('advanceModalTitle').textContent = 'РЕДАКТИРАЙ АВАНС';
+    $('advanceSaveBtn').textContent = 'Запиши';
+    $('advanceModal').classList.remove('hidden');
+  }
+
+  function closeAdvanceModal() {
+    editingAdvanceId = '';
+    $('advanceModal').classList.add('hidden');
+  }
+
+  function saveAdvanceFromModal() {
+    const amount = parseFloat($('advanceAmountInput').value);
+    const date = $('advanceDateInput').value;
+    const note = $('advanceNoteInput').value.trim();
+
+    if (!amount || amount <= 0) { showToast('Въведи сума'); return; }
+    if (!date) { showToast('Избери дата'); return; }
+
+    if (editingAdvanceId) {
+      const a = state.company.advances.find((x) => x.id === editingAdvanceId);
+      if (a) Object.assign(a, { amount, date, note });
+    } else {
+      state.company.advances.push({ id: genId('adv'), amount, date, note });
+    }
+
+    saveState();
+    closeAdvanceModal();
+    renderCompanyOverview();
+    renderAdvancesList();
+    renderHubIfVisible();
+  }
+
+  function deleteAdvance(id) {
+    state.company.advances = state.company.advances.filter((a) => a.id !== id);
+    if (editingAdvanceId === id) closeAdvanceModal();
+    saveState();
+    renderCompanyOverview();
+    renderAdvancesList();
+    renderHubIfVisible();
+  }
+
+  function openExpenseModal() {
+    editingExpenseId = '';
+    $('expenseDescInput').value = '';
+    $('expenseAmountInput').value = '';
+    $('expenseDateInput').value = todayKey();
+    $('expenseModalTitle').textContent = 'ДОБАВИ РАЗХОД';
+    $('expenseSaveBtn').textContent = 'Добави';
+    $('expenseModal').classList.remove('hidden');
+    $('expenseDescInput').focus();
+  }
+
+  function openExpenseEditModal(id) {
+    const e = state.company.expenses.find((x) => x.id === id);
+    if (!e) return;
+    editingExpenseId = id;
+    $('expenseDescInput').value = e.desc;
+    $('expenseAmountInput').value = e.amount;
+    $('expenseDateInput').value = e.date;
+    $('expenseModalTitle').textContent = 'РЕДАКТИРАЙ РАЗХОД';
+    $('expenseSaveBtn').textContent = 'Запиши';
+    $('expenseModal').classList.remove('hidden');
+  }
+
+  function closeExpenseModal() {
+    editingExpenseId = '';
+    $('expenseModal').classList.add('hidden');
+  }
+
+  function saveExpenseFromModal() {
+    const desc = $('expenseDescInput').value.trim();
+    const amount = parseFloat($('expenseAmountInput').value);
+    const date = $('expenseDateInput').value;
+
+    if (!desc) { showToast('Въведи за какво е разходът'); return; }
+    if (!amount || amount <= 0) { showToast('Въведи сума'); return; }
+    if (!date) { showToast('Избери дата'); return; }
+
+    if (editingExpenseId) {
+      const e = state.company.expenses.find((x) => x.id === editingExpenseId);
+      if (e) Object.assign(e, { desc, amount, date });
+    } else {
+      state.company.expenses.push({ id: genId('exp'), desc, amount, date, receiptPath: '' });
+    }
+
+    saveState();
+    closeExpenseModal();
+    renderCompanyOverview();
+    renderExpensesList();
+    renderHubIfVisible();
+  }
+
+  async function deleteExpense(id) {
+    const e = state.company.expenses.find((x) => x.id === id);
+    if (e && e.receiptPath) {
+      await sb.storage.from(PHOTO_BUCKET).remove([e.receiptPath]);
+      delete signedUrlCache[e.receiptPath];
+    }
+    state.company.expenses = state.company.expenses.filter((x) => x.id !== id);
+    if (editingExpenseId === id) closeExpenseModal();
+    saveState();
+    renderCompanyOverview();
+    renderExpensesList();
+    renderHubIfVisible();
+  }
+
+  function onExpensePhotoClick(id) {
+    const e = state.company.expenses.find((x) => x.id === id);
+    if (!e) return;
+    if (e.receiptPath) {
+      getSignedPhotoUrl(e.receiptPath).then(({ data, error }) => {
+        if (error || !data) { showToast('Грешка при зареждане на снимката'); return; }
+        openPhotoLightbox(data.signedUrl, e.receiptPath);
+      });
+    } else {
+      pendingReceiptExpenseId = id;
+      $('expenseReceiptFileInput').click();
+    }
+  }
+
+  async function onExpenseReceiptFileSelected(evt) {
+    const file = evt.target.files[0];
+    evt.target.value = '';
+    if (!file || !pendingReceiptExpenseId) return;
+    const e = state.company.expenses.find((x) => x.id === pendingReceiptExpenseId);
+    pendingReceiptExpenseId = '';
+    if (!e) return;
+
+    if (!file.type.startsWith('image/')) { showToast('Само снимки'); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`Файлът е над ${MAX_PHOTO_MB}MB`); return; }
+
+    let blob;
+    try { blob = await compressImage(file, PHOTO_MAX_DIM, 0.82); } catch { blob = file; }
+
+    const path = `${currentUser.id}/receipts/${genId('rc')}.jpg`;
+    const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
+    if (error) { showToast('Грешка при качване на снимка'); return; }
+
+    e.receiptPath = path;
+    saveState();
+    renderExpensesList();
+    showToast('Снимката е прикачена');
+  }
+
+  function printCompanyReport() {
+    const advancesTotal = getAdvancesTotal();
+    const expensesTotal = getExpensesTotal();
+    const balance = advancesTotal - expensesTotal;
+
+    $('reportEmployee').textContent = currentUser ? currentUser.email : '';
+    $('reportDate').textContent = 'Генериран на ' + formatDateDisplay(todayKey());
+
+    const rows = $('reportExpenseRows');
+    rows.innerHTML = '';
+    const list = state.company.expenses.slice().sort((a, b) => a.date.localeCompare(b.date));
+    if (!list.length) {
+      const tr = document.createElement('tr');
+      tr.innerHTML = '<td colspan="3">Няма записани разходи</td>';
+      rows.appendChild(tr);
+    } else {
+      list.forEach((e) => {
+        const tr = document.createElement('tr');
+        const tdDate = document.createElement('td');
+        tdDate.textContent = formatDateDisplay(e.date);
+        const tdDesc = document.createElement('td');
+        tdDesc.textContent = e.desc;
+        const tdAmount = document.createElement('td');
+        tdAmount.textContent = formatMoney(e.amount) + ' €';
+        tr.append(tdDate, tdDesc, tdAmount);
+        rows.appendChild(tr);
+      });
+    }
+
+    $('reportTotalSpent').textContent = formatMoney(expensesTotal) + ' €';
+    $('reportTotalAdvances').textContent = formatMoney(advancesTotal) + ' €';
+    $('reportTotalSpent2').textContent = formatMoney(expensesTotal) + ' €';
+    $('reportBalance').textContent = formatMoney(balance) + ' €';
+
+    window.print();
   }
 
   /* ============ Vitals ============ */
@@ -4552,10 +5064,9 @@
     return { cls: 'valid', label: 'Валиден' };
   }
 
-  function createRecordRow({ date, desc, meta, cost, onDelete, onEdit }) {
+  function createRecordRow({ date, desc, meta, cost, onDelete, onEdit, onPhoto, hasPhoto }) {
     const row = document.createElement('div');
     row.className = 'record-row';
-    if (onEdit) row.classList.add('record-row-has-edit');
 
     const dateEl = document.createElement('span');
     dateEl.className = 'record-row-date';
@@ -4580,16 +5091,33 @@
     delBtn.textContent = '×';
     delBtn.addEventListener('click', onDelete);
 
+    row.append(dateEl, descEl, metaEl, costEl);
+
+    let actionCount = 0;
+    if (onPhoto) {
+      actionCount++;
+      const photoBtn = document.createElement('button');
+      photoBtn.className = 'record-row-edit' + (hasPhoto ? ' has-receipt' : '');
+      photoBtn.textContent = '▣';
+      photoBtn.title = hasPhoto ? 'Виж фактура' : 'Добави снимка на фактура';
+      photoBtn.addEventListener('click', onPhoto);
+      row.appendChild(photoBtn);
+    }
     if (onEdit) {
+      actionCount++;
       const editBtn = document.createElement('button');
       editBtn.className = 'record-row-edit';
       editBtn.textContent = '✎';
       editBtn.title = 'Редактирай';
       editBtn.addEventListener('click', onEdit);
-      row.append(dateEl, descEl, metaEl, costEl, editBtn, delBtn);
-    } else {
-      row.append(dateEl, descEl, metaEl, costEl, delBtn);
+      row.appendChild(editBtn);
     }
+    row.appendChild(delBtn);
+
+    if (actionCount > 0) {
+      row.style.gridTemplateColumns = `90px 1fr auto auto ${'22px '.repeat(actionCount + 1).trim()}`;
+    }
+
     return row;
   }
 
@@ -5121,7 +5649,11 @@
           savings: parsed.savings ? {
             goal: parsed.savings.goal || state.savings.goal,
             coins: parsed.savings.coins || {}
-          } : state.savings
+          } : state.savings,
+          company: parsed.company ? {
+            advances: parsed.company.advances || [],
+            expenses: parsed.company.expenses || []
+          } : state.company
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
           state.garage.activeVehicleId = state.garage.vehicles[0].id;
@@ -5298,9 +5830,26 @@
       if (!$('settingsDropdown').contains(e.target)) closeSettingsMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); }
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); }
     });
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
+    document.querySelectorAll('.vitals-tab[data-company-tab]').forEach((btn) => {
+      btn.addEventListener('click', () => switchCompanyTab(btn.dataset.companyTab));
+    });
+    $('advanceAddOpenBtn').addEventListener('click', openAdvanceModal);
+    $('advanceCancelBtn').addEventListener('click', closeAdvanceModal);
+    $('advanceSaveBtn').addEventListener('click', saveAdvanceFromModal);
+    ['advanceAmountInput','advanceDateInput','advanceNoteInput'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') saveAdvanceFromModal(); });
+    });
+    $('expenseAddOpenBtn').addEventListener('click', openExpenseModal);
+    $('expenseCancelBtn').addEventListener('click', closeExpenseModal);
+    $('expenseSaveBtn').addEventListener('click', saveExpenseFromModal);
+    ['expenseDescInput','expenseAmountInput','expenseDateInput'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') saveExpenseFromModal(); });
+    });
+    $('expenseReceiptFileInput').addEventListener('change', onExpenseReceiptFileSelected);
+    $('companyReportBtn').addEventListener('click', printCompanyReport);
     $('productDbAddBtn').addEventListener('click', openProductAddModal);
     $('productEditCancelBtn').addEventListener('click', closeProductEditModal);
     $('productEditSaveBtn').addEventListener('click', saveProductFromModal);
