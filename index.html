@@ -2240,8 +2240,10 @@
   .report-view { display: none; }
 
   @media print {
+    html, body { height: auto !important; background: #fff !important; overflow: visible !important; }
     body * { visibility: hidden; }
     .report-view, .report-view * { visibility: visible; }
+    #appRoot, .bg-fx, .matrix-rain, .auth-screen { display: none !important; }
     .report-view {
       display: block;
       position: absolute;
@@ -2250,40 +2252,106 @@
       width: 100%;
       background: #fff;
       color: #111;
-      padding: 30px;
+      padding: 34px;
       font-family: Arial, Helvetica, sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+
+    .report-band {
+      height: 6px;
+      background: linear-gradient(90deg, #6d28d9, #a78bfa);
+      margin: -34px -34px 26px;
     }
 
     .report-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      border-bottom: 2px solid #111;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
+      align-items: flex-start;
+      margin-bottom: 26px;
     }
 
-    .report-title { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+    .report-brand { display: flex; align-items: center; gap: 12px; }
 
-    .report-meta { display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; color: #444; gap: 2px; }
+    .report-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: #6d28d9;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
 
-    .report-table { width: 100%; border-collapse: collapse; margin-bottom: 22px; }
+    .report-title { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; color: #111; }
+    .report-subtitle { font-size: 10.5px; color: #888; margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
 
-    .report-table th, .report-table td {
+    .report-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      font-size: 12px;
+      color: #666;
+      gap: 3px;
+      text-align: right;
+    }
+
+    .report-meta span:first-child { font-weight: 700; color: #111; font-size: 13px; }
+
+    .report-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; }
+
+    .report-table th {
+      background: #f4f1fd;
+      color: #5b21b6;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      font-size: 10.5px;
+      font-weight: 700;
       text-align: left;
-      padding: 8px 10px;
-      border-bottom: 1px solid #ccc;
-      font-size: 13px;
+      padding: 10px 12px;
+      border-bottom: 2px solid #6d28d9;
     }
 
-    .report-table th { border-bottom: 2px solid #111; font-weight: 700; }
-    .report-table td:last-child, .report-table th:last-child { text-align: right; }
-    .report-table tfoot td { font-weight: 700; border-top: 2px solid #111; border-bottom: none; }
+    .report-table td {
+      text-align: left;
+      padding: 9px 12px;
+      border-bottom: 1px solid #eee;
+      font-size: 13px;
+      color: #222;
+    }
 
-    .report-summary { width: 300px; margin-left: auto; border-collapse: collapse; margin-bottom: 40px; }
-    .report-summary td { padding: 6px 10px; font-size: 13px; }
-    .report-summary td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
-    .report-summary-balance td { font-weight: 700; font-size: 15px; border-top: 2px solid #111; }
+    .report-table tbody tr:nth-child(even) { background: #faf9fd; }
+    .report-table td:last-child, .report-table th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .report-table tfoot td { font-weight: 700; border-top: 2px solid #111; border-bottom: none; padding-top: 12px; }
+
+    .report-summary-cards { display: flex; gap: 14px; margin-bottom: 30px; }
+
+    .report-summary-card {
+      flex: 1;
+      border: 1px solid #e6e0f7;
+      border-radius: 10px;
+      padding: 14px 16px;
+    }
+
+    .report-summary-label {
+      display: block;
+      font-size: 9.5px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 6px;
+    }
+
+    .report-summary-value { display: block; font-size: 19px; font-weight: 700; color: #222; font-variant-numeric: tabular-nums; }
+
+    .report-summary-card-balance { background: #6d28d9; border-color: #6d28d9; }
+    .report-summary-card-balance .report-summary-label { color: #e2d9fb; }
+    .report-summary-card-balance .report-summary-value { color: #fff; }
+
+    .report-footer { text-align: center; font-size: 10px; color: #aaa; letter-spacing: 0.5px; margin-top: 10px; }
   }
 </style>
 </head>
@@ -3288,8 +3356,15 @@
 <input type="file" id="expenseReceiptFileInput" accept="image/*" class="hidden" />
 
 <div class="report-view" id="companyReportView">
+  <div class="report-band"></div>
   <div class="report-header">
-    <div class="report-title">СЛУЖЕБЕН ОТЧЕТ</div>
+    <div class="report-brand">
+      <div class="report-logo">◆</div>
+      <div>
+        <div class="report-title">СЛУЖЕБЕН ОТЧЕТ</div>
+        <div class="report-subtitle">Отчет за служебни разходи</div>
+      </div>
+    </div>
     <div class="report-meta">
       <span id="reportEmployee"></span>
       <span id="reportDate"></span>
@@ -3306,11 +3381,22 @@
     </tfoot>
   </table>
 
-  <table class="report-summary">
-    <tr><td>Общо получени аванси</td><td id="reportTotalAdvances">0.00 €</td></tr>
-    <tr><td>Общо похарчено</td><td id="reportTotalSpent2">0.00 €</td></tr>
-    <tr class="report-summary-balance"><td>Текущ баланс</td><td id="reportBalance">0.00 €</td></tr>
-  </table>
+  <div class="report-summary-cards">
+    <div class="report-summary-card">
+      <span class="report-summary-label">Получени аванси</span>
+      <span class="report-summary-value" id="reportTotalAdvances">0.00 €</span>
+    </div>
+    <div class="report-summary-card">
+      <span class="report-summary-label">Похарчено</span>
+      <span class="report-summary-value" id="reportTotalSpent2">0.00 €</span>
+    </div>
+    <div class="report-summary-card report-summary-card-balance">
+      <span class="report-summary-label">Текущ баланс</span>
+      <span class="report-summary-value" id="reportBalance">0.00 €</span>
+    </div>
+  </div>
+
+  <div class="report-footer">Генериран с LifeOS</div>
 </div>
 
 <div class="product-edit-modal hidden" id="profileModal">
