@@ -437,6 +437,7 @@
   .tile[data-app="garage"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
   .tile[data-app="savings"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
   .tile[data-app="company"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
+  .tile[data-app="notes"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
 
   .tile-top {
     display: flex;
@@ -461,6 +462,7 @@
   .tile[data-app="garage"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
   .tile[data-app="savings"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
   .tile[data-app="company"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
+  .tile[data-app="notes"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
 
   .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
   .tile:hover .tile-arrow { transform: translateX(3px); color: var(--text-dim); }
@@ -1987,6 +1989,91 @@
 
   #profileEmailDisplay { opacity: 0.6; cursor: not-allowed; }
 
+  .note-body-input {
+    width: 100%;
+    resize: vertical;
+    min-height: 130px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    line-height: 1.6;
+  }
+
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .note-card {
+    position: relative;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--pink);
+    border-radius: 8px;
+    padding: 14px 16px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 120px;
+    transition: border-color 0.15s ease;
+  }
+
+  .note-card:hover { border-color: var(--line-strong); }
+
+  .note-card-title {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    color: var(--text);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 20px;
+  }
+
+  .note-card-body {
+    font-size: 12px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    flex: 1;
+    white-space: pre-wrap;
+  }
+
+  .note-card-date {
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    color: var(--text-faint);
+    letter-spacing: 0.5px;
+  }
+
+  .note-card-del {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-faint);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: all 0.15s ease;
+  }
+
+  .note-card:hover .note-card-del { opacity: 1; }
+  .note-card-del:hover { border-color: var(--danger); color: var(--danger); }
+
   /* ============ Settings menu ============ */
 
   .settings-dropdown { position: relative; }
@@ -2564,6 +2651,21 @@
             <div class="tile-stat"><span class="tile-stat-value" id="hubCompanyMonthSpent">0€</span><span class="tile-stat-label">ПОХАРЧЕНО ТОЗИ МЕСЕЦ</span></div>
           </div>
         </div>
+
+        <div class="console-panel tile" data-app="notes">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">✎</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">NOTES</div>
+          <div class="tile-desc">Бележки, за да не забравяш</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubNotesCount">0</span><span class="tile-stat-label">БЕЛЕЖКИ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubNotesLast">—</span><span class="tile-stat-label">ПОСЛЕДНА</span></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -2993,6 +3095,28 @@
             </div>
             <div class="record-list" id="expensesList"></div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ NOTES ============ -->
+    <section id="screen-notes" class="screen hidden">
+      <div class="vitals-body">
+        <div class="console-panel chart-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head">
+            <span class="gauge-label">БЕЛЕЖКИ</span>
+            <div class="chart-head-actions">
+              <div class="product-list-search">
+                <span class="product-search-icon">⌕</span>
+                <input type="text" id="notesSearchInput" class="product-search-input" placeholder="Търси бележки..." autocomplete="off" />
+              </div>
+              <button class="chip" id="noteAddOpenBtn">+ Нова бележка</button>
+            </div>
+          </div>
+
+          <div class="notes-grid" id="notesGrid"></div>
         </div>
       </div>
     </section>
@@ -3450,6 +3574,28 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="noteModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" id="noteModalTitle">НОВА БЕЛЕЖКА</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="noteTitleInput">Заглавие (по избор)</label>
+        <input type="text" id="noteTitleInput" class="mini-input" placeholder="напр. Пазар за уикенда" maxlength="80" />
+      </div>
+      <div class="product-edit-field">
+        <label for="noteBodyInput">Текст</label>
+        <textarea id="noteBodyInput" class="mini-input note-body-input" placeholder="Пиши тук..." rows="6"></textarea>
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="noteCancelBtn">Отказ</button>
+      <button class="chip" id="noteSaveBtn">Запази</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -3481,7 +3627,8 @@
     },
     savings: { goal: 1000, coins: {} },
     company: { advances: [], expenses: [] },
-    profile: { name: '', avatarPath: '' }
+    profile: { name: '', avatarPath: '' },
+    notes: { entries: [] }
   };
 
   let viewDate = new Date();
@@ -3527,6 +3674,9 @@
           profile: {
             name: (parsed.profile && parsed.profile.name) || '',
             avatarPath: (parsed.profile && parsed.profile.avatarPath) || ''
+          },
+          notes: {
+            entries: (parsed.notes && parsed.notes.entries) || []
           }
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
@@ -3619,7 +3769,7 @@
     $('goalsBox').classList.toggle('hidden', name !== 'vitals');
     $('vehicleBox').classList.toggle('hidden', name !== 'garage');
 
-    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', company: 'EXPENSES', admin: 'ADMIN' };
+    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', admin: 'ADMIN' };
     const subs = {
       hub: 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР',
       workdays: 'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ',
@@ -3628,6 +3778,7 @@
       garage: 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ',
       savings: 'СПЕСТЕНИ ПАРИ',
       company: 'СЛУЖЕБНИ ПАРИ',
+      notes: 'БЕЛЕЖКИ',
       admin: 'СЛУЖЕБНО ТАБЛО'
     };
     $('brandTitle').textContent = titles[name];
@@ -3640,6 +3791,7 @@
     if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
     if (name === 'savings') renderSavingsAll();
     if (name === 'company') { renderCompanyAll(); switchCompanyTab('overview'); }
+    if (name === 'notes') renderNotes();
     if (name === 'admin') renderAdmin();
   }
 
@@ -3680,6 +3832,10 @@
 
     $('hubCompanyBalance').textContent = formatMoney(getCompanyBalance()) + '€';
     $('hubCompanyMonthSpent').textContent = formatMoney(getCompanyMonthSpent()) + '€';
+
+    $('hubNotesCount').textContent = state.notes.entries.length;
+    const lastNote = state.notes.entries.slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+    $('hubNotesLast').textContent = lastNote ? formatDateDisplay(lastNote.updatedAt.slice(0, 10)) : '—';
   }
 
   function onBrandMarkClick() {
@@ -4448,6 +4604,117 @@
     const file = evt.target.files[0];
     evt.target.value = '';
     uploadProfileAvatar(file);
+  }
+
+  /* ============ Notes ============ */
+
+  let editingNoteId = '';
+
+  function renderNotes() {
+    const term = ($('notesSearchInput').value || '').trim().toLowerCase();
+    let list = state.notes.entries.slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+    if (term) {
+      list = list.filter((n) =>
+        (n.title || '').toLowerCase().includes(term) || (n.body || '').toLowerCase().includes(term)
+      );
+    }
+
+    const container = $('notesGrid');
+    container.innerHTML = '';
+
+    if (!list.length) {
+      const empty = document.createElement('div');
+      empty.className = 'record-empty';
+      empty.textContent = term ? 'Няма съвпадения' : 'Няма добавени бележки';
+      container.appendChild(empty);
+      return;
+    }
+
+    list.forEach((n) => {
+      const card = document.createElement('div');
+      card.className = 'note-card';
+      card.addEventListener('click', () => openNoteEditModal(n.id));
+
+      if (n.title) {
+        const titleEl = document.createElement('div');
+        titleEl.className = 'note-card-title';
+        titleEl.textContent = n.title;
+        card.appendChild(titleEl);
+      }
+
+      const bodyEl = document.createElement('div');
+      bodyEl.className = 'note-card-body';
+      bodyEl.textContent = n.body;
+      card.appendChild(bodyEl);
+
+      const dateEl = document.createElement('div');
+      dateEl.className = 'note-card-date';
+      dateEl.textContent = formatDateDisplay(n.updatedAt.slice(0, 10));
+      card.appendChild(dateEl);
+
+      const delBtn = document.createElement('button');
+      delBtn.className = 'note-card-del';
+      delBtn.textContent = '×';
+      delBtn.title = 'Изтрий';
+      delBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteNote(n.id); });
+      card.appendChild(delBtn);
+
+      container.appendChild(card);
+    });
+  }
+
+  function openNoteAddModal() {
+    editingNoteId = '';
+    $('noteTitleInput').value = '';
+    $('noteBodyInput').value = '';
+    $('noteModalTitle').textContent = 'НОВА БЕЛЕЖКА';
+    $('noteSaveBtn').textContent = 'Запази';
+    $('noteModal').classList.remove('hidden');
+    $('noteTitleInput').focus();
+  }
+
+  function openNoteEditModal(id) {
+    const n = state.notes.entries.find((x) => x.id === id);
+    if (!n) return;
+    editingNoteId = id;
+    $('noteTitleInput').value = n.title || '';
+    $('noteBodyInput').value = n.body || '';
+    $('noteModalTitle').textContent = 'РЕДАКТИРАЙ БЕЛЕЖКА';
+    $('noteSaveBtn').textContent = 'Запази';
+    $('noteModal').classList.remove('hidden');
+  }
+
+  function closeNoteModal() {
+    editingNoteId = '';
+    $('noteModal').classList.add('hidden');
+  }
+
+  function saveNoteFromModal() {
+    const title = $('noteTitleInput').value.trim();
+    const body = $('noteBodyInput').value.trim();
+
+    if (!body) { showToast('Напиши нещо в бележката'); return; }
+
+    const now = new Date().toISOString();
+    if (editingNoteId) {
+      const n = state.notes.entries.find((x) => x.id === editingNoteId);
+      if (n) Object.assign(n, { title, body, updatedAt: now });
+    } else {
+      state.notes.entries.push({ id: genId('note'), title, body, updatedAt: now });
+    }
+
+    saveState();
+    closeNoteModal();
+    renderNotes();
+    renderHubIfVisible();
+  }
+
+  function deleteNote(id) {
+    state.notes.entries = state.notes.entries.filter((n) => n.id !== id);
+    if (editingNoteId === id) closeNoteModal();
+    saveState();
+    renderNotes();
+    renderHubIfVisible();
   }
 
   /* ============ Vitals ============ */
@@ -5925,7 +6192,10 @@
           profile: parsed.profile ? {
             name: parsed.profile.name || '',
             avatarPath: parsed.profile.avatarPath || ''
-          } : state.profile
+          } : state.profile,
+          notes: parsed.notes ? {
+            entries: parsed.notes.entries || []
+          } : state.notes
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
           state.garage.activeVehicleId = state.garage.vehicles[0].id;
@@ -6102,7 +6372,7 @@
       if (!$('settingsDropdown').contains(e.target)) closeSettingsMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); closeProfileModal(); }
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); closeProfileModal(); closeNoteModal(); }
     });
     $('profileAvatarBtn').addEventListener('click', openProfileModal);
     $('profileModalAvatarBtn').addEventListener('click', () => $('profileAvatarFileInput').click());
@@ -6111,6 +6381,11 @@
     $('profileCancelBtn').addEventListener('click', closeProfileModal);
     $('profileSaveBtn').addEventListener('click', saveProfileFromModal);
     $('profileNameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveProfileFromModal(); });
+    $('noteAddOpenBtn').addEventListener('click', openNoteAddModal);
+    $('noteCancelBtn').addEventListener('click', closeNoteModal);
+    $('noteSaveBtn').addEventListener('click', saveNoteFromModal);
+    $('noteTitleInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveNoteFromModal(); });
+    $('notesSearchInput').addEventListener('input', renderNotes);
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
     document.querySelectorAll('.vitals-tab[data-company-tab]').forEach((btn) => {
       btn.addEventListener('click', () => switchCompanyTab(btn.dataset.companyTab));
