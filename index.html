@@ -1989,13 +1989,91 @@
 
   #profileEmailDisplay { opacity: 0.6; cursor: not-allowed; }
 
-  .note-body-input {
+  #noteModal .product-edit-modal-inner { max-width: min(94vw, 640px); }
+
+  .note-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-bottom: none;
+    border-radius: 6px 6px 0 0;
+    padding: 6px;
+  }
+
+  .note-toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--line);
+    margin: 0 3px;
+    flex-shrink: 0;
+  }
+
+  .note-tool-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-dim);
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+  }
+
+  .note-tool-btn:hover { border-color: var(--line-strong); color: var(--text); background: var(--surface); }
+
+  .note-tool-select {
+    height: 26px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    padding: 0 4px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .note-tool-color {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: transparent;
+    padding: 2px;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .note-body-editable {
     width: 100%;
-    resize: vertical;
-    min-height: 130px;
+    min-height: 220px;
+    max-height: 40vh;
+    overflow-y: auto;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 0 0 6px 6px;
+    padding: 10px 12px;
+    color: var(--text);
     font-family: var(--font-sans);
-    font-size: 12.5px;
+    font-size: 13px;
     line-height: 1.6;
+    outline: none;
+  }
+
+  .note-body-editable:focus { border-color: var(--line-strong); }
+
+  .note-body-editable:empty::before {
+    content: attr(data-placeholder);
+    color: var(--text-faint);
   }
 
   .notes-grid {
@@ -2030,7 +2108,7 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    padding-right: 20px;
+    padding-right: 44px;
   }
 
   .note-card-body {
@@ -2073,6 +2151,26 @@
 
   .note-card:hover .note-card-del { opacity: 1; }
   .note-card-del:hover { border-color: var(--danger); color: var(--danger); }
+
+  .note-card-edit {
+    position: absolute;
+    top: 10px;
+    right: 34px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-faint);
+    font-size: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .note-card-edit:hover { border-color: var(--violet); color: var(--violet); }
 
   /* ============ Settings menu ============ */
 
@@ -3585,8 +3683,37 @@
         <input type="text" id="noteTitleInput" class="mini-input" placeholder="напр. Пазар за уикенда" maxlength="80" />
       </div>
       <div class="product-edit-field">
-        <label for="noteBodyInput">Текст</label>
-        <textarea id="noteBodyInput" class="mini-input note-body-input" placeholder="Пиши тук..." rows="6"></textarea>
+        <label>Текст</label>
+        <div class="note-toolbar" id="noteToolbar">
+          <button type="button" class="note-tool-btn" data-cmd="bold" title="Удебелен"><b>Ж</b></button>
+          <button type="button" class="note-tool-btn" data-cmd="italic" title="Курсив"><i>К</i></button>
+          <button type="button" class="note-tool-btn" data-cmd="underline" title="Подчертан"><u>П</u></button>
+          <button type="button" class="note-tool-btn" data-cmd="strikeThrough" title="Зачертан"><s>З</s></button>
+          <span class="note-toolbar-divider"></span>
+          <select class="note-tool-select" id="noteFontSizeSelect" title="Размер на шрифта">
+            <option value="2">Малък</option>
+            <option value="3" selected>Нормален</option>
+            <option value="5">Голям</option>
+            <option value="7">Огромен</option>
+          </select>
+          <select class="note-tool-select" id="noteFontFamilySelect" title="Шрифт">
+            <option value="">Шрифт</option>
+            <option value="Georgia, serif">Georgia</option>
+            <option value="'Courier New', monospace">Courier</option>
+            <option value="'Comic Sans MS', cursive">Comic Sans</option>
+          </select>
+          <input type="color" id="noteColorInput" class="note-tool-color" title="Цвят на текста" value="#eae7fb" />
+          <span class="note-toolbar-divider"></span>
+          <button type="button" class="note-tool-btn" data-cmd="insertUnorderedList" title="Списък">☰</button>
+          <button type="button" class="note-tool-btn" data-cmd="insertOrderedList" title="Номериран списък">①</button>
+          <span class="note-toolbar-divider"></span>
+          <button type="button" class="note-tool-btn" data-cmd="justifyLeft" title="Ляво подравняване">◧</button>
+          <button type="button" class="note-tool-btn" data-cmd="justifyCenter" title="Центрирано">▣</button>
+          <button type="button" class="note-tool-btn" data-cmd="justifyRight" title="Дясно подравняване">◨</button>
+          <span class="note-toolbar-divider"></span>
+          <button type="button" class="note-tool-btn" id="noteClearFormatBtn" title="Изчисти форматирането">⌫</button>
+        </div>
+        <div id="noteBodyInput" class="note-body-editable" contenteditable="true" data-placeholder="Пиши тук..."></div>
       </div>
     </div>
     <div class="matrix-modal-actions">
@@ -4610,12 +4737,18 @@
 
   let editingNoteId = '';
 
+  function htmlToPlainText(html) {
+    const el = document.createElement('div');
+    el.innerHTML = html || '';
+    return el.textContent || '';
+  }
+
   function renderNotes() {
     const term = ($('notesSearchInput').value || '').trim().toLowerCase();
     let list = state.notes.entries.slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
     if (term) {
       list = list.filter((n) =>
-        (n.title || '').toLowerCase().includes(term) || (n.body || '').toLowerCase().includes(term)
+        (n.title || '').toLowerCase().includes(term) || htmlToPlainText(n.body).toLowerCase().includes(term)
       );
     }
 
@@ -4644,13 +4777,20 @@
 
       const bodyEl = document.createElement('div');
       bodyEl.className = 'note-card-body';
-      bodyEl.textContent = n.body;
+      bodyEl.textContent = htmlToPlainText(n.body);
       card.appendChild(bodyEl);
 
       const dateEl = document.createElement('div');
       dateEl.className = 'note-card-date';
       dateEl.textContent = formatDateDisplay(n.updatedAt.slice(0, 10));
       card.appendChild(dateEl);
+
+      const editBtn = document.createElement('button');
+      editBtn.className = 'note-card-edit';
+      editBtn.textContent = '✎';
+      editBtn.title = 'Редактирай';
+      editBtn.addEventListener('click', (e) => { e.stopPropagation(); openNoteEditModal(n.id); });
+      card.appendChild(editBtn);
 
       const delBtn = document.createElement('button');
       delBtn.className = 'note-card-del';
@@ -4666,7 +4806,7 @@
   function openNoteAddModal() {
     editingNoteId = '';
     $('noteTitleInput').value = '';
-    $('noteBodyInput').value = '';
+    $('noteBodyInput').innerHTML = '';
     $('noteModalTitle').textContent = 'НОВА БЕЛЕЖКА';
     $('noteSaveBtn').textContent = 'Запази';
     $('noteModal').classList.remove('hidden');
@@ -4678,7 +4818,7 @@
     if (!n) return;
     editingNoteId = id;
     $('noteTitleInput').value = n.title || '';
-    $('noteBodyInput').value = n.body || '';
+    $('noteBodyInput').innerHTML = n.body || '';
     $('noteModalTitle').textContent = 'РЕДАКТИРАЙ БЕЛЕЖКА';
     $('noteSaveBtn').textContent = 'Запази';
     $('noteModal').classList.remove('hidden');
@@ -4691,9 +4831,10 @@
 
   function saveNoteFromModal() {
     const title = $('noteTitleInput').value.trim();
-    const body = $('noteBodyInput').value.trim();
+    const bodyEl = $('noteBodyInput');
+    const body = bodyEl.innerHTML.trim();
 
-    if (!body) { showToast('Напиши нещо в бележката'); return; }
+    if (!bodyEl.textContent.trim()) { showToast('Напиши нещо в бележката'); return; }
 
     const now = new Date().toISOString();
     if (editingNoteId) {
@@ -4715,6 +4856,32 @@
     saveState();
     renderNotes();
     renderHubIfVisible();
+  }
+
+  function applyNoteCommand(cmd) {
+    $('noteBodyInput').focus();
+    document.execCommand(cmd, false, null);
+  }
+
+  function onNoteFontSizeChange() {
+    $('noteBodyInput').focus();
+    document.execCommand('fontSize', false, $('noteFontSizeSelect').value);
+  }
+
+  function onNoteFontFamilyChange() {
+    const val = $('noteFontFamilySelect').value;
+    $('noteBodyInput').focus();
+    if (val) document.execCommand('fontName', false, val);
+  }
+
+  function onNoteColorChange() {
+    $('noteBodyInput').focus();
+    document.execCommand('foreColor', false, $('noteColorInput').value);
+  }
+
+  function clearNoteFormatting() {
+    $('noteBodyInput').focus();
+    document.execCommand('removeFormat', false, null);
   }
 
   /* ============ Vitals ============ */
@@ -6386,6 +6553,13 @@
     $('noteSaveBtn').addEventListener('click', saveNoteFromModal);
     $('noteTitleInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveNoteFromModal(); });
     $('notesSearchInput').addEventListener('input', renderNotes);
+    document.querySelectorAll('.note-tool-btn[data-cmd]').forEach((btn) => {
+      btn.addEventListener('click', () => applyNoteCommand(btn.dataset.cmd));
+    });
+    $('noteFontSizeSelect').addEventListener('change', onNoteFontSizeChange);
+    $('noteFontFamilySelect').addEventListener('change', onNoteFontFamilyChange);
+    $('noteColorInput').addEventListener('input', onNoteColorChange);
+    $('noteClearFormatBtn').addEventListener('click', clearNoteFormatting);
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
     document.querySelectorAll('.vitals-tab[data-company-tab]').forEach((btn) => {
       btn.addEventListener('click', () => switchCompanyTab(btn.dataset.companyTab));
