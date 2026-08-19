@@ -2133,6 +2133,22 @@
 
   .profile-modal-divider { margin-top: 18px; }
 
+  .settings-toggle-caret {
+    float: right;
+    color: var(--text-faint);
+    transition: transform 0.15s ease;
+  }
+
+  #settingsToggleBtn.open .settings-toggle-caret { transform: rotate(180deg); }
+
+  .settings-collapse {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 0 2px;
+  }
+
+  .settings-collapse.hidden { display: none; }
+
   #profileModal #logoutBtn { color: var(--danger); }
   #profileModal #logoutBtn:hover { border-color: var(--danger); }
 
@@ -3811,18 +3827,20 @@
 
     <div class="settings-divider profile-modal-divider"></div>
 
-    <div class="settings-row">
-      <span id="themeLabel" class="theme-label">ТЕМА</span>
-      <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата">
-        <span class="theme-toggle-icon">☀</span>
-        <span class="theme-toggle-icon">☾</span>
-        <span class="theme-toggle-thumb"></span>
-      </button>
-    </div>
+    <button class="settings-action" id="settingsToggleBtn">⚙ Настройки <span class="settings-toggle-caret" id="settingsToggleCaret">▾</span></button>
 
-    <div class="settings-divider"></div>
-    <button class="settings-action" id="settingsExportBtn">⭳ Изтегли резервно копие</button>
-    <button class="settings-action" id="settingsImportBtn">⭱ Възстанови от файл</button>
+    <div class="settings-collapse hidden" id="settingsCollapse">
+      <div class="settings-row">
+        <span id="themeLabel" class="theme-label">ТЕМА</span>
+        <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата">
+          <span class="theme-toggle-icon">☀</span>
+          <span class="theme-toggle-icon">☾</span>
+          <span class="theme-toggle-thumb"></span>
+        </button>
+      </div>
+      <button class="settings-action" id="settingsExportBtn">⭳ Изтегли резервно копие</button>
+      <button class="settings-action" id="settingsImportBtn">⭱ Възстанови от файл</button>
+    </div>
 
     <div class="settings-divider"></div>
     <button class="settings-action" id="logoutBtn">⏻ Изход</button>
@@ -4919,12 +4937,21 @@
     $('profileNameInput').value = state.profile.name || '';
     $('profileEmailDisplay').value = currentUser ? currentUser.email : '';
     renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), state.profile.avatarPath);
+    $('settingsCollapse').classList.add('hidden');
+    $('settingsToggleBtn').classList.remove('open');
     $('profileModal').classList.remove('hidden');
     $('profileNameInput').focus();
   }
 
   function closeProfileModal() {
     $('profileModal').classList.add('hidden');
+  }
+
+  function toggleSettingsCollapse() {
+    const el = $('settingsCollapse');
+    const isHidden = el.classList.contains('hidden');
+    el.classList.toggle('hidden', !isHidden);
+    $('settingsToggleBtn').classList.toggle('open', isHidden);
   }
 
   function saveProfileFromModal() {
@@ -6721,6 +6748,7 @@
     $('brandMark').addEventListener('click', onBrandMarkClick);
 
     $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
+    $('settingsToggleBtn').addEventListener('click', toggleSettingsCollapse);
     $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
     $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); });
     $('matrixNoBtn').addEventListener('click', closeMatrixModal);
