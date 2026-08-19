@@ -3297,6 +3297,15 @@
           </div>
           <div class="coin-grid" id="coinGrid"></div>
         </div>
+
+        <div class="console-panel chart-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head">
+            <span class="gauge-label">ЦЕНТОВЕ</span>
+          </div>
+          <div class="coin-grid" id="centGrid"></div>
+        </div>
       </div>
     </section>
 
@@ -4460,7 +4469,8 @@
 
   /* ============ Savings ============ */
 
-  const COIN_DENOMINATIONS = [2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01];
+  const COIN_DENOMINATIONS = [2, 1, 0.5, 0.2, 0.1];
+  const CENT_DENOMINATIONS = [0.05, 0.02, 0.01];
   const BANKNOTE_DENOMINATIONS = [100, 50, 20, 10, 5];
 
   function formatMoney(n) {
@@ -4468,7 +4478,7 @@
   }
 
   function getSavingsTotal() {
-    const denoms = COIN_DENOMINATIONS.concat(BANKNOTE_DENOMINATIONS);
+    const denoms = COIN_DENOMINATIONS.concat(CENT_DENOMINATIONS, BANKNOTE_DENOMINATIONS);
     return denoms.reduce((sum, d) => sum + (state.savings.coins[d] || 0) * d, 0);
   }
 
@@ -4488,11 +4498,11 @@
     return 'tier-copper';
   }
 
-  function renderCoinGrid() {
-    const container = $('coinGrid');
+  function renderCoinGroup(denominations, containerId) {
+    const container = $(containerId);
     container.innerHTML = '';
 
-    COIN_DENOMINATIONS.forEach((d) => {
+    denominations.forEach((d) => {
       const card = document.createElement('div');
       card.className = 'coin-card';
 
@@ -4600,7 +4610,8 @@
 
   function renderSavingsAll() {
     renderBanknoteGrid();
-    renderCoinGrid();
+    renderCoinGroup(COIN_DENOMINATIONS, 'coinGrid');
+    renderCoinGroup(CENT_DENOMINATIONS, 'centGrid');
     renderSavingsOverview();
   }
 
