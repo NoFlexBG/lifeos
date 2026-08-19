@@ -2042,6 +2042,20 @@
     flex-shrink: 0;
   }
 
+  .note-tool-number {
+    width: 44px;
+    height: 26px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 11px;
+    padding: 0 4px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+
   .note-tool-color {
     width: 26px;
     height: 26px;
@@ -3690,16 +3704,14 @@
           <button type="button" class="note-tool-btn" data-cmd="underline" title="Подчертан"><u>П</u></button>
           <button type="button" class="note-tool-btn" data-cmd="strikeThrough" title="Зачертан"><s>З</s></button>
           <span class="note-toolbar-divider"></span>
-          <select class="note-tool-select" id="noteFontSizeSelect" title="Размер на шрифта">
-            <option value="2">Малък</option>
-            <option value="3" selected>Нормален</option>
-            <option value="5">Голям</option>
-            <option value="7">Огромен</option>
-          </select>
+          <input type="number" class="note-tool-number" id="noteFontSizeInput" title="Размер на шрифта (px)" min="2" max="40" value="14" />
           <select class="note-tool-select" id="noteFontFamilySelect" title="Шрифт">
             <option value="">Шрифт</option>
+            <option value="'Times New Roman', Times, serif">Times New Roman</option>
+            <option value="Arial, Helvetica, sans-serif">Arial</option>
             <option value="Georgia, serif">Georgia</option>
-            <option value="'Courier New', monospace">Courier</option>
+            <option value="Verdana, sans-serif">Verdana</option>
+            <option value="'Courier New', monospace">Courier New</option>
             <option value="'Comic Sans MS', cursive">Comic Sans</option>
           </select>
           <input type="color" id="noteColorInput" class="note-tool-color" title="Цвят на текста" value="#eae7fb" />
@@ -4864,8 +4876,18 @@
   }
 
   function onNoteFontSizeChange() {
-    $('noteBodyInput').focus();
-    document.execCommand('fontSize', false, $('noteFontSizeSelect').value);
+    let px = parseInt($('noteFontSizeInput').value, 10);
+    if (!px || isNaN(px)) return;
+    px = Math.min(40, Math.max(2, px));
+    $('noteFontSizeInput').value = px;
+
+    const editor = $('noteBodyInput');
+    editor.focus();
+    document.execCommand('fontSize', false, '7');
+    editor.querySelectorAll('font[size="7"]').forEach((el) => {
+      el.removeAttribute('size');
+      el.style.fontSize = px + 'px';
+    });
   }
 
   function onNoteFontFamilyChange() {
@@ -6556,7 +6578,7 @@
     document.querySelectorAll('.note-tool-btn[data-cmd]').forEach((btn) => {
       btn.addEventListener('click', () => applyNoteCommand(btn.dataset.cmd));
     });
-    $('noteFontSizeSelect').addEventListener('change', onNoteFontSizeChange);
+    $('noteFontSizeInput').addEventListener('change', onNoteFontSizeChange);
     $('noteFontFamilySelect').addEventListener('change', onNoteFontFamilyChange);
     $('noteColorInput').addEventListener('input', onNoteColorChange);
     $('noteClearFormatBtn').addEventListener('click', clearNoteFormatting);
