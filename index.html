@@ -479,6 +479,7 @@
   .tile-preview {
     display: flex;
     gap: 18px;
+    border-top: 1px solid var(--line);
     padding-top: 12px;
   }
 
@@ -1457,8 +1458,8 @@
 
   /* ============ Scrollbar ============ */
 
-  ::-webkit-scrollbar { width: 5px; }
-  ::-webkit-scrollbar-thumb { background: rgba(var(--violet-rgb), 0.25); border-radius: 4px; }
+  * { scrollbar-width: none; }
+  ::-webkit-scrollbar { width: 0; height: 0; }
 
   /* ============ Toast ============ */
 
