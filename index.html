@@ -2131,6 +2131,11 @@
 
   #profileEmailDisplay { opacity: 0.6; cursor: not-allowed; }
 
+  .profile-modal-divider { margin-top: 18px; }
+
+  #profileModal #logoutBtn { color: var(--danger); }
+  #profileModal #logoutBtn:hover { border-color: var(--danger); }
+
   #noteModal .product-edit-modal-inner { max-width: min(94vw, 640px); }
 
   .note-toolbar {
@@ -2328,25 +2333,7 @@
 
   .note-card-edit:hover { border-color: var(--violet); color: var(--violet); }
 
-  /* ============ Settings menu ============ */
-
-  .settings-dropdown { position: relative; }
-
-  .settings-menu {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    min-width: 250px;
-    background: linear-gradient(180deg, var(--menu-bg-top), var(--menu-bg-bottom));
-    border: 1px solid var(--line-strong);
-    border-radius: 10px;
-    padding: 14px;
-    z-index: 40;
-    box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5);
-    animation: productPopIn 0.16s ease;
-  }
-
-  .settings-menu.hidden { display: none; }
+  /* ============ Settings (in profile modal) ============ */
 
   .settings-row {
     display: flex;
@@ -2782,29 +2769,12 @@
         <button class="icon-btn" id="addVehicleBtn" title="Нова кола">+</button>
       </div>
       <input type="file" id="importFile" accept="application/json" class="hidden" />
-      <div class="settings-dropdown" id="settingsDropdown">
-        <button class="icon-btn" id="settingsBtn" title="Настройки">⚙</button>
-        <div class="settings-menu hidden" id="settingsMenu">
-          <div class="settings-row">
-            <span id="themeLabel" class="theme-label">ТЕМА</span>
-            <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата">
-              <span class="theme-toggle-icon">☀</span>
-              <span class="theme-toggle-icon">☾</span>
-              <span class="theme-toggle-thumb"></span>
-            </button>
-          </div>
-          <div class="settings-divider"></div>
-          <button class="settings-action" id="settingsExportBtn">⭳ Изтегли резервно копие</button>
-          <button class="settings-action" id="settingsImportBtn">⭱ Възстанови от файл</button>
-        </div>
-      </div>
       <div class="user-box">
         <button class="profile-avatar-btn" id="profileAvatarBtn" title="Профил">
           <img id="profileAvatarImg" class="hidden" alt="" />
           <span id="profileAvatarInitial">?</span>
         </button>
         <span id="userEmailLabel"></span>
-        <button class="icon-btn" id="logoutBtn" title="Изход">⏻</button>
       </div>
     </div>
   </header>
@@ -3839,6 +3809,24 @@
       </div>
     </div>
 
+    <div class="settings-divider profile-modal-divider"></div>
+
+    <div class="settings-row">
+      <span id="themeLabel" class="theme-label">ТЕМА</span>
+      <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата">
+        <span class="theme-toggle-icon">☀</span>
+        <span class="theme-toggle-icon">☾</span>
+        <span class="theme-toggle-thumb"></span>
+      </button>
+    </div>
+
+    <div class="settings-divider"></div>
+    <button class="settings-action" id="settingsExportBtn">⭳ Изтегли резервно копие</button>
+    <button class="settings-action" id="settingsImportBtn">⭱ Възстанови от файл</button>
+
+    <div class="settings-divider"></div>
+    <button class="settings-action" id="logoutBtn">⏻ Изход</button>
+
     <div class="matrix-modal-actions">
       <button class="chip" id="profileCancelBtn">Отказ</button>
       <button class="chip" id="profileSaveBtn">Запази</button>
@@ -4213,19 +4201,6 @@
       window.removeEventListener('resize', matrixRainState.resize);
       matrixRainState = null;
     }
-  }
-
-  function closeSettingsMenu() {
-    $('settingsMenu').classList.add('hidden');
-  }
-
-  function toggleSettingsMenu() {
-    const menu = $('settingsMenu');
-    const isHidden = menu.classList.contains('hidden');
-    closeProductDropdown();
-    closeProductSortMenu();
-    closeSettingsMenu();
-    if (isHidden) menu.classList.remove('hidden');
   }
 
   async function renderAdmin() {
@@ -6717,6 +6692,7 @@
   function handleLogout() {
     sb.auth.signOut({ scope: 'local' });
     currentUser = null;
+    closeProfileModal();
 
     $('appRoot').classList.add('hidden');
     $('authScreen').classList.remove('hidden');
@@ -6738,16 +6714,15 @@
 
     $('prevMonth').addEventListener('click', () => shiftMonth(-1));
     $('nextMonth').addEventListener('click', () => shiftMonth(1));
-    $('settingsExportBtn').addEventListener('click', () => { exportData(); closeSettingsMenu(); });
-    $('settingsImportBtn').addEventListener('click', () => { $('importFile').click(); closeSettingsMenu(); });
+    $('settingsExportBtn').addEventListener('click', exportData);
+    $('settingsImportBtn').addEventListener('click', () => { $('importFile').click(); });
     $('importFile').addEventListener('change', importData);
     $('homeBtn').addEventListener('click', () => showScreen('hub'));
     $('brandMark').addEventListener('click', onBrandMarkClick);
 
-    $('settingsBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleSettingsMenu(); });
     $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
     $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
-    $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); closeSettingsMenu(); });
+    $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); });
     $('matrixNoBtn').addEventListener('click', closeMatrixModal);
 
     document.querySelectorAll('.tile').forEach((tile) => {
@@ -6798,10 +6773,9 @@
     document.addEventListener('click', (e) => {
       if (!$('productDropdown').contains(e.target)) closeProductDropdown();
       if (!$('productSortDropdown').contains(e.target)) closeProductSortMenu();
-      if (!$('settingsDropdown').contains(e.target)) closeSettingsMenu();
     });
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeSettingsMenu(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); closeProfileModal(); closeNoteModal(); }
+      if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); closeProfileModal(); closeNoteModal(); }
     });
     $('profileAvatarBtn').addEventListener('click', openProfileModal);
     $('profileModalAvatarBtn').addEventListener('click', () => $('profileAvatarFileInput').click());
