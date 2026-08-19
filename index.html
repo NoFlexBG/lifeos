@@ -1288,37 +1288,88 @@
 
   .coin-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-    gap: 10px;
-    margin-top: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(126px, 1fr));
+    gap: 14px;
+    margin-top: 18px;
   }
 
-  .coin-row {
+  .coin-card {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: space-between;
     gap: 10px;
     background: var(--surface-2);
     border: 1px solid var(--line);
-    border-radius: 8px;
-    padding: 10px 12px;
+    border-radius: 12px;
+    padding: 18px 12px 14px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
 
-  .coin-row-label {
+  .coin-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--line-strong);
+    box-shadow: 0 10px 24px -12px rgba(0, 0, 0, 0.5);
+  }
+
+  .coin-disc {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     font-family: var(--font-mono);
-    color: var(--amber);
-    font-size: 13px;
-    min-width: 50px;
+    font-weight: 700;
+    font-size: 12.5px;
+    letter-spacing: 0.3px;
+    position: relative;
+    box-shadow:
+      inset 0 2px 3px rgba(255, 255, 255, 0.45),
+      inset 0 -4px 7px rgba(0, 0, 0, 0.4),
+      0 6px 14px -6px rgba(0, 0, 0, 0.6);
   }
 
-  .coin-row-input { width: 64px; text-align: center; }
+  .coin-disc::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border-radius: 50%;
+    border: 1px dashed rgba(255, 255, 255, 0.4);
+  }
+
+  .coin-disc.tier-gold {
+    background: radial-gradient(circle at 35% 28%, #fff0bd, #e0b23c 52%, #9c7418 100%);
+    color: #4a3400;
+  }
+
+  .coin-disc.tier-nordic {
+    background: radial-gradient(circle at 35% 28%, #fff5d2, #e8c468 52%, #b08a34 100%);
+    color: #4a3400;
+  }
+
+  .coin-disc.tier-copper {
+    background: radial-gradient(circle at 35% 28%, #f3c398, #c9814a 52%, #8a5527 100%);
+    color: #3a2210;
+  }
+
+  .coin-card-input-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .coin-row-input { width: 56px; text-align: center; }
+
+  .coin-card-times {
+    font-family: var(--font-mono);
+    color: var(--text-faint);
+    font-size: 11px;
+  }
 
   .coin-row-subtotal {
     font-family: var(--font-mono);
     color: var(--text-dim);
     font-size: 11px;
-    min-width: 60px;
-    text-align: right;
   }
 
   .product-dropdown-category-filter {
@@ -4329,17 +4380,27 @@
     setMetricStatus($('savingsGoalStatus'), total, goal, 'higherBetter');
   }
 
+  function getCoinTier(d) {
+    if (d >= 1) return 'tier-gold';
+    if (d >= 0.1) return 'tier-nordic';
+    return 'tier-copper';
+  }
+
   function renderCoinGrid() {
     const container = $('coinGrid');
     container.innerHTML = '';
 
     COIN_DENOMINATIONS.forEach((d) => {
-      const row = document.createElement('div');
-      row.className = 'coin-row';
+      const card = document.createElement('div');
+      card.className = 'coin-card';
 
-      const label = document.createElement('span');
-      label.className = 'coin-row-label';
-      label.textContent = formatMoney(d) + ' €';
+      const disc = document.createElement('div');
+      disc.className = 'coin-disc ' + getCoinTier(d);
+      disc.textContent = formatMoney(d) + '€';
+      card.appendChild(disc);
+
+      const inputRow = document.createElement('div');
+      inputRow.className = 'coin-card-input-row';
 
       const input = document.createElement('input');
       input.type = 'number';
@@ -4348,9 +4409,17 @@
       input.step = '1';
       input.value = state.savings.coins[d] || 0;
 
+      const times = document.createElement('span');
+      times.className = 'coin-card-times';
+      times.textContent = '×';
+
+      inputRow.append(times, input);
+      card.appendChild(inputRow);
+
       const subtotal = document.createElement('span');
       subtotal.className = 'coin-row-subtotal';
       subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' €';
+      card.appendChild(subtotal);
 
       input.addEventListener('input', () => {
         const count = Math.max(0, parseInt(input.value) || 0);
@@ -4361,8 +4430,7 @@
         renderHubIfVisible();
       });
 
-      row.append(label, input, subtotal);
-      container.appendChild(row);
+      container.appendChild(card);
     });
   }
 
