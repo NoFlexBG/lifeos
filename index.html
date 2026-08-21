@@ -964,6 +964,13 @@
 
   .mini-input:focus { border-color: var(--line-strong); }
 
+  .weight-date-input {
+    width: 132px;
+    color-scheme: dark;
+  }
+
+  :root[data-theme="light"] .weight-date-input { color-scheme: light; }
+
   /* ============ Vitals layout ============ */
 
   .vitals-body {
@@ -3135,6 +3142,7 @@
             </div>
             <div class="chip-row">
               <input type="number" id="weightInput" class="mini-input" placeholder="кг" min="0" step="0.1" />
+              <input type="date" id="weightDateInput" class="mini-input weight-date-input" />
               <button class="chip" id="weightSetBtn">Запиши</button>
             </div>
           </div>
@@ -5510,6 +5518,12 @@
     $('weightGoalInput').value = state.vitals.goals.weight;
     const goal = state.vitals.goals.weight || 0;
 
+    const dateInput = $('weightDateInput');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = todayKey();
+      dateInput.max = todayKey();
+    }
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
@@ -6036,8 +6050,10 @@
   function setWeight() {
     const val = parseFloat($('weightInput').value);
     if (isNaN(val) || val < 0) return;
-    mutateVitalsDay(todayKey(), (e) => { e.weight = val; });
+    const key = $('weightDateInput').value || todayKey();
+    mutateVitalsDay(key, (e) => { e.weight = val; });
     $('weightInput').value = '';
+    $('weightDateInput').value = todayKey();
     renderVitalsToday(false);
     renderVitalsCharts();
     renderWeightTab();
