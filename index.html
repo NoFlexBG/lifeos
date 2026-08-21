@@ -3292,6 +3292,7 @@
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
             <span class="gauge-label">БАНКНОТИ</span>
+            <span class="weight-chart-stats" id="banknoteGroupTotal"></span>
           </div>
           <div class="banknote-grid" id="banknoteGrid"></div>
         </div>
@@ -3301,6 +3302,7 @@
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
             <span class="gauge-label">МОНЕТИ</span>
+            <span class="weight-chart-stats" id="coinGroupTotal"></span>
           </div>
           <div class="coin-grid" id="coinGrid"></div>
         </div>
@@ -3310,6 +3312,7 @@
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
             <span class="gauge-label">ЦЕНТОВЕ</span>
+            <span class="weight-chart-stats" id="centGroupTotal"></span>
           </div>
           <div class="coin-grid" id="centGrid"></div>
         </div>
@@ -4496,6 +4499,15 @@
     return denoms.reduce((sum, d) => sum + (state.savings.coins[d] || 0) * d, 0);
   }
 
+  function getGroupTotal(denominations) {
+    return denominations.reduce((sum, d) => sum + (state.savings.coins[d] || 0) * d, 0);
+  }
+
+  function updateGroupTotalDisplay(denominations, totalElId) {
+    const el = $(totalElId);
+    if (el) el.textContent = formatMoney(getGroupTotal(denominations)) + ' €';
+  }
+
   function renderSavingsOverview() {
     const total = getSavingsTotal();
     const goal = state.savings.goal || 0;
@@ -4515,6 +4527,7 @@
   function renderCoinGroup(denominations, containerId) {
     const container = $(containerId);
     container.innerHTML = '';
+    const totalElId = containerId.replace(/Grid$/, 'GroupTotal');
 
     denominations.forEach((d) => {
       const card = document.createElement('div');
@@ -4551,6 +4564,7 @@
         const count = Math.max(0, parseInt(input.value) || 0);
         state.savings.coins[d] = count;
         subtotal.textContent = formatMoney(count * d) + ' €';
+        updateGroupTotalDisplay(denominations, totalElId);
         saveState();
         renderSavingsOverview();
         renderHubIfVisible();
@@ -4558,6 +4572,8 @@
 
       container.appendChild(card);
     });
+
+    updateGroupTotalDisplay(denominations, totalElId);
   }
 
   function renderBanknoteGrid() {
@@ -4609,6 +4625,7 @@
         const count = Math.max(0, parseInt(input.value) || 0);
         state.savings.coins[d] = count;
         subtotal.textContent = formatMoney(count * d) + ' €';
+        updateGroupTotalDisplay(BANKNOTE_DENOMINATIONS, 'banknoteGroupTotal');
         saveState();
         renderSavingsOverview();
         renderHubIfVisible();
@@ -4616,6 +4633,8 @@
 
       container.appendChild(card);
     });
+
+    updateGroupTotalDisplay(BANKNOTE_DENOMINATIONS, 'banknoteGroupTotal');
   }
 
   function renderHubIfVisible() {
