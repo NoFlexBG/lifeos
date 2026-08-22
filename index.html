@@ -4671,11 +4671,11 @@
   }
 
   function getAdvancesTotal() {
-    return state.company.advances.reduce((sum, a) => sum + a.amount, 0);
+    return state.company.advances.reduce((sum, a) => sum + (Number(a.amount) || 0), 0);
   }
 
   function getExpensesTotal() {
-    return state.company.expenses.reduce((sum, e) => sum + e.amount, 0);
+    return state.company.expenses.reduce((sum, e) => sum + (Number(e.amount) || 0), 0);
   }
 
   function getCompanyBalance() {
@@ -4697,7 +4697,7 @@
   }
 
   function renderAdvancesList() {
-    const list = state.company.advances.slice().sort((a, b) => b.date.localeCompare(a.date));
+    const list = state.company.advances.slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     const container = $('advancesList');
     container.innerHTML = '';
     if (!list.length) { renderEmptyRow(container, 'Няма записани аванси'); return; }
@@ -4714,7 +4714,7 @@
   }
 
   function renderExpensesList() {
-    const list = state.company.expenses.slice().sort((a, b) => b.date.localeCompare(a.date));
+    const list = state.company.expenses.slice().sort((a, b) => (b.date || '').localeCompare(a.date || ''));
     const container = $('expensesList');
     container.innerHTML = '';
     if (!list.length) { renderEmptyRow(container, 'Няма записани разходи'); return; }
@@ -4901,39 +4901,44 @@
   }
 
   function printCompanyReport() {
-    const advancesTotal = getAdvancesTotal();
-    const expensesTotal = getExpensesTotal();
-    const balance = advancesTotal - expensesTotal;
+    try {
+      const advancesTotal = getAdvancesTotal();
+      const expensesTotal = getExpensesTotal();
+      const balance = advancesTotal - expensesTotal;
 
-    $('reportEmployee').textContent = getProfileDisplayName();
+      $('reportEmployee').textContent = getProfileDisplayName();
 
-    const rows = $('reportExpenseRows');
-    rows.innerHTML = '';
-    const list = state.company.expenses.slice().sort((a, b) => a.date.localeCompare(b.date));
-    if (!list.length) {
-      const tr = document.createElement('tr');
-      tr.innerHTML = '<td colspan="3">Няма записани разходи</td>';
-      rows.appendChild(tr);
-    } else {
-      list.forEach((e) => {
+      const rows = $('reportExpenseRows');
+      rows.innerHTML = '';
+      const list = state.company.expenses.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+      if (!list.length) {
         const tr = document.createElement('tr');
-        const tdDate = document.createElement('td');
-        tdDate.textContent = formatDateDisplay(e.date);
-        const tdDesc = document.createElement('td');
-        tdDesc.textContent = e.desc;
-        const tdAmount = document.createElement('td');
-        tdAmount.textContent = formatMoney(e.amount) + ' €';
-        tr.append(tdDate, tdDesc, tdAmount);
+        tr.innerHTML = '<td colspan="3">Няма записани разходи</td>';
         rows.appendChild(tr);
-      });
+      } else {
+        list.forEach((e) => {
+          const tr = document.createElement('tr');
+          const tdDate = document.createElement('td');
+          tdDate.textContent = formatDateDisplay(e.date);
+          const tdDesc = document.createElement('td');
+          tdDesc.textContent = e.desc || '';
+          const tdAmount = document.createElement('td');
+          tdAmount.textContent = formatMoney(e.amount) + ' €';
+          tr.append(tdDate, tdDesc, tdAmount);
+          rows.appendChild(tr);
+        });
+      }
+
+      $('reportTotalSpent').textContent = formatMoney(expensesTotal) + ' €';
+      $('reportTotalAdvances').textContent = formatMoney(advancesTotal) + ' €';
+      $('reportTotalSpent2').textContent = formatMoney(expensesTotal) + ' €';
+      $('reportBalance').textContent = formatMoney(balance) + ' €';
+
+      window.print();
+    } catch (err) {
+      console.error('printCompanyReport failed:', err);
+      showToast('Грешка при генериране на отчета: ' + err.message);
     }
-
-    $('reportTotalSpent').textContent = formatMoney(expensesTotal) + ' €';
-    $('reportTotalAdvances').textContent = formatMoney(advancesTotal) + ' €';
-    $('reportTotalSpent2').textContent = formatMoney(expensesTotal) + ' €';
-    $('reportBalance').textContent = formatMoney(balance) + ' €';
-
-    window.print();
   }
 
   /* ============ Profile ============ */
