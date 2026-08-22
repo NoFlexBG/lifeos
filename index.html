@@ -4900,6 +4900,60 @@
     showToast('Снимката е прикачена');
   }
 
+  const REPORT_PRINT_CSS = `
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #fff;
+      color: #111;
+      padding: 34px;
+      font-family: Arial, Helvetica, sans-serif;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .report-band { height: 6px; background: linear-gradient(90deg, #6d28d9, #a78bfa); margin: -34px -34px 26px; }
+    .report-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 26px; }
+    .report-brand { display: flex; align-items: center; gap: 12px; }
+    .report-logo { width: 36px; height: 36px; border-radius: 9px; background: #6d28d9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+    .report-title { font-size: 20px; font-weight: 800; letter-spacing: 0.5px; color: #111; }
+    .report-subtitle { font-size: 10.5px; color: #888; margin-top: 3px; text-transform: uppercase; letter-spacing: 1px; }
+    .report-meta { display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; color: #666; gap: 3px; text-align: right; }
+    .report-meta span:first-child { font-weight: 700; color: #111; font-size: 13px; }
+    .report-table { width: 100%; border-collapse: collapse; margin-bottom: 26px; }
+    .report-table th { background: #f4f1fd; color: #5b21b6; text-transform: uppercase; letter-spacing: 0.6px; font-size: 10.5px; font-weight: 700; text-align: left; padding: 10px 12px; border-bottom: 2px solid #6d28d9; }
+    .report-table td { text-align: left; padding: 9px 12px; border-bottom: 1px solid #eee; font-size: 13px; color: #222; }
+    .report-table tbody tr:nth-child(even) { background: #faf9fd; }
+    .report-table td:last-child, .report-table th:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+    .report-table tfoot td { font-weight: 700; border-top: 2px solid #111; border-bottom: none; padding-top: 12px; }
+    .report-summary-cards { display: flex; gap: 14px; margin-bottom: 30px; }
+    .report-summary-card { flex: 1; border: 1px solid #e6e0f7; border-radius: 10px; padding: 14px 16px; }
+    .report-summary-label { display: block; font-size: 9.5px; letter-spacing: 1px; text-transform: uppercase; color: #888; margin-bottom: 6px; }
+    .report-summary-value { display: block; font-size: 19px; font-weight: 700; color: #222; font-variant-numeric: tabular-nums; }
+    .report-summary-card-balance { background: #6d28d9; border-color: #6d28d9; }
+    .report-summary-card-balance .report-summary-label { color: #e2d9fb; }
+    .report-summary-card-balance .report-summary-value { color: #fff; }
+    .report-footer { text-align: center; font-size: 10px; color: #aaa; letter-spacing: 0.5px; margin-top: 10px; }
+  `;
+
+  function isStandaloneApp() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  }
+
+  function downloadReportAsFile() {
+    const reportHTML = $('companyReportView').innerHTML;
+    const doc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Служебен отчет</title><style>${REPORT_PRINT_CSS}</style></head><body>${reportHTML}</body></html>`;
+    const blob = new Blob([doc], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'Sluzheben_otchet.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    showToast('Отчетът е изтеглен — отвори файла, за да го отпечаташ или запишеш като PDF');
+  }
+
   function printCompanyReport() {
     try {
       const advancesTotal = getAdvancesTotal();
@@ -4934,7 +4988,11 @@
       $('reportTotalSpent2').textContent = formatMoney(expensesTotal) + ' €';
       $('reportBalance').textContent = formatMoney(balance) + ' €';
 
-      window.print();
+      if (isStandaloneApp()) {
+        downloadReportAsFile();
+      } else {
+        window.print();
+      }
     } catch (err) {
       console.error('printCompanyReport failed:', err);
       showToast('Грешка при генериране на отчета: ' + err.message);
