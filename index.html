@@ -2786,26 +2786,26 @@
       <div class="brand-mark">◆</div>
       <div class="brand-text">
         <h1>LIFEOS</h1>
-        <span class="brand-sub" id="authSubtitle" data-i18n>ВХОД</span>
+        <span class="brand-sub" id="authSubtitle">LOGIN</span>
       </div>
     </div>
 
     <div class="auth-fields">
       <div class="auth-field">
-        <label for="authEmail" data-i18n>ИМЕЙЛ</label>
+        <label for="authEmail">EMAIL</label>
         <input id="authEmail" type="email" autocomplete="email" />
       </div>
       <div class="auth-field">
-        <label for="authPassword" data-i18n>ПАРОЛА</label>
+        <label for="authPassword">PASSWORD</label>
         <input id="authPassword" type="password" autocomplete="current-password" />
       </div>
-      <button class="auth-submit" id="authSubmitBtn" data-i18n>ВХОД</button>
+      <button class="auth-submit" id="authSubmitBtn">LOGIN</button>
     </div>
 
     <div class="auth-message" id="authMessage"></div>
 
     <div class="auth-switch">
-      <span id="authSwitchText" data-i18n>Нямаш акаунт?</span> <a id="authSwitchLink" data-i18n>Регистрирай се</a>
+      <span id="authSwitchText">Don't have an account?</span> <a id="authSwitchLink">Sign up</a>
     </div>
   </div>
 </div>
@@ -4136,6 +4136,7 @@
     'Грешка при изтегляне': 'Download error', 'Резервно копие изтеглено': 'Backup downloaded',
     'Изтеглянето беше отказано': 'Download was cancelled',
     'Данните са възстановени': 'Data restored', 'Невалиден файл': 'Invalid file',
+    'Грешка при зареждане': 'Error loading',
 
     'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ': 'TRACKING SYSTEM', 'ВИТАЛНИ ПОКАЗАТЕЛИ': 'VITAL METRICS',
     'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД': 'ENERGY EXPENDITURE CALCULATOR', 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ': 'VEHICLE SERVICING',
@@ -4521,7 +4522,7 @@
 
     if (error || !data) {
       ['adminUserCount','adminUsersWeek','adminUsersMonth','adminUsersYear'].forEach((id) => $(id).textContent = '—');
-      $('adminGrowthChart').innerHTML = '<div class="line-chart-empty">Грешка при зареждане</div>';
+      $('adminGrowthChart').innerHTML = `<div class="line-chart-empty">${tr('Грешка при зареждане')}</div>`;
       return;
     }
 
@@ -7111,11 +7112,11 @@
   /* ============ Auth ============ */
 
   function initAuth() {
-    $('authMessage').textContent = tr('Проверка на сесията...');
+    $('authMessage').textContent = 'Checking session...';
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
         currentUser = data.session.user;
-        $('authMessage').textContent = tr('Зареждане...');
+        $('authMessage').textContent = 'Loading...';
         startApp();
       } else {
         $('authMessage').textContent = '';
@@ -7126,10 +7127,10 @@
   function toggleAuthMode(e) {
     if (e) e.preventDefault();
     authMode = authMode === 'signin' ? 'signup' : 'signin';
-    $('authSubtitle').textContent = tr(authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ');
-    $('authSubmitBtn').textContent = tr(authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ');
-    $('authSwitchText').textContent = tr(authMode === 'signin' ? 'Нямаш акаунт?' : 'Вече имаш акаунт?');
-    $('authSwitchLink').textContent = tr(authMode === 'signin' ? 'Регистрирай се' : 'Влез');
+    $('authSubtitle').textContent = authMode === 'signin' ? 'LOGIN' : 'SIGN UP';
+    $('authSubmitBtn').textContent = authMode === 'signin' ? 'LOGIN' : 'SIGN UP';
+    $('authSwitchText').textContent = authMode === 'signin' ? "Don't have an account?" : 'Already have an account?';
+    $('authSwitchLink').textContent = authMode === 'signin' ? 'Sign up' : 'Log in';
     $('authMessage').textContent = '';
     $('authMessage').className = 'auth-message';
   }
@@ -7141,7 +7142,7 @@
     const btn = $('authSubmitBtn');
 
     if (!email || !password) {
-      msg.textContent = tr('Въведи имейл и парола');
+      msg.textContent = 'Enter email and password';
       msg.className = 'auth-message error';
       return;
     }
@@ -7154,7 +7155,7 @@
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
       if (error) { btn.disabled = false; msg.textContent = error.message; msg.className = 'auth-message error'; return; }
       currentUser = data.user;
-      msg.textContent = tr('Зареждане...');
+      msg.textContent = 'Loading...';
       msg.className = 'auth-message ok';
       await startApp();
     } else {
@@ -7162,12 +7163,12 @@
       if (error) { btn.disabled = false; msg.textContent = error.message; msg.className = 'auth-message error'; return; }
       if (data.session) {
         currentUser = data.user;
-        msg.textContent = tr('Зареждане...');
+        msg.textContent = 'Loading...';
         msg.className = 'auth-message ok';
         await startApp();
       } else {
         btn.disabled = false;
-        msg.textContent = tr('Провери имейла си, за да потвърдиш акаунта.');
+        msg.textContent = 'Check your email to confirm your account.';
         msg.className = 'auth-message ok';
       }
     }
