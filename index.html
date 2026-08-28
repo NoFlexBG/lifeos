@@ -2786,26 +2786,26 @@
       <div class="brand-mark">◆</div>
       <div class="brand-text">
         <h1>LIFEOS</h1>
-        <span class="brand-sub" id="authSubtitle">ВХОД</span>
+        <span class="brand-sub" id="authSubtitle" data-i18n>ВХОД</span>
       </div>
     </div>
 
     <div class="auth-fields">
       <div class="auth-field">
-        <label for="authEmail">ИМЕЙЛ</label>
+        <label for="authEmail" data-i18n>ИМЕЙЛ</label>
         <input id="authEmail" type="email" autocomplete="email" />
       </div>
       <div class="auth-field">
-        <label for="authPassword">ПАРОЛА</label>
+        <label for="authPassword" data-i18n>ПАРОЛА</label>
         <input id="authPassword" type="password" autocomplete="current-password" />
       </div>
-      <button class="auth-submit" id="authSubmitBtn">ВХОД</button>
+      <button class="auth-submit" id="authSubmitBtn" data-i18n>ВХОД</button>
     </div>
 
     <div class="auth-message" id="authMessage"></div>
 
     <div class="auth-switch">
-      <span id="authSwitchText">Нямаш акаунт?</span> <a id="authSwitchLink">Регистрирай се</a>
+      <span id="authSwitchText" data-i18n>Нямаш акаунт?</span> <a id="authSwitchLink" data-i18n>Регистрирай се</a>
     </div>
   </div>
 </div>
@@ -2813,28 +2813,28 @@
 <div class="app hidden" id="appRoot">
   <header class="topbar">
     <div class="brand">
-      <button id="homeBtn" class="home-btn" aria-label="Към хъба">‹</button>
+      <button id="homeBtn" class="home-btn" aria-label="Към хъба" data-i18n-aria>‹</button>
       <div class="brand-mark" id="brandMark">◆</div>
       <div class="brand-text">
         <h1 id="brandTitle">LIFEOS</h1>
-        <span class="brand-sub" id="brandSub">ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР</span>
+        <span class="brand-sub" id="brandSub" data-i18n>ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР</span>
       </div>
     </div>
 
     <div class="top-controls">
       <div class="rate-box hidden" id="rateBox">
-        <label for="dailyRate">ДНЕВНА СТАВКА</label>
+        <label for="dailyRate" data-i18n>ДНЕВНА СТАВКА</label>
         <input id="dailyRate" type="number" min="0" step="1" />
         <span class="currency">€</span>
       </div>
       <div class="goals-box hidden" id="goalsBox">
-        <div class="goal-field"><label for="goalCalories">ККАЛ</label><input id="goalCalories" type="number" min="0" step="50" /></div>
-        <div class="goal-field"><label for="goalWater">МЛ</label><input id="goalWater" type="number" min="0" step="50" /></div>
-        <div class="goal-field"><label for="goalSteps">КРАЧКИ</label><input id="goalSteps" type="number" min="0" step="500" /></div>
+        <div class="goal-field"><label for="goalCalories" data-i18n>ККАЛ</label><input id="goalCalories" type="number" min="0" step="50" /></div>
+        <div class="goal-field"><label for="goalWater" data-i18n>МЛ</label><input id="goalWater" type="number" min="0" step="50" /></div>
+        <div class="goal-field"><label for="goalSteps" data-i18n>КРАЧКИ</label><input id="goalSteps" type="number" min="0" step="500" /></div>
       </div>
       <div class="vehicle-box hidden" id="vehicleBox">
         <select id="vehicleSelect" class="mini-input"></select>
-        <button class="icon-btn" id="addVehicleBtn" title="Нова кола">+</button>
+        <button class="icon-btn" id="addVehicleBtn" title="Нова кола" data-i18n-title>+</button>
       </div>
       <input type="file" id="importFile" accept="application/json" class="hidden" />
       <div class="user-box">
@@ -2851,7 +2851,7 @@
 
     <!-- ============ HUB ============ -->
     <section id="screen-hub" class="screen">
-      <span class="hub-intro">ИЗБЕРИ МОДУЛ</span>
+      <span class="hub-intro" data-i18n>ИЗБЕРИ МОДУЛ</span>
       <div class="hub-grid" id="hubGrid">
         <div class="console-panel tile" data-app="vitals">
           <span class="corner tl"></span><span class="corner tr"></span>
@@ -2861,11 +2861,11 @@
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">VITALS</div>
-          <div class="tile-desc">Калории, вода, крачки</div>
+          <div class="tile-desc" data-i18n>Калории, вода, крачки</div>
           <div class="tile-preview">
-            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsCalories">0</span><span class="tile-stat-label">ККАЛ ДНЕС</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsWater">0</span><span class="tile-stat-label">МЛ ДНЕС</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsSteps">0</span><span class="tile-stat-label">КРАЧКИ ДНЕС</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsCalories">0</span><span class="tile-stat-label" data-i18n>ККАЛ ДНЕС</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsWater">0</span><span class="tile-stat-label" data-i18n>МЛ ДНЕС</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubVitalsSteps">0</span><span class="tile-stat-label" data-i18n>КРАЧКИ ДНЕС</span></div>
           </div>
         </div>
 
@@ -2877,10 +2877,10 @@
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">GARAGE</div>
-          <div class="tile-desc">Ремонти, гориво, документи, фишове</div>
+          <div class="tile-desc" data-i18n>Ремонти, гориво, документи, фишове</div>
           <div class="tile-preview">
-            <div class="tile-stat"><span class="tile-stat-value" id="hubGarageFines">0€</span><span class="tile-stat-label">НЕПЛАТЕНИ ФИШОВЕ</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubGarageDocs">0</span><span class="tile-stat-label">ДОКУМЕНТИ ИЗТИЧАТ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubGarageFines">0€</span><span class="tile-stat-label" data-i18n>НЕПЛАТЕНИ ФИШОВЕ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubGarageDocs">0</span><span class="tile-stat-label" data-i18n>ДОКУМЕНТИ ИЗТИЧАТ</span></div>
           </div>
         </div>
 
@@ -2892,10 +2892,10 @@
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">WORKDAYS</div>
-          <div class="tile-desc">Работни дни и доходи</div>
+          <div class="tile-desc" data-i18n>Работни дни и доходи</div>
           <div class="tile-preview">
-            <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthDays">0</span><span class="tile-stat-label">ДНИ ТОЗИ МЕСЕЦ</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthEarnings">0€</span><span class="tile-stat-label">ДОХОД ТОЗИ МЕСЕЦ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthDays">0</span><span class="tile-stat-label" data-i18n>ДНИ ТОЗИ МЕСЕЦ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthEarnings">0€</span><span class="tile-stat-label" data-i18n>ДОХОД ТОЗИ МЕСЕЦ</span></div>
           </div>
         </div>
 
@@ -2907,10 +2907,10 @@
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">SAVINGS</div>
-          <div class="tile-desc">Спестени пари</div>
+          <div class="tile-desc" data-i18n>Спестени пари</div>
           <div class="tile-preview">
-            <div class="tile-stat"><span class="tile-stat-value" id="hubSavingsTotal">0€</span><span class="tile-stat-label">ОБЩО СПЕСТЕНО</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubSavingsToGoal">0€</span><span class="tile-stat-label">ДО ЦЕЛТА</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubSavingsTotal">0€</span><span class="tile-stat-label" data-i18n>ОБЩО СПЕСТЕНО</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubSavingsToGoal">0€</span><span class="tile-stat-label" data-i18n>ДО ЦЕЛТА</span></div>
           </div>
         </div>
 
@@ -2922,10 +2922,10 @@
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">EXPENSES</div>
-          <div class="tile-desc">Служебни пари и отчитане</div>
+          <div class="tile-desc" data-i18n>Служебни пари и отчитане</div>
           <div class="tile-preview">
-            <div class="tile-stat"><span class="tile-stat-value" id="hubCompanyBalance">0€</span><span class="tile-stat-label">ТЕКУЩ БАЛАНС</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubCompanyMonthSpent">0€</span><span class="tile-stat-label">ПОХАРЧЕНО ТОЗИ МЕСЕЦ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubCompanyBalance">0€</span><span class="tile-stat-label" data-i18n>ТЕКУЩ БАЛАНС</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubCompanyMonthSpent">0€</span><span class="tile-stat-label" data-i18n>ПОХАРЧЕНО ТОЗИ МЕСЕЦ</span></div>
           </div>
         </div>
 
@@ -2937,10 +2937,10 @@
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">NOTES</div>
-          <div class="tile-desc">Бележки, за да не забравяш</div>
+          <div class="tile-desc" data-i18n>Бележки, за да не забравяш</div>
           <div class="tile-preview">
-            <div class="tile-stat"><span class="tile-stat-value" id="hubNotesCount">0</span><span class="tile-stat-label">БЕЛЕЖКИ</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubNotesLast">—</span><span class="tile-stat-label">ПОСЛЕДНА</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubNotesCount">0</span><span class="tile-stat-label" data-i18n>БЕЛЕЖКИ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubNotesLast">—</span><span class="tile-stat-label" data-i18n>ПОСЛЕДНА</span></div>
           </div>
         </div>
 
@@ -2952,10 +2952,10 @@
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">TDEE</div>
-          <div class="tile-desc">Калкулатор на енергоразход</div>
+          <div class="tile-desc" data-i18n>Калкулатор на енергоразход</div>
           <div class="tile-preview">
             <div class="tile-stat"><span class="tile-stat-value" id="hubTdeeBmr">0</span><span class="tile-stat-label">BMR</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubTdeeValue">0</span><span class="tile-stat-label">TDEE (ККАЛ)</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubTdeeValue">0</span><span class="tile-stat-label" data-i18n>TDEE (ККАЛ)</span></div>
           </div>
         </div>
       </div>
@@ -2969,24 +2969,24 @@
           <span class="corner bl"></span><span class="corner br"></span>
 
           <div class="calendar-header">
-            <button id="prevMonth" class="nav-btn" aria-label="Предишен месец">‹</button>
+            <button id="prevMonth" class="nav-btn" aria-label="Предишен месец" data-i18n-aria>‹</button>
             <div class="month-title">
               <span id="monthLabel">Август</span>
               <span id="yearLabel">2026</span>
             </div>
-            <button id="nextMonth" class="nav-btn" aria-label="Следващ месец">›</button>
+            <button id="nextMonth" class="nav-btn" aria-label="Следващ месец" data-i18n-aria>›</button>
           </div>
 
           <div class="weekday-row">
-            <span>ПН</span><span>ВТ</span><span>СР</span><span>ЧТ</span><span>ПТ</span><span>СБ</span><span>НД</span>
+            <span data-i18n>ПН</span><span data-i18n>ВТ</span><span data-i18n>СР</span><span data-i18n>ЧТ</span><span data-i18n>ПТ</span><span data-i18n>СБ</span><span data-i18n>НД</span>
           </div>
 
           <div id="calendarGrid" class="calendar-grid"></div>
 
           <div class="legend">
-            <div class="legend-item"><span class="dot dot-work"></span> Работен ден</div>
-            <div class="legend-item"><span class="dot dot-today"></span> Днес</div>
-            <div class="legend-item">Кликни ден, за да превключиш</div>
+            <div class="legend-item"><span class="dot dot-work"></span> <span data-i18n>Работен ден</span></div>
+            <div class="legend-item"><span class="dot dot-today"></span> <span data-i18n>Днес</span></div>
+            <div class="legend-item" data-i18n>Кликни ден, за да превключиш</div>
           </div>
         </section>
 
@@ -2998,18 +2998,18 @@
                 <span class="gauge-delta flat" id="firstHalfDelta">—</span>
               </div>
               <div class="gauge-row">
-                <div class="gauge-value-wrap"><span class="gauge-value" id="firstHalfDays">0</span><span class="gauge-unit">дни</span></div>
+                <div class="gauge-value-wrap"><span class="gauge-value" id="firstHalfDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
                 <div class="gauge-value-wrap"><span class="gauge-value money" id="firstHalfEarnings">0</span><span class="gauge-unit">€</span></div>
               </div>
             </div>
 
             <div class="gauge">
               <div class="gauge-top">
-                <span class="gauge-label">16 - КРАЙ</span>
+                <span class="gauge-label" data-i18n>16 - КРАЙ</span>
                 <span class="gauge-delta flat" id="secondHalfDelta">—</span>
               </div>
               <div class="gauge-row">
-                <div class="gauge-value-wrap"><span class="gauge-value" id="secondHalfDays">0</span><span class="gauge-unit">дни</span></div>
+                <div class="gauge-value-wrap"><span class="gauge-value" id="secondHalfDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
                 <div class="gauge-value-wrap"><span class="gauge-value money" id="secondHalfEarnings">0</span><span class="gauge-unit">€</span></div>
               </div>
             </div>
@@ -3017,22 +3017,22 @@
 
           <div class="gauge">
             <div class="gauge-top">
-              <span class="gauge-label">ТОЗИ МЕСЕЦ</span>
+              <span class="gauge-label" data-i18n>ТОЗИ МЕСЕЦ</span>
               <span class="gauge-delta flat" id="monthDelta">—</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value" id="monthDays">0</span><span class="gauge-unit">дни</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value" id="monthDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
               <div class="gauge-value-wrap"><span class="gauge-value money" id="monthEarnings">0</span><span class="gauge-unit">€</span></div>
             </div>
           </div>
 
           <div class="gauge">
             <div class="gauge-top">
-              <span class="gauge-label">ТАЗИ ГОДИНА</span>
+              <span class="gauge-label" data-i18n>ТАЗИ ГОДИНА</span>
               <span class="gauge-delta flat" id="yearDelta">—</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value" id="yearDays">0</span><span class="gauge-unit">дни</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value" id="yearDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
               <div class="gauge-value-wrap"><span class="gauge-value money" id="yearEarnings">0</span><span class="gauge-unit">€</span></div>
             </div>
           </div>
@@ -3041,7 +3041,7 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">ДОХОД ПО МЕСЕЦИ</span>
+              <span class="gauge-label" data-i18n>ДОХОД ПО МЕСЕЦИ</span>
             </div>
             <div id="yearChart" class="year-chart"></div>
           </div>
@@ -3053,47 +3053,47 @@
     <section id="screen-vitals" class="screen hidden">
       <div class="vitals-body">
         <div class="vitals-tabs">
-          <button class="vitals-tab active" data-tab="today">ДНЕС</button>
-          <button class="vitals-tab" data-tab="weight">ТЕГЛО</button>
-          <button class="vitals-tab" data-tab="products">ХРАНА</button>
+          <button class="vitals-tab active" data-tab="today" data-i18n>ДНЕС</button>
+          <button class="vitals-tab" data-tab="weight" data-i18n>ТЕГЛО</button>
+          <button class="vitals-tab" data-tab="products" data-i18n>ХРАНА</button>
         </div>
 
         <div class="vitals-tab-panel" id="vitalsTabToday">
         <div class="vitals-grid">
           <div class="gauge" data-metric="calories">
             <div class="gauge-top">
-              <span class="gauge-label">КАЛОРИИ ДНЕС</span>
+              <span class="gauge-label" data-i18n>КАЛОРИИ ДНЕС</span>
               <span class="gauge-delta flat" id="calStatus">—</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="calValue">0</span><span class="gauge-unit">/ <span id="calGoalLabel">0</span> ккал</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="calValue">0</span><span class="gauge-unit">/ <span id="calGoalLabel">0</span> <span data-i18n>ккал</span></span></div>
             </div>
             <div class="progress-track"><div class="progress-fill" id="calProgress"></div></div>
             <div class="chip-row">
-              <button class="chip" id="nutritionResetBtn">Нулирай хранене</button>
+              <button class="chip" id="nutritionResetBtn" data-i18n>Нулирай хранене</button>
             </div>
           </div>
 
           <div class="gauge" data-metric="water">
             <div class="gauge-top">
-              <span class="gauge-label">ВОДА ДНЕС</span>
+              <span class="gauge-label" data-i18n>ВОДА ДНЕС</span>
               <span class="gauge-delta flat" id="waterStatus">—</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="waterValue">0</span><span class="gauge-unit">/ <span id="waterGoalLabel">0</span> мл</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="waterValue">0</span><span class="gauge-unit">/ <span id="waterGoalLabel">0</span> <span data-i18n>мл</span></span></div>
             </div>
             <div class="progress-track"><div class="progress-fill" id="waterProgress"></div></div>
             <div class="chip-row">
-              <button class="chip" data-water-add="250">+250 мл</button>
-              <button class="chip" data-water-add="500">+500 мл</button>
-              <button class="chip" data-water-add="1000">+1Л</button>
-              <button class="chip" id="waterResetBtn">Нулирай</button>
+              <button class="chip" data-water-add="250" data-i18n>+250 мл</button>
+              <button class="chip" data-water-add="500" data-i18n>+500 мл</button>
+              <button class="chip" data-water-add="1000" data-i18n>+1Л</button>
+              <button class="chip" id="waterResetBtn" data-i18n>Нулирай</button>
             </div>
           </div>
 
           <div class="gauge" data-metric="steps">
             <div class="gauge-top">
-              <span class="gauge-label">КРАЧКИ ДНЕС</span>
+              <span class="gauge-label" data-i18n>КРАЧКИ ДНЕС</span>
               <span class="gauge-delta flat" id="stepsStatus">—</span>
             </div>
             <div class="gauge-row">
@@ -3101,8 +3101,8 @@
             </div>
             <div class="progress-track"><div class="progress-fill" id="stepsProgress"></div></div>
             <div class="chip-row">
-              <input type="number" id="stepsInput" class="mini-input" placeholder="крачки" min="0" />
-              <button class="chip" id="stepsSetBtn">Задай</button>
+              <input type="number" id="stepsInput" class="mini-input" placeholder="крачки" min="0" data-i18n-ph />
+              <button class="chip" id="stepsSetBtn" data-i18n>Задай</button>
               <button class="chip" data-steps-add="1000">+1000</button>
             </div>
           </div>
@@ -3113,30 +3113,30 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">ХРАНЕНЕ И МАКРОСИ</span>
-              <button class="chip" id="mealAddOpenBtn">+ Добави хранене</button>
+              <span class="gauge-label" data-i18n>ХРАНЕНЕ И МАКРОСИ</span>
+              <button class="chip" id="mealAddOpenBtn" data-i18n>+ Добави хранене</button>
             </div>
 
             <div class="macro-row" data-macro="protein">
               <div class="macro-row-head">
-                <span>ПРОТЕИНИ</span>
-                <span><span id="proteinValue">0</span> / <input id="proteinGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+                <span data-i18n>ПРОТЕИНИ</span>
+                <span><span id="proteinValue">0</span> / <input id="proteinGoalInput" class="inline-goal-input" type="number" min="0" /> <span data-i18n>г</span></span>
               </div>
               <div class="progress-track thin"><div class="progress-fill" id="proteinProgress"></div></div>
             </div>
 
             <div class="macro-row" data-macro="carbs">
               <div class="macro-row-head">
-                <span>ВЪГЛЕХИДРАТИ</span>
-                <span><span id="carbsValue">0</span> / <input id="carbsGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+                <span data-i18n>ВЪГЛЕХИДРАТИ</span>
+                <span><span id="carbsValue">0</span> / <input id="carbsGoalInput" class="inline-goal-input" type="number" min="0" /> <span data-i18n>г</span></span>
               </div>
               <div class="progress-track thin"><div class="progress-fill" id="carbsProgress"></div></div>
             </div>
 
             <div class="macro-row" data-macro="fat">
               <div class="macro-row-head">
-                <span>МАЗНИНИ</span>
-                <span><span id="fatValue">0</span> / <input id="fatGoalInput" class="inline-goal-input" type="number" min="0" /> г</span>
+                <span data-i18n>МАЗНИНИ</span>
+                <span><span id="fatValue">0</span> / <input id="fatGoalInput" class="inline-goal-input" type="number" min="0" /> <span data-i18n>г</span></span>
               </div>
               <div class="progress-track thin"><div class="progress-fill" id="fatProgress"></div></div>
             </div>
@@ -3146,7 +3146,7 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">ИСТОРИЯ ДНЕС</span>
+              <span class="gauge-label" data-i18n>ИСТОРИЯ ДНЕС</span>
               <span class="weight-chart-stats" id="mealHistoryCount"></span>
             </div>
             <div class="record-list" id="mealHistoryList"></div>
@@ -3156,18 +3156,18 @@
         <div class="console-panel chart-panel">
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
-          <div class="chart-head"><span class="gauge-label">ПОСЛЕДНИ 7 ДНИ</span></div>
+          <div class="chart-head"><span class="gauge-label" data-i18n>ПОСЛЕДНИ 7 ДНИ</span></div>
 
           <div class="week-chart-block">
-            <div class="week-chart-head"><span>КАЛОРИИ</span></div>
+            <div class="week-chart-head"><span data-i18n>КАЛОРИИ</span></div>
             <div id="weekChartCalories" class="week-chart"></div>
           </div>
           <div class="week-chart-block">
-            <div class="week-chart-head"><span>ВОДА</span></div>
+            <div class="week-chart-head"><span data-i18n>ВОДА</span></div>
             <div id="weekChartWater" class="week-chart"></div>
           </div>
           <div class="week-chart-block">
-            <div class="week-chart-head"><span>КРАЧКИ</span></div>
+            <div class="week-chart-head"><span data-i18n>КРАЧКИ</span></div>
             <div id="weekChartSteps" class="week-chart"></div>
           </div>
         </div>
@@ -3176,33 +3176,33 @@
         <div class="vitals-tab-panel hidden" id="vitalsTabWeight">
           <div class="gauge" data-metric="weight">
             <div class="gauge-top">
-              <span class="gauge-label">ТЕГЛО ДНЕС</span>
+              <span class="gauge-label" data-i18n>ТЕГЛО ДНЕС</span>
               <span class="gauge-delta flat" id="weightStatus">—</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="weightValue">—</span><span class="gauge-unit">/ цел <input id="weightGoalInput" class="inline-goal-input" type="number" min="0" step="0.1" /> кг</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="weightValue">—</span><span class="gauge-unit"><span data-i18n>/ цел</span> <input id="weightGoalInput" class="inline-goal-input" type="number" min="0" step="0.1" /> <span data-i18n>кг</span></span></div>
             </div>
             <div class="chip-row">
-              <input type="number" id="weightInput" class="mini-input" placeholder="кг" min="0" step="0.1" />
-              <button class="chip" id="weightSetBtn">Запиши</button>
+              <input type="number" id="weightInput" class="mini-input" placeholder="кг" min="0" step="0.1" data-i18n-ph />
+              <button class="chip" id="weightSetBtn" data-i18n>Запиши</button>
             </div>
           </div>
 
           <div class="garage-stats-row">
             <div class="console-panel garage-stat" data-accent="violet">
-              <span class="gauge-label">ТЕКУЩО</span>
+              <span class="gauge-label" data-i18n>ТЕКУЩО</span>
               <div class="garage-stat-value" id="weightStatCurrent">—</div>
             </div>
             <div class="console-panel garage-stat" data-accent="cyan">
-              <span class="gauge-label">ПРОМЯНА (30 ДНИ)</span>
+              <span class="gauge-label" data-i18n>ПРОМЯНА (30 ДНИ)</span>
               <div class="garage-stat-value" id="weightStatChange">—</div>
             </div>
             <div class="console-panel garage-stat" data-accent="amber">
-              <span class="gauge-label">СРЕДНО</span>
+              <span class="gauge-label" data-i18n>СРЕДНО</span>
               <div class="garage-stat-value" id="weightStatAvg">—</div>
             </div>
             <div class="console-panel garage-stat" data-accent="pink">
-              <span class="gauge-label">ЦЕЛ</span>
+              <span class="gauge-label" data-i18n>ЦЕЛ</span>
               <div class="garage-stat-value" id="weightStatGoal">—</div>
             </div>
           </div>
@@ -3211,7 +3211,7 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ</span>
+              <span class="gauge-label" data-i18n>ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ</span>
             </div>
             <div id="weightLineChart" class="line-chart"></div>
           </div>
@@ -3222,16 +3222,16 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)</span>
+              <span class="gauge-label" data-i18n>МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)</span>
               <div class="chart-head-actions">
                 <div class="product-list-search">
                   <span class="product-search-icon">⌕</span>
-                  <input type="text" id="productListSearchInput" class="product-search-input" placeholder="Търси храна..." autocomplete="off" />
+                  <input type="text" id="productListSearchInput" class="product-search-input" placeholder="Търси храна..." autocomplete="off" data-i18n-ph />
                 </div>
-                <button class="chip" id="productDbAddBtn">+ Добави продукт</button>
+                <button class="chip" id="productDbAddBtn" data-i18n>+ Добави продукт</button>
                 <div class="product-dropdown sort-dropdown" id="productSortDropdown">
                   <button type="button" class="product-dropdown-btn sort-dropdown-btn" id="productSortBtn">
-                    <span id="productSortLabel">Име (А-Я)</span>
+                    <span id="productSortLabel" data-i18n>Име (А-Я)</span>
                     <span class="caret">▾</span>
                   </button>
                   <div class="product-dropdown-menu hidden" id="productSortMenu">
@@ -3254,58 +3254,58 @@
       <div class="console-panel tdee-panel">
         <span class="corner tl"></span><span class="corner tr"></span>
         <span class="corner bl"></span><span class="corner br"></span>
-        <div class="chart-head"><span class="gauge-label">ДАННИ</span></div>
-        <div class="tdee-note">По формулата на Mifflin-St Jeor</div>
+        <div class="chart-head"><span class="gauge-label" data-i18n>ДАННИ</span></div>
+        <div class="tdee-note" data-i18n>По формулата на Mifflin-St Jeor</div>
 
         <div class="calc-grid">
           <div class="calc-field">
-            <label for="calcSex">ПОЛ</label>
+            <label for="calcSex" data-i18n>ПОЛ</label>
             <select id="calcSex" class="mini-input">
-              <option value="male">Мъж</option>
-              <option value="female">Жена</option>
+              <option value="male" data-i18n>Мъж</option>
+              <option value="female" data-i18n>Жена</option>
             </select>
           </div>
           <div class="calc-field">
-            <label for="calcAge">ВЪЗРАСТ</label>
+            <label for="calcAge" data-i18n>ВЪЗРАСТ</label>
             <input id="calcAge" type="number" class="mini-input" min="10" max="100" />
           </div>
           <div class="calc-field">
-            <label for="calcHeight">РЪСТ (СМ)</label>
+            <label for="calcHeight" data-i18n>РЪСТ (СМ)</label>
             <input id="calcHeight" type="number" class="mini-input" min="100" max="250" />
           </div>
           <div class="calc-field">
-            <label for="calcWeight">ТЕГЛО (КГ)</label>
+            <label for="calcWeight" data-i18n>ТЕГЛО (КГ)</label>
             <input id="calcWeight" type="number" class="mini-input" min="30" max="300" />
           </div>
           <div class="calc-field calc-field-wide">
-            <label for="calcActivity">НИВО НА АКТИВНОСТ</label>
+            <label for="calcActivity" data-i18n>НИВО НА АКТИВНОСТ</label>
             <select id="calcActivity" class="mini-input">
-              <option value="1.2">Заседнал (без спорт)</option>
-              <option value="1.375">Леко активен (1-3 дни/седмица)</option>
-              <option value="1.55">Умерено активен (3-5 дни/седмица)</option>
-              <option value="1.725">Много активен (6-7 дни/седмица)</option>
-              <option value="1.9">Екстремно активен (физически труд + спорт)</option>
+              <option value="1.2" data-i18n>Заседнал (без спорт)</option>
+              <option value="1.375" data-i18n>Леко активен (1-3 дни/седмица)</option>
+              <option value="1.55" data-i18n>Умерено активен (3-5 дни/седмица)</option>
+              <option value="1.725" data-i18n>Много активен (6-7 дни/седмица)</option>
+              <option value="1.9" data-i18n>Екстремно активен (физически труд + спорт)</option>
             </select>
           </div>
         </div>
 
         <div class="calc-results">
-          <div class="calc-result"><span class="calc-result-label">BMR (ПОКОЙ)</span><span class="calc-result-value" id="bmrValue">0</span></div>
-          <div class="calc-result"><span class="calc-result-label">TDEE (ПОДДЪРЖАНЕ)</span><span class="calc-result-value" id="tdeeValue">0</span></div>
+          <div class="calc-result"><span class="calc-result-label" data-i18n>BMR (ПОКОЙ)</span><span class="calc-result-value" id="bmrValue">0</span></div>
+          <div class="calc-result"><span class="calc-result-label" data-i18n>TDEE (ПОДДЪРЖАНЕ)</span><span class="calc-result-value" id="tdeeValue">0</span></div>
         </div>
 
         <div class="calc-suggestions">
           <div class="calc-sugg">
-            <div><span class="calc-sugg-label">ОТСЛАБВАНЕ (-20%)</span><span class="calc-sugg-value" id="cutValue">0 ккал</span></div>
-            <button class="chip" data-apply-goal="cut">Приложи като цел във Vitals</button>
+            <div><span class="calc-sugg-label" data-i18n>ОТСЛАБВАНЕ (-20%)</span><span class="calc-sugg-value" id="cutValue">0 ккал</span></div>
+            <button class="chip" data-apply-goal="cut" data-i18n>Приложи като цел във Vitals</button>
           </div>
           <div class="calc-sugg">
-            <div><span class="calc-sugg-label">ПОДДЪРЖАНЕ</span><span class="calc-sugg-value" id="maintainValue">0 ккал</span></div>
-            <button class="chip" data-apply-goal="maintain">Приложи като цел във Vitals</button>
+            <div><span class="calc-sugg-label" data-i18n>ПОДДЪРЖАНЕ</span><span class="calc-sugg-value" id="maintainValue">0 ккал</span></div>
+            <button class="chip" data-apply-goal="maintain" data-i18n>Приложи като цел във Vitals</button>
           </div>
           <div class="calc-sugg">
-            <div><span class="calc-sugg-label">НАБИРАНЕ (+15%)</span><span class="calc-sugg-value" id="bulkValue">0 ккал</span></div>
-            <button class="chip" data-apply-goal="bulk">Приложи като цел във Vitals</button>
+            <div><span class="calc-sugg-label" data-i18n>НАБИРАНЕ (+15%)</span><span class="calc-sugg-value" id="bulkValue">0 ккал</span></div>
+            <button class="chip" data-apply-goal="bulk" data-i18n>Приложи като цел във Vitals</button>
           </div>
         </div>
       </div>
@@ -3317,7 +3317,7 @@
         <div class="vitals-grid">
           <div class="gauge" data-metric="savings-total">
             <div class="gauge-top">
-              <span class="gauge-label">ОБЩО СПЕСТЕНО</span>
+              <span class="gauge-label" data-i18n>ОБЩО СПЕСТЕНО</span>
             </div>
             <div class="gauge-row">
               <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsTotalValue">0.00</span><span class="gauge-unit">€</span></div>
@@ -3326,7 +3326,7 @@
 
           <div class="gauge" data-metric="savings-goal">
             <div class="gauge-top">
-              <span class="gauge-label">ЦЕЛ</span>
+              <span class="gauge-label" data-i18n>ЦЕЛ</span>
               <span class="gauge-delta flat" id="savingsGoalStatus">—</span>
             </div>
             <div class="gauge-row">
@@ -3340,7 +3340,7 @@
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
-            <span class="gauge-label">БАНКНОТИ</span>
+            <span class="gauge-label" data-i18n>БАНКНОТИ</span>
             <span class="weight-chart-stats" id="banknoteGroupTotal"></span>
           </div>
           <div class="banknote-grid" id="banknoteGrid"></div>
@@ -3350,7 +3350,7 @@
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
-            <span class="gauge-label">МОНЕТИ</span>
+            <span class="gauge-label" data-i18n>МОНЕТИ</span>
             <span class="weight-chart-stats" id="coinGroupTotal"></span>
           </div>
           <div class="coin-grid" id="coinGrid"></div>
@@ -3360,7 +3360,7 @@
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
-            <span class="gauge-label">ЦЕНТОВЕ</span>
+            <span class="gauge-label" data-i18n>ЦЕНТОВЕ</span>
             <span class="weight-chart-stats" id="centGroupTotal"></span>
           </div>
           <div class="coin-grid" id="centGrid"></div>
@@ -3372,23 +3372,23 @@
     <section id="screen-company" class="screen hidden">
       <div class="vitals-body">
         <div class="vitals-tabs">
-          <button class="vitals-tab active" data-company-tab="overview">ОБЗОР</button>
-          <button class="vitals-tab" data-company-tab="advances">АВАНСИ</button>
-          <button class="vitals-tab" data-company-tab="expenses">РАЗХОДИ</button>
+          <button class="vitals-tab active" data-company-tab="overview" data-i18n>ОБЗОР</button>
+          <button class="vitals-tab" data-company-tab="advances" data-i18n>АВАНСИ</button>
+          <button class="vitals-tab" data-company-tab="expenses" data-i18n>РАЗХОДИ</button>
         </div>
 
         <div class="vitals-tab-panel" id="companyTabOverview">
           <div class="garage-stats-row">
             <div class="console-panel garage-stat" data-accent="violet">
-              <span class="gauge-label">ТЕКУЩ БАЛАНС</span>
+              <span class="gauge-label" data-i18n>ТЕКУЩ БАЛАНС</span>
               <div class="garage-stat-value" id="companyBalanceValue">0.00€</div>
             </div>
             <div class="console-panel garage-stat" data-accent="cyan">
-              <span class="gauge-label">ПОЛУЧЕНИ АВАНСИ</span>
+              <span class="gauge-label" data-i18n>ПОЛУЧЕНИ АВАНСИ</span>
               <div class="garage-stat-value" id="companyAdvancesTotal">0.00€</div>
             </div>
             <div class="console-panel garage-stat" data-accent="amber">
-              <span class="gauge-label">ПОХАРЧЕНО</span>
+              <span class="gauge-label" data-i18n>ПОХАРЧЕНО</span>
               <div class="garage-stat-value" id="companyExpensesTotal">0.00€</div>
             </div>
           </div>
@@ -3396,10 +3396,10 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">ОТЧЕТ</span></div>
-            <p class="tdee-note">Свали чист документ с всички разходи, готов за печат или запис като PDF — за да го предадеш на шефа.</p>
+            <div class="chart-head"><span class="gauge-label" data-i18n>ОТЧЕТ</span></div>
+            <p class="tdee-note" data-i18n>Свали чист документ с всички разходи, готов за печат или запис като PDF — за да го предадеш на шефа.</p>
             <div class="chip-row">
-              <button class="chip" id="companyReportBtn">⭳ Свали отчет</button>
+              <button class="chip" id="companyReportBtn" data-i18n>⭳ Свали отчет</button>
             </div>
           </div>
         </div>
@@ -3409,8 +3409,8 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">АВАНСИ</span>
-              <button class="chip" id="advanceAddOpenBtn">+ Добави аванс</button>
+              <span class="gauge-label" data-i18n>АВАНСИ</span>
+              <button class="chip" id="advanceAddOpenBtn" data-i18n>+ Добави аванс</button>
             </div>
             <div class="record-list" id="advancesList"></div>
           </div>
@@ -3421,8 +3421,8 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">РАЗХОДИ</span>
-              <button class="chip" id="expenseAddOpenBtn">+ Добави разход</button>
+              <span class="gauge-label" data-i18n>РАЗХОДИ</span>
+              <button class="chip" id="expenseAddOpenBtn" data-i18n>+ Добави разход</button>
             </div>
             <div class="record-list" id="expensesList"></div>
           </div>
@@ -3437,13 +3437,13 @@
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
-            <span class="gauge-label">БЕЛЕЖКИ</span>
+            <span class="gauge-label" data-i18n>БЕЛЕЖКИ</span>
             <div class="chart-head-actions">
               <div class="product-list-search">
                 <span class="product-search-icon">⌕</span>
-                <input type="text" id="notesSearchInput" class="product-search-input" placeholder="Търси бележки..." autocomplete="off" />
+                <input type="text" id="notesSearchInput" class="product-search-input" placeholder="Търси бележки..." autocomplete="off" data-i18n-ph />
               </div>
-              <button class="chip" id="noteAddOpenBtn">+ Нова бележка</button>
+              <button class="chip" id="noteAddOpenBtn" data-i18n>+ Нова бележка</button>
             </div>
           </div>
 
@@ -3456,37 +3456,37 @@
     <section id="screen-garage" class="screen hidden">
       <div class="garage-body">
         <div class="vehicle-add-row hidden" id="vehicleAddRow">
-          <input id="newVehicleName" class="mini-input" placeholder="Име (напр. Астра)" />
-          <input id="newVehiclePlate" class="mini-input" placeholder="Рег. номер" />
-          <button class="chip" id="confirmAddVehicleBtn">Добави кола</button>
-          <button class="chip" id="cancelAddVehicleBtn">Отказ</button>
+          <input id="newVehicleName" class="mini-input" placeholder="Име (напр. Астра)" data-i18n-ph />
+          <input id="newVehiclePlate" class="mini-input" placeholder="Рег. номер" data-i18n-ph />
+          <button class="chip" id="confirmAddVehicleBtn" data-i18n>Добави кола</button>
+          <button class="chip" id="cancelAddVehicleBtn" data-i18n>Отказ</button>
         </div>
 
         <div class="vitals-tabs">
-          <button class="vitals-tab active" data-garage-tab="overview">ОБЗОР</button>
-          <button class="vitals-tab" data-garage-tab="repairs">РЕМОНТИ</button>
-          <button class="vitals-tab" data-garage-tab="fuel">ГОРИВО</button>
-          <button class="vitals-tab" data-garage-tab="documents">ДОКУМЕНТИ</button>
-          <button class="vitals-tab" data-garage-tab="fines">ФИШОВЕ</button>
-          <button class="vitals-tab" data-garage-tab="photos">СНИМКИ</button>
+          <button class="vitals-tab active" data-garage-tab="overview" data-i18n>ОБЗОР</button>
+          <button class="vitals-tab" data-garage-tab="repairs" data-i18n>РЕМОНТИ</button>
+          <button class="vitals-tab" data-garage-tab="fuel" data-i18n>ГОРИВО</button>
+          <button class="vitals-tab" data-garage-tab="documents" data-i18n>ДОКУМЕНТИ</button>
+          <button class="vitals-tab" data-garage-tab="fines" data-i18n>ФИШОВЕ</button>
+          <button class="vitals-tab" data-garage-tab="photos" data-i18n>СНИМКИ</button>
         </div>
 
         <div class="vitals-tab-panel" id="garageTabOverview">
           <div class="garage-stats-row">
             <div class="console-panel garage-stat" data-accent="amber">
-              <span class="gauge-label">РЕМОНТИ ТАЗИ ГОДИНА</span>
+              <span class="gauge-label" data-i18n>РЕМОНТИ ТАЗИ ГОДИНА</span>
               <div class="garage-stat-value" id="ovRepairsCost">0€</div>
             </div>
             <div class="console-panel garage-stat" data-accent="cyan">
-              <span class="gauge-label">ГОРИВО ТАЗИ ГОДИНА</span>
+              <span class="gauge-label" data-i18n>ГОРИВО ТАЗИ ГОДИНА</span>
               <div class="garage-stat-value" id="ovFuelCost">0€</div>
             </div>
             <div class="console-panel garage-stat" data-accent="pink">
-              <span class="gauge-label">НЕПЛАТЕНИ ФИШОВЕ</span>
+              <span class="gauge-label" data-i18n>НЕПЛАТЕНИ ФИШОВЕ</span>
               <div class="garage-stat-value" id="ovFinesUnpaid">0€</div>
             </div>
             <div class="console-panel garage-stat" data-accent="cyan">
-              <span class="gauge-label">СРЕДЕН РАЗХОД</span>
+              <span class="gauge-label" data-i18n>СРЕДЕН РАЗХОД</span>
               <div class="garage-stat-value" id="ovFuelConsumption">—</div>
             </div>
           </div>
@@ -3494,14 +3494,14 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">ДОКУМЕНТИ ИЗТИЧАЩИ СКОРО</span></div>
+            <div class="chart-head"><span class="gauge-label" data-i18n>ДОКУМЕНТИ ИЗТИЧАЩИ СКОРО</span></div>
             <div class="garage-alert-list" id="ovDocsAlerts"></div>
           </div>
 
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">НЕПЛАТЕНИ ФИШОВЕ</span></div>
+            <div class="chart-head"><span class="gauge-label" data-i18n>НЕПЛАТЕНИ ФИШОВЕ</span></div>
             <div class="garage-alert-list" id="ovFinesAlerts"></div>
           </div>
         </div>
@@ -3510,13 +3510,13 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">РЕМОНТИ</span></div>
+            <div class="chart-head"><span class="gauge-label" data-i18n>РЕМОНТИ</span></div>
             <div class="record-form">
               <input type="date" id="repairDate" class="mini-input" />
-              <input type="text" id="repairDesc" class="mini-input wide" placeholder="Описание" />
+              <input type="text" id="repairDesc" class="mini-input wide" placeholder="Описание" data-i18n-ph />
               <input type="number" id="repairKm" class="mini-input narrow" placeholder="Km" min="0" />
-              <input type="number" id="repairCost" class="mini-input narrow" placeholder="Цена €" min="0" />
-              <button class="chip" id="repairAddBtn">Добави</button>
+              <input type="number" id="repairCost" class="mini-input narrow" placeholder="Цена €" min="0" data-i18n-ph />
+              <button class="chip" id="repairAddBtn" data-i18n>Добави</button>
             </div>
             <div class="record-list" id="repairsList"></div>
           </div>
@@ -3527,15 +3527,15 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label">ГОРИВО</span>
+              <span class="gauge-label" data-i18n>ГОРИВО</span>
               <span class="weight-chart-stats" id="fuelStats"></span>
             </div>
             <div class="record-form">
               <input type="date" id="fuelDate" class="mini-input" />
-              <input type="number" id="fuelLiters" class="mini-input narrow" placeholder="Литри" min="0" step="0.01" />
-              <input type="number" id="fuelCost" class="mini-input narrow" placeholder="Цена €" min="0" />
+              <input type="number" id="fuelLiters" class="mini-input narrow" placeholder="Литри" min="0" step="0.01" data-i18n-ph />
+              <input type="number" id="fuelCost" class="mini-input narrow" placeholder="Цена €" min="0" data-i18n-ph />
               <input type="number" id="fuelKm" class="mini-input narrow" placeholder="Km" min="0" />
-              <button class="chip" id="fuelAddBtn">Добави</button>
+              <button class="chip" id="fuelAddBtn" data-i18n>Добави</button>
             </div>
             <div class="record-list" id="fuelList"></div>
           </div>
@@ -3545,17 +3545,17 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">ДОКУМЕНТИ</span></div>
+            <div class="chart-head"><span class="gauge-label" data-i18n>ДОКУМЕНТИ</span></div>
             <div class="record-form">
               <select id="docType" class="mini-input wide">
-                <option>Гражданска отговорност</option>
-                <option>Автокаско</option>
-                <option>Технически преглед</option>
-                <option>Винетка</option>
-                <option>Друго</option>
+                <option data-i18n>Гражданска отговорност</option>
+                <option data-i18n>Автокаско</option>
+                <option data-i18n>Технически преглед</option>
+                <option data-i18n>Винетка</option>
+                <option data-i18n>Друго</option>
               </select>
               <input type="date" id="docExpiry" class="mini-input" />
-              <button class="chip" id="docAddBtn">Добави</button>
+              <button class="chip" id="docAddBtn" data-i18n>Добави</button>
             </div>
             <div class="record-list" id="documentsList"></div>
           </div>
@@ -3565,12 +3565,12 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">ФИШОВЕ</span></div>
+            <div class="chart-head"><span class="gauge-label" data-i18n>ФИШОВЕ</span></div>
             <div class="record-form">
               <input type="date" id="fineDate" class="mini-input" />
-              <input type="text" id="fineDesc" class="mini-input wide" placeholder="Описание" />
-              <input type="number" id="fineAmount" class="mini-input narrow" placeholder="Сума €" min="0" />
-              <button class="chip" id="fineAddBtn">Добави</button>
+              <input type="text" id="fineDesc" class="mini-input wide" placeholder="Описание" data-i18n-ph />
+              <input type="number" id="fineAmount" class="mini-input narrow" placeholder="Сума €" min="0" data-i18n-ph />
+              <button class="chip" id="fineAddBtn" data-i18n>Добави</button>
             </div>
             <div class="record-list" id="finesList"></div>
           </div>
@@ -3580,10 +3580,10 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label">СНИМКИ НА КОЛАТА</span></div>
+            <div class="chart-head"><span class="gauge-label" data-i18n>СНИМКИ НА КОЛАТА</span></div>
 
             <div class="photo-upload-row">
-              <label class="chip photo-upload-label" for="photoUploadInput">+ Добави снимки</label>
+              <label class="chip photo-upload-label" for="photoUploadInput" data-i18n>+ Добави снимки</label>
               <input type="file" id="photoUploadInput" accept="image/*" multiple class="hidden" />
               <span class="photo-upload-hint" id="photoUploadHint"></span>
             </div>
@@ -3598,19 +3598,19 @@
     <section id="screen-admin" class="screen hidden">
       <div class="admin-stats-row">
         <div class="console-panel admin-stat total">
-          <span class="gauge-label">ОБЩО ПОТРЕБИТЕЛИ</span>
+          <span class="gauge-label" data-i18n>ОБЩО ПОТРЕБИТЕЛИ</span>
           <div class="admin-stat-value" id="adminUserCount">—</div>
         </div>
         <div class="console-panel admin-stat">
-          <span class="gauge-label">НОВИ ТАЗИ СЕДМИЦА</span>
+          <span class="gauge-label" data-i18n>НОВИ ТАЗИ СЕДМИЦА</span>
           <div class="admin-stat-value" id="adminUsersWeek">—</div>
         </div>
         <div class="console-panel admin-stat">
-          <span class="gauge-label">НОВИ ТОЗИ МЕСЕЦ</span>
+          <span class="gauge-label" data-i18n>НОВИ ТОЗИ МЕСЕЦ</span>
           <div class="admin-stat-value" id="adminUsersMonth">—</div>
         </div>
         <div class="console-panel admin-stat">
-          <span class="gauge-label">НОВИ ТАЗИ ГОДИНА</span>
+          <span class="gauge-label" data-i18n>НОВИ ТАЗИ ГОДИНА</span>
           <div class="admin-stat-value" id="adminUsersYear">—</div>
         </div>
       </div>
@@ -3618,16 +3618,16 @@
       <div class="console-panel chart-panel admin-growth-panel">
         <span class="corner tl"></span><span class="corner tr"></span>
         <span class="corner bl"></span><span class="corner br"></span>
-        <div class="chart-head"><span class="gauge-label">РАСТЕЖ — ОБЩО ПОТРЕБИТЕЛИ, ПОСЛЕДНИТЕ 30 ДНИ</span></div>
+        <div class="chart-head"><span class="gauge-label" data-i18n>РАСТЕЖ — ОБЩО ПОТРЕБИТЕЛИ, ПОСЛЕДНИТЕ 30 ДНИ</span></div>
         <div id="adminGrowthChart" class="line-chart"></div>
       </div>
 
       <div class="console-panel admin-panel">
         <span class="corner tl"></span><span class="corner tr"></span>
         <span class="corner bl"></span><span class="corner br"></span>
-        <div class="chart-head"><span class="gauge-label">СЛУЖЕБНИ ДЕЙСТВИЯ</span></div>
+        <div class="chart-head"><span class="gauge-label" data-i18n>СЛУЖЕБНИ ДЕЙСТВИЯ</span></div>
         <div class="admin-actions">
-          <button class="chip" id="adminClearCacheBtn">Изчисти локален кеш</button>
+          <button class="chip" id="adminClearCacheBtn" data-i18n>Изчисти локален кеш</button>
         </div>
       </div>
 
@@ -3639,10 +3639,10 @@
 
 <div class="photo-lightbox hidden" id="photoLightbox">
   <div class="photo-lightbox-inner">
-    <button class="photo-lightbox-close" id="photoLightboxClose" aria-label="Затвори">×</button>
+    <button class="photo-lightbox-close" id="photoLightboxClose" aria-label="Затвори" data-i18n-aria>×</button>
     <img id="photoLightboxImg" src="" alt="" />
     <div class="photo-lightbox-actions">
-      <button class="chip" id="photoLightboxDownload">⭳ Изтегли</button>
+      <button class="chip" id="photoLightboxDownload" data-i18n>⭳ Изтегли</button>
     </div>
   </div>
 </div>
@@ -3653,10 +3653,10 @@
   <div class="console-panel matrix-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
-    <p class="matrix-modal-text">Искаш ли да видиш нещо яко?</p>
+    <p class="matrix-modal-text" data-i18n>Искаш ли да видиш нещо яко?</p>
     <div class="matrix-modal-actions">
-      <button class="chip" id="matrixYesBtn">ДА</button>
-      <button class="chip" id="matrixNoBtn">НЕ</button>
+      <button class="chip" id="matrixYesBtn" data-i18n>ДА</button>
+      <button class="chip" id="matrixNoBtn" data-i18n>НЕ</button>
     </div>
   </div>
 </div>
@@ -3668,40 +3668,40 @@
     <span class="gauge-label" id="productEditModalTitle">РЕДАКТИРАЙ ПРОДУКТ</span>
     <div class="product-edit-form">
       <div class="product-edit-field">
-        <label for="editProductName">Име</label>
-        <input type="text" id="editProductName" class="mini-input" placeholder="Име на продукт" />
+        <label for="editProductName" data-i18n>Име</label>
+        <input type="text" id="editProductName" class="mini-input" placeholder="Име на продукт" data-i18n-ph />
       </div>
       <div class="product-edit-field">
-        <label for="editProductCategory">Категория</label>
+        <label for="editProductCategory" data-i18n>Категория</label>
         <select id="editProductCategory" class="mini-input"></select>
       </div>
       <div class="product-edit-row">
         <div class="product-edit-field">
-          <label for="editProductCalories">Ккал</label>
+          <label for="editProductCalories" data-i18n>Ккал</label>
           <input type="number" id="editProductCalories" class="mini-input" min="0" />
         </div>
         <div class="product-edit-field">
-          <label for="editProductProtein">Б (г)</label>
+          <label for="editProductProtein" data-i18n>Б (г)</label>
           <input type="number" id="editProductProtein" class="mini-input" min="0" />
         </div>
         <div class="product-edit-field">
-          <label for="editProductCarbs">В (г)</label>
+          <label for="editProductCarbs" data-i18n>В (г)</label>
           <input type="number" id="editProductCarbs" class="mini-input" min="0" />
         </div>
         <div class="product-edit-field">
-          <label for="editProductFat">М (г)</label>
+          <label for="editProductFat" data-i18n>М (г)</label>
           <input type="number" id="editProductFat" class="mini-input" min="0" />
         </div>
       </div>
       <div class="product-ref-field">
-        <label for="editProductRefGrams">стойностите са за</label>
+        <label for="editProductRefGrams" data-i18n>стойностите са за</label>
         <input type="number" id="editProductRefGrams" value="100" min="1" />
-        <label for="editProductRefGrams">г</label>
+        <label for="editProductRefGrams" data-i18n>г</label>
       </div>
     </div>
     <div class="matrix-modal-actions">
-      <button class="chip" id="productEditCancelBtn">Отказ</button>
-      <button class="chip" id="productEditSaveBtn">Запиши</button>
+      <button class="chip" id="productEditCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="productEditSaveBtn" data-i18n>Запиши</button>
     </div>
   </div>
 </div>
@@ -3710,25 +3710,25 @@
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
-    <span class="gauge-label">ДОБАВИ ХРАНЕНЕ</span>
+    <span class="gauge-label" data-i18n>ДОБАВИ ХРАНЕНЕ</span>
 
     <div class="meal-add-mode-tabs">
-      <button type="button" class="vitals-tab active" data-meal-mode="product">ОТ ПРОДУКТ</button>
-      <button type="button" class="vitals-tab" data-meal-mode="manual">РЪЧНО</button>
+      <button type="button" class="vitals-tab active" data-meal-mode="product" data-i18n>ОТ ПРОДУКТ</button>
+      <button type="button" class="vitals-tab" data-meal-mode="manual" data-i18n>РЪЧНО</button>
     </div>
 
     <div class="product-edit-form" id="mealAddModeProduct">
       <div class="product-edit-field">
-        <label for="productDropdownBtn">Продукт</label>
+        <label for="productDropdownBtn" data-i18n>Продукт</label>
         <div class="product-dropdown" id="productDropdown">
           <button type="button" class="product-dropdown-btn" id="productDropdownBtn">
-            <span id="productDropdownLabel">— избери продукт —</span>
+            <span id="productDropdownLabel" data-i18n>— избери продукт —</span>
             <span class="caret">▾</span>
           </button>
           <div class="product-dropdown-menu hidden" id="productDropdownMenu">
             <div class="product-search-row">
               <span class="product-search-icon">⌕</span>
-              <input type="text" id="productSearchInput" class="product-search-input" placeholder="Търси продукт..." autocomplete="off" />
+              <input type="text" id="productSearchInput" class="product-search-input" placeholder="Търси продукт..." autocomplete="off" data-i18n-ph />
             </div>
             <div class="product-dropdown-category-filter" id="productDropdownCategoryFilter"></div>
             <div class="product-dropdown-list" id="productDropdownList"></div>
@@ -3736,39 +3736,39 @@
         </div>
       </div>
       <div class="product-edit-field">
-        <label for="productGrams">Грамове / мл</label>
+        <label for="productGrams" data-i18n>Грамове / мл</label>
         <input type="number" id="productGrams" class="mini-input" placeholder="напр. 150" min="0" />
       </div>
     </div>
 
     <div class="product-edit-form hidden" id="mealAddModeManual">
       <div class="product-edit-field">
-        <label for="mealDesc">Какво прие?</label>
-        <input type="text" id="mealDesc" class="mini-input" placeholder="напр. Пилешко филе на скара" />
+        <label for="mealDesc" data-i18n>Какво прие?</label>
+        <input type="text" id="mealDesc" class="mini-input" placeholder="напр. Пилешко филе на скара" data-i18n-ph />
       </div>
       <div class="product-edit-row">
         <div class="product-edit-field">
-          <label for="mealCalories">Ккал</label>
+          <label for="mealCalories" data-i18n>Ккал</label>
           <input type="number" id="mealCalories" class="mini-input" min="0" />
         </div>
         <div class="product-edit-field">
-          <label for="mealProtein">Б (г)</label>
+          <label for="mealProtein" data-i18n>Б (г)</label>
           <input type="number" id="mealProtein" class="mini-input" min="0" />
         </div>
         <div class="product-edit-field">
-          <label for="mealCarbs">В (г)</label>
+          <label for="mealCarbs" data-i18n>В (г)</label>
           <input type="number" id="mealCarbs" class="mini-input" min="0" />
         </div>
         <div class="product-edit-field">
-          <label for="mealFat">М (г)</label>
+          <label for="mealFat" data-i18n>М (г)</label>
           <input type="number" id="mealFat" class="mini-input" min="0" />
         </div>
       </div>
     </div>
 
     <div class="matrix-modal-actions">
-      <button class="chip" id="mealAddCancelBtn">Отказ</button>
-      <button class="chip" id="mealAddSaveBtn">Добави</button>
+      <button class="chip" id="mealAddCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="mealAddSaveBtn" data-i18n>Добави</button>
     </div>
   </div>
 </div>
@@ -3780,21 +3780,21 @@
     <span class="gauge-label" id="advanceModalTitle">ДОБАВИ АВАНС</span>
     <div class="product-edit-form">
       <div class="product-edit-field">
-        <label for="advanceAmountInput">Сума (€)</label>
+        <label for="advanceAmountInput" data-i18n>Сума (€)</label>
         <input type="number" id="advanceAmountInput" class="mini-input" min="0" step="0.01" />
       </div>
       <div class="product-edit-field">
-        <label for="advanceDateInput">Дата</label>
+        <label for="advanceDateInput" data-i18n>Дата</label>
         <input type="date" id="advanceDateInput" class="mini-input" />
       </div>
       <div class="product-edit-field">
-        <label for="advanceNoteInput">Бележка (по избор)</label>
-        <input type="text" id="advanceNoteInput" class="mini-input" placeholder="напр. Аванс за командировка" />
+        <label for="advanceNoteInput" data-i18n>Бележка (по избор)</label>
+        <input type="text" id="advanceNoteInput" class="mini-input" placeholder="напр. Аванс за командировка" data-i18n-ph />
       </div>
     </div>
     <div class="matrix-modal-actions">
-      <button class="chip" id="advanceCancelBtn">Отказ</button>
-      <button class="chip" id="advanceSaveBtn">Добави</button>
+      <button class="chip" id="advanceCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="advanceSaveBtn" data-i18n>Добави</button>
     </div>
   </div>
 </div>
@@ -3806,23 +3806,23 @@
     <span class="gauge-label" id="expenseModalTitle">ДОБАВИ РАЗХОД</span>
     <div class="product-edit-form">
       <div class="product-edit-field">
-        <label for="expenseDescInput">За какво</label>
-        <input type="text" id="expenseDescInput" class="mini-input" placeholder="напр. Гориво, паркинг, материали" />
+        <label for="expenseDescInput" data-i18n>За какво</label>
+        <input type="text" id="expenseDescInput" class="mini-input" placeholder="напр. Гориво, паркинг, материали" data-i18n-ph />
       </div>
       <div class="product-edit-row-2">
         <div class="product-edit-field">
-          <label for="expenseAmountInput">Сума (€)</label>
+          <label for="expenseAmountInput" data-i18n>Сума (€)</label>
           <input type="number" id="expenseAmountInput" class="mini-input" min="0" step="0.01" />
         </div>
         <div class="product-edit-field">
-          <label for="expenseDateInput">Дата</label>
+          <label for="expenseDateInput" data-i18n>Дата</label>
           <input type="date" id="expenseDateInput" class="mini-input" />
         </div>
       </div>
     </div>
     <div class="matrix-modal-actions">
-      <button class="chip" id="expenseCancelBtn">Отказ</button>
-      <button class="chip" id="expenseSaveBtn">Добави</button>
+      <button class="chip" id="expenseCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="expenseSaveBtn" data-i18n>Добави</button>
     </div>
   </div>
 </div>
@@ -3835,8 +3835,8 @@
     <div class="report-brand">
       <div class="report-logo">◆</div>
       <div>
-        <div class="report-title">СЛУЖЕБЕН ОТЧЕТ</div>
-        <div class="report-subtitle">Отчет за служебни разходи</div>
+        <div class="report-title" data-i18n>СЛУЖЕБЕН ОТЧЕТ</div>
+        <div class="report-subtitle" data-i18n>Отчет за служебни разходи</div>
       </div>
     </div>
     <div class="report-meta">
@@ -3846,81 +3846,89 @@
 
   <table class="report-table">
     <thead>
-      <tr><th>Дата</th><th>Описание</th><th>Сума</th></tr>
+      <tr><th data-i18n>Дата</th><th data-i18n>Описание</th><th data-i18n>Сума</th></tr>
     </thead>
     <tbody id="reportExpenseRows"></tbody>
     <tfoot>
-      <tr><td colspan="2">Общо похарчено</td><td id="reportTotalSpent">0.00 €</td></tr>
+      <tr><td colspan="2" data-i18n>Общо похарчено</td><td id="reportTotalSpent">0.00 €</td></tr>
     </tfoot>
   </table>
 
   <div class="report-summary-cards">
     <div class="report-summary-card">
-      <span class="report-summary-label">Получени аванси</span>
+      <span class="report-summary-label" data-i18n>Получени аванси</span>
       <span class="report-summary-value" id="reportTotalAdvances">0.00 €</span>
     </div>
     <div class="report-summary-card">
-      <span class="report-summary-label">Похарчено</span>
+      <span class="report-summary-label" data-i18n>Похарчено</span>
       <span class="report-summary-value" id="reportTotalSpent2">0.00 €</span>
     </div>
     <div class="report-summary-card report-summary-card-balance">
-      <span class="report-summary-label">Текущ баланс</span>
+      <span class="report-summary-label" data-i18n>Текущ баланс</span>
       <span class="report-summary-value" id="reportBalance">0.00 €</span>
     </div>
   </div>
 
-  <div class="report-footer">Генериран с LifeOS</div>
+  <div class="report-footer" data-i18n>Генериран с LifeOS</div>
 </div>
 
 <div class="product-edit-modal hidden" id="profileModal">
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
-    <span class="gauge-label">ПРОФИЛ</span>
+    <span class="gauge-label" data-i18n>ПРОФИЛ</span>
 
     <div class="profile-modal-avatar-row">
-      <button class="profile-avatar-btn profile-avatar-btn-lg" id="profileModalAvatarBtn" title="Смени снимка">
+      <button class="profile-avatar-btn profile-avatar-btn-lg" id="profileModalAvatarBtn" title="Смени снимка" data-i18n-title>
         <img id="profileModalAvatarImg" class="hidden" alt="" />
         <span id="profileModalAvatarInitial">?</span>
       </button>
-      <button class="chip" id="profileAvatarUploadBtn">Смени снимка</button>
+      <button class="chip" id="profileAvatarUploadBtn" data-i18n>Смени снимка</button>
     </div>
     <input type="file" id="profileAvatarFileInput" accept="image/*" class="hidden" />
 
     <div class="product-edit-form">
       <div class="product-edit-field">
-        <label for="profileNameInput">Име</label>
-        <input type="text" id="profileNameInput" class="mini-input" placeholder="Твоето име" maxlength="40" />
+        <label for="profileNameInput" data-i18n>Име</label>
+        <input type="text" id="profileNameInput" class="mini-input" placeholder="Твоето име" maxlength="40" data-i18n-ph />
       </div>
       <div class="product-edit-field">
-        <label for="profileEmailDisplay">Имейл</label>
+        <label for="profileEmailDisplay" data-i18n>Имейл</label>
         <input type="text" id="profileEmailDisplay" class="mini-input" disabled />
       </div>
     </div>
 
     <div class="settings-divider profile-modal-divider"></div>
 
-    <button class="settings-action" id="settingsToggleBtn">⚙ Настройки <span class="settings-toggle-caret" id="settingsToggleCaret">▾</span></button>
+    <button class="settings-action" id="settingsToggleBtn"><span data-i18n>⚙ Настройки</span> <span class="settings-toggle-caret" id="settingsToggleCaret">▾</span></button>
 
     <div class="settings-collapse hidden" id="settingsCollapse">
       <div class="settings-row">
-        <span id="themeLabel" class="theme-label">ТЕМА</span>
-        <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата">
+        <span id="themeLabel" class="theme-label" data-i18n>ТЕМА</span>
+        <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата" data-i18n-title>
           <span class="theme-toggle-icon">☀</span>
           <span class="theme-toggle-icon">☾</span>
           <span class="theme-toggle-thumb"></span>
         </button>
       </div>
-      <button class="settings-action" id="settingsExportBtn">⭳ Изтегли резервно копие</button>
-      <button class="settings-action" id="settingsImportBtn">⭱ Възстанови от файл</button>
+      <div class="settings-row">
+        <span id="langLabel" class="theme-label" data-i18n>ЕЗИК</span>
+        <button class="theme-toggle" id="langToggle" type="button" role="switch" aria-checked="false" title="Смени езика" data-i18n-title>
+          <span class="theme-toggle-icon">BG</span>
+          <span class="theme-toggle-icon">EN</span>
+          <span class="theme-toggle-thumb"></span>
+        </button>
+      </div>
+      <button class="settings-action" id="settingsExportBtn" data-i18n>⭳ Изтегли резервно копие</button>
+      <button class="settings-action" id="settingsImportBtn" data-i18n>⭱ Възстанови от файл</button>
     </div>
 
     <div class="settings-divider"></div>
-    <button class="settings-action" id="logoutBtn">⏻ Изход</button>
+    <button class="settings-action" id="logoutBtn" data-i18n>⏻ Изход</button>
 
     <div class="matrix-modal-actions">
-      <button class="chip" id="profileCancelBtn">Отказ</button>
-      <button class="chip" id="profileSaveBtn">Запази</button>
+      <button class="chip" id="profileCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="profileSaveBtn" data-i18n>Запази</button>
     </div>
   </div>
 </div>
@@ -3932,20 +3940,20 @@
     <span class="gauge-label" id="noteModalTitle">НОВА БЕЛЕЖКА</span>
     <div class="product-edit-form">
       <div class="product-edit-field">
-        <label for="noteTitleInput">Заглавие (по избор)</label>
-        <input type="text" id="noteTitleInput" class="mini-input" placeholder="напр. Пазар за уикенда" maxlength="80" />
+        <label for="noteTitleInput" data-i18n>Заглавие (по избор)</label>
+        <input type="text" id="noteTitleInput" class="mini-input" placeholder="напр. Пазар за уикенда" maxlength="80" data-i18n-ph />
       </div>
       <div class="product-edit-field">
-        <label>Текст</label>
+        <label data-i18n>Текст</label>
         <div class="note-toolbar" id="noteToolbar">
-          <button type="button" class="note-tool-btn" data-cmd="bold" title="Удебелен"><b>Ж</b></button>
-          <button type="button" class="note-tool-btn" data-cmd="italic" title="Курсив"><i>К</i></button>
-          <button type="button" class="note-tool-btn" data-cmd="underline" title="Подчертан"><u>П</u></button>
-          <button type="button" class="note-tool-btn" data-cmd="strikeThrough" title="Зачертан"><s>З</s></button>
+          <button type="button" class="note-tool-btn" data-cmd="bold" title="Удебелен" data-i18n-title><b>Ж</b></button>
+          <button type="button" class="note-tool-btn" data-cmd="italic" title="Курсив" data-i18n-title><i>К</i></button>
+          <button type="button" class="note-tool-btn" data-cmd="underline" title="Подчертан" data-i18n-title><u>П</u></button>
+          <button type="button" class="note-tool-btn" data-cmd="strikeThrough" title="Зачертан" data-i18n-title><s>З</s></button>
           <span class="note-toolbar-divider"></span>
-          <input type="number" class="note-tool-number" id="noteFontSizeInput" title="Размер на шрифта (px)" min="2" max="40" value="14" />
-          <select class="note-tool-select" id="noteFontFamilySelect" title="Шрифт">
-            <option value="">Шрифт</option>
+          <input type="number" class="note-tool-number" id="noteFontSizeInput" title="Размер на шрифта (px)" min="2" max="40" value="14" data-i18n-title />
+          <select class="note-tool-select" id="noteFontFamilySelect" title="Шрифт" data-i18n-title>
+            <option value="" data-i18n>Шрифт</option>
             <option value="'Times New Roman', Times, serif">Times New Roman</option>
             <option value="Arial, Helvetica, sans-serif">Arial</option>
             <option value="Georgia, serif">Georgia</option>
@@ -3953,23 +3961,23 @@
             <option value="'Courier New', monospace">Courier New</option>
             <option value="'Comic Sans MS', cursive">Comic Sans</option>
           </select>
-          <input type="color" id="noteColorInput" class="note-tool-color" title="Цвят на текста" value="#eae7fb" />
+          <input type="color" id="noteColorInput" class="note-tool-color" title="Цвят на текста" value="#eae7fb" data-i18n-title />
           <span class="note-toolbar-divider"></span>
-          <button type="button" class="note-tool-btn" data-cmd="insertUnorderedList" title="Списък">☰</button>
-          <button type="button" class="note-tool-btn" data-cmd="insertOrderedList" title="Номериран списък">①</button>
+          <button type="button" class="note-tool-btn" data-cmd="insertUnorderedList" title="Списък" data-i18n-title>☰</button>
+          <button type="button" class="note-tool-btn" data-cmd="insertOrderedList" title="Номериран списък" data-i18n-title>①</button>
           <span class="note-toolbar-divider"></span>
-          <button type="button" class="note-tool-btn" data-cmd="justifyLeft" title="Ляво подравняване">◧</button>
-          <button type="button" class="note-tool-btn" data-cmd="justifyCenter" title="Центрирано">▣</button>
-          <button type="button" class="note-tool-btn" data-cmd="justifyRight" title="Дясно подравняване">◨</button>
+          <button type="button" class="note-tool-btn" data-cmd="justifyLeft" title="Ляво подравняване" data-i18n-title>◧</button>
+          <button type="button" class="note-tool-btn" data-cmd="justifyCenter" title="Центрирано" data-i18n-title>▣</button>
+          <button type="button" class="note-tool-btn" data-cmd="justifyRight" title="Дясно подравняване" data-i18n-title>◨</button>
           <span class="note-toolbar-divider"></span>
-          <button type="button" class="note-tool-btn" id="noteClearFormatBtn" title="Изчисти форматирането">⌫</button>
+          <button type="button" class="note-tool-btn" id="noteClearFormatBtn" title="Изчисти форматирането" data-i18n-title>⌫</button>
         </div>
-        <div id="noteBodyInput" class="note-body-editable" contenteditable="true" data-placeholder="Пиши тук..."></div>
+        <div id="noteBodyInput" class="note-body-editable" contenteditable="true" data-placeholder="Пиши тук..." data-i18n-dataph></div>
       </div>
     </div>
     <div class="matrix-modal-actions">
-      <button class="chip" id="noteCancelBtn">Отказ</button>
-      <button class="chip" id="noteSaveBtn">Запази</button>
+      <button class="chip" id="noteCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="noteSaveBtn" data-i18n>Запази</button>
     </div>
   </div>
 </div>
@@ -3977,9 +3985,169 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const MONTH_NAMES = ['Януари','Февруари','Март','Април','Май','Юни','Юли','Август','Септември','Октомври','Ноември','Декември'];
-  const MONTH_SHORT = ['Яну','Фев','Мар','Апр','Май','Юни','Юли','Авг','Сеп','Окт','Ное','Дек'];
-  const WEEKDAY_SHORT = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+  const MONTH_NAMES_BG = ['Януари','Февруари','Март','Април','Май','Юни','Юли','Август','Септември','Октомври','Ноември','Декември'];
+  const MONTH_NAMES_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const MONTH_SHORT_BG = ['Яну','Фев','Мар','Апр','Май','Юни','Юли','Авг','Сеп','Окт','Ное','Дек'];
+  const MONTH_SHORT_EN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const WEEKDAY_SHORT_BG = ['Пн','Вт','Ср','Чт','Пт','Сб','Нд'];
+  const WEEKDAY_SHORT_EN = ['Mo','Tu','We','Th','Fr','Sa','Su'];
+  const MONTH_NAMES = () => currentLang === 'en' ? MONTH_NAMES_EN : MONTH_NAMES_BG;
+  const MONTH_SHORT = () => currentLang === 'en' ? MONTH_SHORT_EN : MONTH_SHORT_BG;
+  const WEEKDAY_SHORT = () => currentLang === 'en' ? WEEKDAY_SHORT_EN : WEEKDAY_SHORT_BG;
+
+  const I18N_EN = {
+    'ВХОД': 'LOGIN', 'ИМЕЙЛ': 'EMAIL', 'ПАРОЛА': 'PASSWORD', 'Нямаш акаунт?': "Don't have an account?",
+    'Регистрирай се': 'Sign up', 'РЕГИСТРАЦИЯ': 'SIGN UP', 'Вече имаш акаунт?': 'Already have an account?', 'Влез': 'Log in',
+    'Въведи имейл и парола': 'Enter email and password', 'Провери имейла си, за да потвърдиш акаунта.': 'Check your email to confirm your account.',
+    'Проверка на сесията...': 'Checking session...', 'Зареждане...': 'Loading...',
+
+    'Към хъба': 'To hub', 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР': 'PERSONAL CONTROL CENTER', 'ДНЕВНА СТАВКА': 'DAILY RATE',
+    'ККАЛ': 'KCAL', 'МЛ': 'ML', 'КРАЧКИ': 'STEPS', 'Нова кола': 'New car',
+
+    'ИЗБЕРИ МОДУЛ': 'SELECT MODULE',
+    'Калории, вода, крачки': 'Calories, water, steps', 'ККАЛ ДНЕС': 'KCAL TODAY', 'МЛ ДНЕС': 'ML TODAY', 'КРАЧКИ ДНЕС': 'STEPS TODAY',
+    'Ремонти, гориво, документи, фишове': 'Repairs, fuel, documents, tickets', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNPAID TICKETS', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOCUMENTS EXPIRING',
+    'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
+    'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
+    'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
+    "Бележки, за да не забравяш": "Notes, so you don't forget", 'БЕЛЕЖКИ': 'NOTES', 'ПОСЛЕДНА': 'LATEST',
+    'Калкулатор на енергоразход': 'Energy expenditure calculator', 'TDEE (ККАЛ)': 'TDEE (KCAL)',
+
+    'Предишен месец': 'Previous month', 'Следващ месец': 'Next month',
+    'ПН': 'MO', 'ВТ': 'TU', 'СР': 'WE', 'ЧТ': 'TH', 'ПТ': 'FR', 'СБ': 'SA', 'НД': 'SU',
+    'Работен ден': 'Work day', 'Днес': 'Today', 'Кликни ден, за да превключиш': 'Click a day to toggle',
+    'дни': 'days', '16 - КРАЙ': '16 - END', 'ТОЗИ МЕСЕЦ': 'THIS MONTH', 'ТАЗИ ГОДИНА': 'THIS YEAR', 'ДОХОД ПО МЕСЕЦИ': 'INCOME BY MONTH',
+
+    'ДНЕС': 'TODAY', 'ТЕГЛО': 'WEIGHT', 'ХРАНА': 'FOOD',
+    'КАЛОРИИ ДНЕС': 'CALORIES TODAY', 'ккал': 'kcal', 'Нулирай хранене': 'Reset nutrition',
+    'ВОДА ДНЕС': 'WATER TODAY', 'мл': 'ml', '+250 мл': '+250 ml', '+500 мл': '+500 ml', '+1Л': '+1L', 'Нулирай': 'Reset',
+    'крачки': 'steps', 'Задай': 'Set',
+    'ХРАНЕНЕ И МАКРОСИ': 'NUTRITION & MACROS', '+ Добави хранене': '+ Add meal',
+    'ПРОТЕИНИ': 'PROTEIN', 'г': 'g', 'ВЪГЛЕХИДРАТИ': 'CARBS', 'МАЗНИНИ': 'FAT',
+    'ИСТОРИЯ ДНЕС': "TODAY'S HISTORY", 'ПОСЛЕДНИ 7 ДНИ': 'LAST 7 DAYS', 'КАЛОРИИ': 'CALORIES', 'ВОДА': 'WATER',
+    'ТЕГЛО ДНЕС': 'WEIGHT TODAY', '/ цел': '/ goal', 'кг': 'kg', 'Запиши': 'Save',
+    'ТЕКУЩО': 'CURRENT', 'ПРОМЯНА (30 ДНИ)': 'CHANGE (30 DAYS)', 'СРЕДНО': 'AVERAGE', 'ЦЕЛ': 'GOAL',
+    'ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ': 'WEIGHT — LAST 30 DAYS',
+    'МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)': 'MY PRODUCTS (PER 100G/ML)', 'Търси храна...': 'Search food...', '+ Добави продукт': '+ Add product',
+
+    'ДАННИ': 'DATA', 'По формулата на Mifflin-St Jeor': 'Using the Mifflin-St Jeor formula',
+    'ПОЛ': 'SEX', 'Мъж': 'Male', 'Жена': 'Female', 'ВЪЗРАСТ': 'AGE', 'РЪСТ (СМ)': 'HEIGHT (CM)', 'ТЕГЛО (КГ)': 'WEIGHT (KG)',
+    'НИВО НА АКТИВНОСТ': 'ACTIVITY LEVEL',
+    'Заседнал (без спорт)': 'Sedentary (no sport)',
+    'Леко активен (1-3 дни/седмица)': 'Lightly active (1-3 days/week)',
+    'Умерено активен (3-5 дни/седмица)': 'Moderately active (3-5 days/week)',
+    'Много активен (6-7 дни/седмица)': 'Very active (6-7 days/week)',
+    'Екстремно активен (физически труд + спорт)': 'Extremely active (physical labor + sport)',
+    'BMR (ПОКОЙ)': 'BMR (RESTING)', 'TDEE (ПОДДЪРЖАНЕ)': 'TDEE (MAINTENANCE)',
+    'ОТСЛАБВАНЕ (-20%)': 'WEIGHT LOSS (-20%)', 'Приложи като цел във Vitals': 'Apply as goal in Vitals',
+    'ПОДДЪРЖАНЕ': 'MAINTENANCE', 'НАБИРАНЕ (+15%)': 'WEIGHT GAIN (+15%)',
+
+    'БАНКНОТИ': 'BANKNOTES', 'МОНЕТИ': 'COINS', 'ЦЕНТОВЕ': 'CENTS',
+
+    'ОБЗОР': 'OVERVIEW', 'АВАНСИ': 'ADVANCES', 'РАЗХОДИ': 'EXPENSES',
+    'ПОЛУЧЕНИ АВАНСИ': 'ADVANCES RECEIVED', 'ПОХАРЧЕНО': 'SPENT', 'ОТЧЕТ': 'REPORT',
+    'Свали чист документ с всички разходи, готов за печат или запис като PDF — за да го предадеш на шефа.':
+      'Download a clean document with all expenses, ready to print or save as PDF — to hand to your boss.',
+    '⭳ Свали отчет': '⭳ Download report', '+ Добави аванс': '+ Add advance', '+ Добави разход': '+ Add expense',
+
+    'Търси бележки...': 'Search notes...', '+ Нова бележка': '+ New note',
+
+    'Име (напр. Астра)': 'Name (e.g. Astra)', 'Рег. номер': 'License plate', 'Добави кола': 'Add car', 'Отказ': 'Cancel',
+    'РЕМОНТИ': 'REPAIRS', 'ГОРИВО': 'FUEL', 'ДОКУМЕНТИ': 'DOCUMENTS', 'ФИШОВЕ': 'TICKETS', 'СНИМКИ': 'PHOTOS',
+    'РЕМОНТИ ТАЗИ ГОДИНА': 'REPAIRS THIS YEAR', 'ГОРИВО ТАЗИ ГОДИНА': 'FUEL THIS YEAR', 'СРЕДЕН РАЗХОД': 'AVERAGE CONSUMPTION',
+    'ДОКУМЕНТИ ИЗТИЧАЩИ СКОРО': 'DOCUMENTS EXPIRING SOON',
+    'Описание': 'Description', 'Цена €': 'Price €', 'Добави': 'Add', 'Литри': 'Liters',
+    'Гражданска отговорност': 'Liability insurance', 'Автокаско': 'Full insurance', 'Технически преглед': 'Technical inspection',
+    'Винетка': 'Road tax vignette', 'Друго': 'Other', 'Сума €': 'Amount €',
+    'СНИМКИ НА КОЛАТА': 'PHOTOS OF THE CAR', '+ Добави снимки': '+ Add photos',
+
+    'ОБЩО ПОТРЕБИТЕЛИ': 'TOTAL USERS', 'НОВИ ТАЗИ СЕДМИЦА': 'NEW THIS WEEK', 'НОВИ ТОЗИ МЕСЕЦ': 'NEW THIS MONTH',
+    'НОВИ ТАЗИ ГОДИНА': 'NEW THIS YEAR', 'РАСТЕЖ — ОБЩО ПОТРЕБИТЕЛИ, ПОСЛЕДНИТЕ 30 ДНИ': 'GROWTH — TOTAL USERS, LAST 30 DAYS',
+    'СЛУЖЕБНИ ДЕЙСТВИЯ': 'ADMIN ACTIONS', 'Изчисти локален кеш': 'Clear local cache',
+
+    'Затвори': 'Close', '⭳ Изтегли': '⭳ Download',
+    'Искаш ли да видиш нещо яко?': 'Want to see something cool?', 'ДА': 'YES', 'НЕ': 'NO',
+
+    'Име': 'Name', 'Име на продукт': 'Product name', 'Категория': 'Category',
+    'Ккал': 'Kcal', 'Б (г)': 'P (g)', 'В (г)': 'C (g)', 'М (г)': 'F (g)', 'стойностите са за': 'values are for',
+
+    'ДОБАВИ ХРАНЕНЕ': 'ADD MEAL', 'ОТ ПРОДУКТ': 'FROM PRODUCT', 'РЪЧНО': 'MANUAL',
+    'Продукт': 'Product', '— избери продукт —': '— select product —', 'Търси продукт...': 'Search product...',
+    'Грамове / мл': 'Grams / ml', 'Какво прие?': 'What did you eat?',
+
+    'Сума (€)': 'Amount (€)', 'Дата': 'Date', 'Бележка (по избор)': 'Note (optional)', 'За какво': 'What for',
+
+    'СЛУЖЕБЕН ОТЧЕТ': 'EXPENSE REPORT', 'Отчет за служебни разходи': 'Report of business expenses',
+    'Сума': 'Amount', 'Общо похарчено': 'Total spent', 'Получени аванси': 'Advances received',
+    'Похарчено': 'Spent', 'Текущ баланс': 'Current balance', 'Генериран с LifeOS': 'Generated with LifeOS',
+
+    'ПРОФИЛ': 'PROFILE', 'Смени снимка': 'Change photo', 'Твоето име': 'Your name', 'Имейл': 'Email',
+    '⚙ Настройки': '⚙ Settings', 'ТЕМА': 'THEME', 'Смени темата': 'Change theme',
+    'ЕЗИК': 'LANGUAGE', 'Смени езика': 'Change language',
+    '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
+
+    'НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
+    'Удебелен': 'Bold', 'Курсив': 'Italic', 'Подчертан': 'Underline', 'Зачертан': 'Strikethrough',
+    'Размер на шрифта (px)': 'Font size (px)', 'Шрифт': 'Font', 'Цвят на текста': 'Text color',
+    'Списък': 'List', 'Номериран списък': 'Numbered list',
+    'Ляво подравняване': 'Align left', 'Центрирано': 'Center', 'Дясно подравняване': 'Align right',
+    'Изчисти форматирането': 'Clear formatting', 'Пиши тук...': 'Write here...',
+
+    'Грешка при зареждане на данните': 'Error loading data',
+    'Грешка при запис — провери връзката': 'Error saving — check your connection',
+    'Кешът е изчистен': 'Cache cleared',
+    'Аванс': 'Advance', 'ДОБАВИ АВАНС': 'ADD ADVANCE', 'РЕДАКТИРАЙ АВАНС': 'EDIT ADVANCE',
+    'Въведи сума': 'Enter an amount', 'Избери дата': 'Select a date',
+    'ДОБАВИ РАЗХОД': 'ADD EXPENSE', 'РЕДАКТИРАЙ РАЗХОД': 'EDIT EXPENSE',
+    'Въведи за какво е разходът': 'Enter what the expense was for',
+    'Грешка при зареждане на снимката': 'Error loading the photo',
+    'Само снимки': 'Images only', 'Файлът е над': 'File is over',
+    'Грешка при качване на снимка': 'Error uploading photo', 'Снимката е прикачена': 'Photo attached',
+    'Служебен отчет': 'Expense report',
+    'Отчетът е изтеглен — отвори файла, за да го отпечаташ или запишеш като PDF':
+      'Report downloaded — open the file to print it or save it as PDF',
+    'Няма записани разходи': 'No expenses recorded',
+    'Грешка при генериране на отчета': 'Error generating the report',
+    'Моят профил': 'My profile', 'Снимката е обновена': 'Photo updated',
+    'Няма съвпадения': 'No matches', 'Няма добавени бележки': 'No notes added',
+    'Редактирай': 'Edit', 'Изтрий': 'Delete', 'Запази': 'Save',
+    'РЕДАКТИРАЙ БЕЛЕЖКА': 'EDIT NOTE', 'Напиши нещо в бележката': 'Write something in the note',
+    'над целта': 'over goal', 'остават': 'remaining', '✓ изпълнена': '✓ reached', 'първи запис': 'first entry',
+    'Целта за калории е обновена': 'Calorie goal updated',
+    'Все още няма записано тегло — въведи първата стойност горе': 'No weight recorded yet — enter your first value above',
+    'Напиши какво си приел': 'Write what you ate', 'Въведи поне една стойност': 'Enter at least one value',
+    'Всички': 'All', 'Избери продукт': 'Select a product', 'Въведи грамове/мл': 'Enter grams/ml',
+    'Избери категория или потърси продукт': 'Select a category or search for a product',
+    'Няма добавени продукти': 'No products added', 'ккал/100г': 'kcal/100g',
+    'Б': 'P', 'В': 'C', 'М': 'F',
+    'ДОБАВИ ПРОДУКТ': 'ADD PRODUCT', 'РЕДАКТИРАЙ ПРОДУКТ': 'EDIT PRODUCT',
+    'Въведи име на продукта': 'Enter the product name',
+    'ДОБАВЯНИЯ': 'ADDED', 'Няма добавяния днес': 'Nothing added today',
+    'Изтекъл': 'Expired', 'Валиден': 'Valid',
+    'Виж фактура': 'View receipt', 'Добави снимка на фактура': 'Add receipt photo',
+    'Няма записани ремонти': 'No repairs recorded', 'Няма записано гориво': 'No fuel recorded',
+    'л': 'L', 'ОБЩО': 'TOTAL', 'СР. ЦЕНА': 'AVG. PRICE', 'Л': 'L',
+    'Платен': 'Paid', 'Неплатен': 'Unpaid', 'Кликни, за да превключиш': 'Click to toggle',
+    'Л/100КМ': 'L/100KM',
+    'Няма документи, изтичащи скоро': 'No documents expiring soon', 'Няма неплатени фишове': 'No unpaid tickets',
+    'Фиш': 'Ticket', 'е над': 'is over', 'прескочена': 'skipped',
+    'Обработка': 'Processing', 'Качване': 'Uploading',
+    'Няма добавени снимки за тази кола': 'No photos added for this car',
+    'Грешка при изтегляне': 'Download error', 'Резервно копие изтеглено': 'Backup downloaded',
+    'Изтеглянето беше отказано': 'Download was cancelled',
+    'Данните са възстановени': 'Data restored', 'Невалиден файл': 'Invalid file',
+
+    'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ': 'TRACKING SYSTEM', 'ВИТАЛНИ ПОКАЗАТЕЛИ': 'VITAL METRICS',
+    'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД': 'ENERGY EXPENDITURE CALCULATOR', 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ': 'VEHICLE SERVICING',
+    'СПЕСТЕНИ ПАРИ': 'SAVED MONEY', 'СЛУЖЕБНИ ПАРИ': 'COMPANY MONEY', 'СЛУЖЕБНО ТАБЛО': 'ADMIN DASHBOARD',
+
+    'Плодове': 'Fruits', 'Зеленчуци': 'Vegetables', 'Месо и риба': 'Meat & fish', 'Хляб': 'Bread',
+    'Млечни': 'Dairy', 'Ядки и семена': 'Nuts & seeds', 'Сладко': 'Sweets', 'Напитки': 'Drinks',
+    'Готови храни': 'Ready meals', 'Домашно приготвени': 'Homemade', 'Сосове': 'Sauces', 'Чипсове': 'Chips', 'Други': 'Other',
+
+    'Име (А-Я)': 'Name (A-Z)', 'Име (Я-А)': 'Name (Z-A)', 'Калории ↑': 'Calories ↑', 'Калории ↓': 'Calories ↓',
+    'Протеини ↓': 'Protein ↓', 'Въглехидрати ↓': 'Carbs ↓', 'Мазнини ↓': 'Fat ↓'
+  };
 
   const SUPABASE_URL = 'https://ytosvspqdmazfwymgssv.supabase.co';
   const SUPABASE_ANON_KEY = 'sb_publishable_NI452NCaweP12tTTIqOITA_IEGt_9zB';
@@ -3989,6 +4157,7 @@
   let currentUser = null;
   let authMode = 'signin';
   let saveTimer = null;
+  let currentLang = 'bg';
 
   let state = {
     workdays: { dailyRate: 100, workDays: {} },
@@ -4066,7 +4235,7 @@
       }
     } catch (err) {
       state = defaults;
-      showToast('Грешка при зареждане на данните');
+      showToast(tr('Грешка при зареждане на данните'));
     }
   }
 
@@ -4081,7 +4250,7 @@
           updated_at: new Date().toISOString()
         });
       } catch {
-        showToast('Грешка при запис — провери връзката');
+        showToast(tr('Грешка при запис — провери връзката'));
       }
     }, 400);
   }
@@ -4160,7 +4329,7 @@
       admin: 'СЛУЖЕБНО ТАБЛО'
     };
     $('brandTitle').textContent = titles[name];
-    $('brandSub').textContent = subs[name];
+    $('brandSub').textContent = tr(subs[name]);
 
     if (name === 'hub') renderHub();
     if (name === 'workdays') { renderCalendar(); renderStats(true); renderYearChart(); }
@@ -4242,6 +4411,57 @@
     let saved = null;
     try { saved = localStorage.getItem('lifeos_theme'); } catch {}
     applyTheme(saved === 'light' || saved === 'matrix' ? saved : 'dark');
+  }
+
+  /* ============ Language (BG/EN) ============ */
+
+  function tr(bg) {
+    if (currentLang !== 'en') return bg;
+    return I18N_EN[bg] !== undefined ? I18N_EN[bg] : bg;
+  }
+
+  function applyI18n() {
+    const en = currentLang === 'en';
+    document.querySelectorAll('[data-i18n]').forEach((el) => {
+      if (el.dataset.i18nOrig === undefined) el.dataset.i18nOrig = el.textContent;
+      el.textContent = en ? tr(el.dataset.i18nOrig) : el.dataset.i18nOrig;
+    });
+    document.querySelectorAll('[data-i18n-ph]').forEach((el) => {
+      if (el.dataset.i18nPhOrig === undefined) el.dataset.i18nPhOrig = el.getAttribute('placeholder') || '';
+      el.setAttribute('placeholder', en ? tr(el.dataset.i18nPhOrig) : el.dataset.i18nPhOrig);
+    });
+    document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+      if (el.dataset.i18nTitleOrig === undefined) el.dataset.i18nTitleOrig = el.getAttribute('title') || '';
+      el.setAttribute('title', en ? tr(el.dataset.i18nTitleOrig) : el.dataset.i18nTitleOrig);
+    });
+    document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
+      if (el.dataset.i18nAriaOrig === undefined) el.dataset.i18nAriaOrig = el.getAttribute('aria-label') || '';
+      el.setAttribute('aria-label', en ? tr(el.dataset.i18nAriaOrig) : el.dataset.i18nAriaOrig);
+    });
+    document.querySelectorAll('[data-i18n-dataph]').forEach((el) => {
+      if (el.dataset.i18nDataphOrig === undefined) el.dataset.i18nDataphOrig = el.getAttribute('data-placeholder') || '';
+      el.setAttribute('data-placeholder', en ? tr(el.dataset.i18nDataphOrig) : el.dataset.i18nDataphOrig);
+    });
+  }
+
+  function applyLang(lang) {
+    currentLang = lang === 'en' ? 'en' : 'bg';
+    $('langToggle').setAttribute('aria-checked', currentLang === 'en' ? 'true' : 'false');
+    try { localStorage.setItem('lifeos_lang', currentLang); } catch {}
+    applyI18n();
+  }
+
+  function toggleLang() {
+    applyLang(currentLang === 'en' ? 'bg' : 'en');
+    location.reload();
+  }
+
+  function initLang() {
+    let saved = null;
+    try { saved = localStorage.getItem('lifeos_lang'); } catch {}
+    currentLang = saved === 'en' ? 'en' : 'bg';
+    $('langToggle').setAttribute('aria-checked', currentLang === 'en' ? 'true' : 'false');
+    applyI18n();
   }
 
   function openMatrixModal() { $('matrixModal').classList.remove('hidden'); }
@@ -4350,7 +4570,7 @@
   function handleClearCache() {
     localStorage.clear();
     sessionStorage.clear();
-    showToast('Кешът е изчистен');
+    showToast(tr('Кешът е изчистен'));
   }
 
   /* ============ WorkDays ============ */
@@ -4372,7 +4592,7 @@
     const y = viewDate.getFullYear();
     const m = viewDate.getMonth();
 
-    $('monthLabel').textContent = MONTH_NAMES[m];
+    $('monthLabel').textContent = MONTH_NAMES()[m];
     $('yearLabel').textContent = y;
 
     const grid = $('calendarGrid');
@@ -4523,7 +4743,7 @@
 
       const label = document.createElement('div');
       label.className = 'chart-bar-label';
-      label.textContent = MONTH_SHORT[i];
+      label.textContent = MONTH_SHORT()[i];
 
       wrap.appendChild(bar);
       wrap.appendChild(label);
@@ -4753,7 +4973,7 @@
     list.forEach((a) => {
       container.appendChild(createRecordRow({
         date: formatDateDisplay(a.date),
-        desc: a.note || 'Аванс',
+        desc: a.note || tr('Аванс'),
         meta: '',
         cost: formatMoney(a.amount) + ' €',
         onDelete: () => deleteAdvance(a.id),
@@ -4792,8 +5012,8 @@
     $('advanceAmountInput').value = '';
     $('advanceDateInput').value = todayKey();
     $('advanceNoteInput').value = '';
-    $('advanceModalTitle').textContent = 'ДОБАВИ АВАНС';
-    $('advanceSaveBtn').textContent = 'Добави';
+    $('advanceModalTitle').textContent = tr('ДОБАВИ АВАНС');
+    $('advanceSaveBtn').textContent = tr('Добави');
     $('advanceModal').classList.remove('hidden');
     $('advanceAmountInput').focus();
   }
@@ -4805,8 +5025,8 @@
     $('advanceAmountInput').value = a.amount;
     $('advanceDateInput').value = a.date;
     $('advanceNoteInput').value = a.note || '';
-    $('advanceModalTitle').textContent = 'РЕДАКТИРАЙ АВАНС';
-    $('advanceSaveBtn').textContent = 'Запиши';
+    $('advanceModalTitle').textContent = tr('РЕДАКТИРАЙ АВАНС');
+    $('advanceSaveBtn').textContent = tr('Запиши');
     $('advanceModal').classList.remove('hidden');
   }
 
@@ -4820,8 +5040,8 @@
     const date = $('advanceDateInput').value;
     const note = $('advanceNoteInput').value.trim();
 
-    if (!amount || amount <= 0) { showToast('Въведи сума'); return; }
-    if (!date) { showToast('Избери дата'); return; }
+    if (!amount || amount <= 0) { showToast(tr('Въведи сума')); return; }
+    if (!date) { showToast(tr('Избери дата')); return; }
 
     if (editingAdvanceId) {
       const a = state.company.advances.find((x) => x.id === editingAdvanceId);
@@ -4851,8 +5071,8 @@
     $('expenseDescInput').value = '';
     $('expenseAmountInput').value = '';
     $('expenseDateInput').value = todayKey();
-    $('expenseModalTitle').textContent = 'ДОБАВИ РАЗХОД';
-    $('expenseSaveBtn').textContent = 'Добави';
+    $('expenseModalTitle').textContent = tr('ДОБАВИ РАЗХОД');
+    $('expenseSaveBtn').textContent = tr('Добави');
     $('expenseModal').classList.remove('hidden');
     $('expenseDescInput').focus();
   }
@@ -4864,8 +5084,8 @@
     $('expenseDescInput').value = e.desc;
     $('expenseAmountInput').value = e.amount;
     $('expenseDateInput').value = e.date;
-    $('expenseModalTitle').textContent = 'РЕДАКТИРАЙ РАЗХОД';
-    $('expenseSaveBtn').textContent = 'Запиши';
+    $('expenseModalTitle').textContent = tr('РЕДАКТИРАЙ РАЗХОД');
+    $('expenseSaveBtn').textContent = tr('Запиши');
     $('expenseModal').classList.remove('hidden');
   }
 
@@ -4879,9 +5099,9 @@
     const amount = parseFloat($('expenseAmountInput').value);
     const date = $('expenseDateInput').value;
 
-    if (!desc) { showToast('Въведи за какво е разходът'); return; }
-    if (!amount || amount <= 0) { showToast('Въведи сума'); return; }
-    if (!date) { showToast('Избери дата'); return; }
+    if (!desc) { showToast(tr('Въведи за какво е разходът')); return; }
+    if (!amount || amount <= 0) { showToast(tr('Въведи сума')); return; }
+    if (!date) { showToast(tr('Избери дата')); return; }
 
     if (editingExpenseId) {
       const e = state.company.expenses.find((x) => x.id === editingExpenseId);
@@ -4916,7 +5136,7 @@
     if (!e) return;
     if (e.receiptPath) {
       getSignedPhotoUrl(e.receiptPath).then(({ data, error }) => {
-        if (error || !data) { showToast('Грешка при зареждане на снимката'); return; }
+        if (error || !data) { showToast(tr('Грешка при зареждане на снимката')); return; }
         openPhotoLightbox(data.signedUrl, e.receiptPath);
       });
     } else {
@@ -4933,20 +5153,20 @@
     pendingReceiptExpenseId = '';
     if (!e) return;
 
-    if (!file.type.startsWith('image/')) { showToast('Само снимки'); return; }
-    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`Файлът е над ${MAX_PHOTO_MB}MB`); return; }
+    if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
 
     let blob;
     try { blob = await compressImage(file, PHOTO_MAX_DIM, 0.82); } catch { blob = file; }
 
     const path = `${currentUser.id}/receipts/${genId('rc')}.jpg`;
     const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
-    if (error) { showToast('Грешка при качване на снимка'); return; }
+    if (error) { showToast(tr('Грешка при качване на снимка')); return; }
 
     e.receiptPath = path;
     saveState();
     renderExpensesList();
-    showToast('Снимката е прикачена');
+    showToast(tr('Снимката е прикачена'));
   }
 
   const REPORT_PRINT_CSS = `
@@ -4990,7 +5210,7 @@
 
   function downloadReportAsFile() {
     const reportHTML = $('companyReportView').innerHTML;
-    const doc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Служебен отчет</title><style>${REPORT_PRINT_CSS}</style></head><body>${reportHTML}</body></html>`;
+    const doc = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${tr('Служебен отчет')}</title><style>${REPORT_PRINT_CSS}</style></head><body>${reportHTML}</body></html>`;
     const blob = new Blob([doc], { type: 'text/html' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -5000,7 +5220,7 @@
     a.click();
     a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 5000);
-    showToast('Отчетът е изтеглен — отвори файла, за да го отпечаташ или запишеш като PDF');
+    showToast(tr('Отчетът е изтеглен — отвори файла, за да го отпечаташ или запишеш като PDF'));
   }
 
   function printCompanyReport() {
@@ -5015,20 +5235,20 @@
       rows.innerHTML = '';
       const list = state.company.expenses.slice().sort((a, b) => (a.date || '').localeCompare(b.date || ''));
       if (!list.length) {
-        const tr = document.createElement('tr');
-        tr.innerHTML = '<td colspan="3">Няма записани разходи</td>';
-        rows.appendChild(tr);
+        const rowEl = document.createElement('tr');
+        rowEl.innerHTML = `<td colspan="3">${tr('Няма записани разходи')}</td>`;
+        rows.appendChild(rowEl);
       } else {
         list.forEach((e) => {
-          const tr = document.createElement('tr');
+          const rowEl = document.createElement('tr');
           const tdDate = document.createElement('td');
           tdDate.textContent = formatDateDisplay(e.date);
           const tdDesc = document.createElement('td');
           tdDesc.textContent = e.desc || '';
           const tdAmount = document.createElement('td');
           tdAmount.textContent = formatMoney(e.amount) + ' €';
-          tr.append(tdDate, tdDesc, tdAmount);
-          rows.appendChild(tr);
+          rowEl.append(tdDate, tdDesc, tdAmount);
+          rows.appendChild(rowEl);
         });
       }
 
@@ -5044,14 +5264,14 @@
       }
     } catch (err) {
       console.error('printCompanyReport failed:', err);
-      showToast('Грешка при генериране на отчета: ' + err.message);
+      showToast(tr('Грешка при генериране на отчета') + ': ' + err.message);
     }
   }
 
   /* ============ Profile ============ */
 
   function getProfileDisplayName() {
-    return (state.profile.name || '').trim() || 'Моят профил';
+    return (state.profile.name || '').trim() || tr('Моят профил');
   }
 
   function getProfileInitial() {
@@ -5115,22 +5335,22 @@
 
   async function uploadProfileAvatar(file) {
     if (!file) return;
-    if (!file.type.startsWith('image/')) { showToast('Само снимки'); return; }
-    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`Файлът е над ${MAX_PHOTO_MB}MB`); return; }
+    if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
 
     let blob;
     try { blob = await compressImage(file, 400, 0.85); } catch { blob = file; }
 
     const path = `${currentUser.id}/profile/avatar.jpg`;
     const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: true });
-    if (error) { showToast('Грешка при качване на снимка'); return; }
+    if (error) { showToast(tr('Грешка при качване на снимка')); return; }
 
     delete signedUrlCache[path];
     state.profile.avatarPath = path;
     saveState();
     renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), path);
     renderAvatarInto($('profileAvatarImg'), $('profileAvatarInitial'), path);
-    showToast('Снимката е обновена');
+    showToast(tr('Снимката е обновена'));
   }
 
   function onProfileAvatarFileSelected(evt) {
@@ -5164,7 +5384,7 @@
     if (!list.length) {
       const empty = document.createElement('div');
       empty.className = 'record-empty';
-      empty.textContent = term ? 'Няма съвпадения' : 'Няма добавени бележки';
+      empty.textContent = term ? tr('Няма съвпадения') : tr('Няма добавени бележки');
       container.appendChild(empty);
       return;
     }
@@ -5194,14 +5414,14 @@
       const editBtn = document.createElement('button');
       editBtn.className = 'note-card-edit';
       editBtn.textContent = '✎';
-      editBtn.title = 'Редактирай';
+      editBtn.title = tr('Редактирай');
       editBtn.addEventListener('click', (e) => { e.stopPropagation(); openNoteEditModal(n.id); });
       card.appendChild(editBtn);
 
       const delBtn = document.createElement('button');
       delBtn.className = 'note-card-del';
       delBtn.textContent = '×';
-      delBtn.title = 'Изтрий';
+      delBtn.title = tr('Изтрий');
       delBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteNote(n.id); });
       card.appendChild(delBtn);
 
@@ -5213,8 +5433,8 @@
     editingNoteId = '';
     $('noteTitleInput').value = '';
     $('noteBodyInput').innerHTML = '';
-    $('noteModalTitle').textContent = 'НОВА БЕЛЕЖКА';
-    $('noteSaveBtn').textContent = 'Запази';
+    $('noteModalTitle').textContent = tr('НОВА БЕЛЕЖКА');
+    $('noteSaveBtn').textContent = tr('Запази');
     $('noteModal').classList.remove('hidden');
     $('noteTitleInput').focus();
   }
@@ -5225,8 +5445,8 @@
     editingNoteId = id;
     $('noteTitleInput').value = n.title || '';
     $('noteBodyInput').innerHTML = n.body || '';
-    $('noteModalTitle').textContent = 'РЕДАКТИРАЙ БЕЛЕЖКА';
-    $('noteSaveBtn').textContent = 'Запази';
+    $('noteModalTitle').textContent = tr('РЕДАКТИРАЙ БЕЛЕЖКА');
+    $('noteSaveBtn').textContent = tr('Запази');
     $('noteModal').classList.remove('hidden');
   }
 
@@ -5240,7 +5460,7 @@
     const bodyEl = $('noteBodyInput');
     const body = bodyEl.innerHTML.trim();
 
-    if (!bodyEl.textContent.trim()) { showToast('Напиши нещо в бележката'); return; }
+    if (!bodyEl.textContent.trim()) { showToast(tr('Напиши нещо в бележката')); return; }
 
     const now = new Date().toISOString();
     if (editingNoteId) {
@@ -5332,21 +5552,21 @@
   function setMetricStatus(el, current, goal, kind) {
     if (goal <= 0) { el.textContent = '—'; el.className = 'gauge-delta flat'; return; }
     if (kind === 'lowerBetter') {
-      if (current > goal) { el.textContent = `+${formatNumber(current - goal)} над целта`; el.className = 'gauge-delta danger'; }
-      else { el.textContent = `${formatNumber(goal - current)} остават`; el.className = 'gauge-delta flat'; }
+      if (current > goal) { el.textContent = `+${formatNumber(current - goal)} ${tr('над целта')}`; el.className = 'gauge-delta danger'; }
+      else { el.textContent = `${formatNumber(goal - current)} ${tr('остават')}`; el.className = 'gauge-delta flat'; }
     } else {
-      if (current >= goal) { el.textContent = '✓ изпълнена'; el.className = 'gauge-delta good'; }
-      else { el.textContent = `${formatNumber(goal - current)} остават`; el.className = 'gauge-delta flat'; }
+      if (current >= goal) { el.textContent = tr('✓ изпълнена'); el.className = 'gauge-delta good'; }
+      else { el.textContent = `${formatNumber(goal - current)} ${tr('остават')}`; el.className = 'gauge-delta flat'; }
     }
   }
 
   function setWeightDelta(el, current, previous) {
     if (!current) { el.textContent = '—'; el.className = 'gauge-delta flat'; return; }
-    if (previous === null) { el.textContent = 'първи запис'; el.className = 'gauge-delta flat'; return; }
+    if (previous === null) { el.textContent = tr('първи запис'); el.className = 'gauge-delta flat'; return; }
     const diff = Math.round((current - previous) * 10) / 10;
-    if (diff > 0) { el.textContent = `▲ ${diff.toFixed(1)} кг`; el.className = 'gauge-delta up'; }
-    else if (diff < 0) { el.textContent = `▽ ${Math.abs(diff).toFixed(1)} кг`; el.className = 'gauge-delta down'; }
-    else { el.textContent = '— 0.0 кг'; el.className = 'gauge-delta flat'; }
+    if (diff > 0) { el.textContent = `▲ ${diff.toFixed(1)} ${tr('кг')}`; el.className = 'gauge-delta up'; }
+    else if (diff < 0) { el.textContent = `▽ ${Math.abs(diff).toFixed(1)} ${tr('кг')}`; el.className = 'gauge-delta down'; }
+    else { el.textContent = `— 0.0 ${tr('кг')}`; el.className = 'gauge-delta flat'; }
   }
 
   function renderVitalsToday(instant) {
@@ -5471,7 +5691,7 @@
     if (!computeTDEE._values) return;
     $('goalCalories').value = computeTDEE._values[kind];
     onGoalsChange();
-    showToast('Целта за калории е обновена');
+    showToast(tr('Целта за калории е обновена'));
   }
 
   function renderWeekChart(containerId, values, color, unit) {
@@ -5516,12 +5736,12 @@
       const d = new Date(today);
       d.setDate(d.getDate() - i);
       const key = dateKey(d.getFullYear(), d.getMonth(), d.getDate());
-      days.push({ key, label: WEEKDAY_SHORT[(d.getDay() + 6) % 7], isToday: i === 0 });
+      days.push({ key, label: WEEKDAY_SHORT()[(d.getDay() + 6) % 7], isToday: i === 0 });
     }
 
-    renderWeekChart('weekChartCalories', days.map((d) => ({ ...d, value: getVitalsDay(d.key).calories })), 'var(--pink)', 'ккал');
-    renderWeekChart('weekChartWater', days.map((d) => ({ ...d, value: getVitalsDay(d.key).water })), 'var(--cyan)', 'мл');
-    renderWeekChart('weekChartSteps', days.map((d) => ({ ...d, value: getVitalsDay(d.key).steps })), 'var(--violet)', 'крачки');
+    renderWeekChart('weekChartCalories', days.map((d) => ({ ...d, value: getVitalsDay(d.key).calories })), 'var(--pink)', tr('ккал'));
+    renderWeekChart('weekChartWater', days.map((d) => ({ ...d, value: getVitalsDay(d.key).water })), 'var(--cyan)', tr('мл'));
+    renderWeekChart('weekChartSteps', days.map((d) => ({ ...d, value: getVitalsDay(d.key).steps })), 'var(--violet)', tr('крачки'));
   }
 
   /* ============ Weight tab ============ */
@@ -5615,7 +5835,7 @@
       const gy = yFor(opts.goalValue).toFixed(1);
       goalLineSVG = `
         <line class="line-chart-goal" x1="${padL}" y1="${gy}" x2="${width - padR}" y2="${gy}" stroke-dasharray="4 4" />
-        <text class="line-chart-goal-label" x="${width - padR}" y="${(parseFloat(gy) - 4).toFixed(1)}" text-anchor="end">ЦЕЛ ${formatValue(opts.goalValue)}</text>
+        <text class="line-chart-goal-label" x="${width - padR}" y="${(parseFloat(gy) - 4).toFixed(1)}" text-anchor="end">${tr('ЦЕЛ')} ${formatValue(opts.goalValue)}</text>
       `;
     }
 
@@ -5690,8 +5910,8 @@
     ['weightStatCurrent','weightStatChange','weightStatAvg','weightStatGoal'].forEach((id) => $(id).textContent = '—');
 
     if (!hasData) {
-      container.innerHTML = '<div class="line-chart-empty">Все още няма записано тегло — въведи първата стойност горе</div>';
-      if (goal) $('weightStatGoal').textContent = goal.toFixed(1) + ' кг';
+      container.innerHTML = `<div class="line-chart-empty">${tr('Все още няма записано тегло — въведи първата стойност горе')}</div>`;
+      if (goal) $('weightStatGoal').textContent = goal.toFixed(1) + ' ' + tr('кг');
       return;
     }
 
@@ -5707,12 +5927,13 @@
     const current = recorded[recorded.length - 1].value;
     const avg = recorded.reduce((s, p) => s + p.value, 0) / recorded.length;
     const change = recorded.length > 1 ? recorded[recorded.length - 1].value - recorded[0].value : 0;
-    const changeStr = change > 0 ? `▲ ${change.toFixed(1)} кг` : change < 0 ? `▽ ${Math.abs(change).toFixed(1)} кг` : '— 0.0 кг';
+    const kgUnit = tr('кг');
+    const changeStr = change > 0 ? `▲ ${change.toFixed(1)} ${kgUnit}` : change < 0 ? `▽ ${Math.abs(change).toFixed(1)} ${kgUnit}` : `— 0.0 ${kgUnit}`;
 
-    $('weightStatCurrent').textContent = current.toFixed(1) + ' кг';
+    $('weightStatCurrent').textContent = current.toFixed(1) + ' ' + kgUnit;
     $('weightStatChange').textContent = changeStr;
-    $('weightStatAvg').textContent = avg.toFixed(1) + ' кг';
-    $('weightStatGoal').textContent = goal ? goal.toFixed(1) + ' кг' : '—';
+    $('weightStatAvg').textContent = avg.toFixed(1) + ' ' + kgUnit;
+    $('weightStatGoal').textContent = goal ? goal.toFixed(1) + ' ' + kgUnit : '—';
   }
 
   function commitMeal(desc, kcal, protein, carbs, fat) {
@@ -5740,8 +5961,8 @@
     const carbs = parseFloat($('mealCarbs').value) || 0;
     const fat = parseFloat($('mealFat').value) || 0;
 
-    if (!desc) { showToast('Напиши какво си приел'); return; }
-    if (!kcal && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
+    if (!desc) { showToast(tr('Напиши какво си приел')); return; }
+    if (!kcal && !protein && !carbs && !fat) { showToast(tr('Въведи поне една стойност')); return; }
 
     commitMeal(desc, kcal, protein, carbs, fat);
     ['mealDesc','mealCalories','mealProtein','mealCarbs','mealFat'].forEach((id) => $(id).value = '');
@@ -5799,7 +6020,7 @@
 
   function getCategoryLabel(id) {
     const cat = PRODUCT_CATEGORIES.find((c) => c.id === id);
-    return cat ? cat.label : '';
+    return cat ? tr(cat.label) : '';
   }
 
   function populateProductCategorySelect() {
@@ -5808,7 +6029,7 @@
     PRODUCT_CATEGORIES.forEach((c) => {
       const opt = document.createElement('option');
       opt.value = c.id;
-      opt.textContent = c.label;
+      opt.textContent = tr(c.label);
       select.appendChild(opt);
     });
   }
@@ -5820,7 +6041,7 @@
     const allChip = document.createElement('button');
     allChip.type = 'button';
     allChip.className = 'chip category-chip' + (productCategoryFilter === '' ? ' active' : '');
-    allChip.textContent = 'Всички';
+    allChip.textContent = tr('Всички');
     allChip.addEventListener('click', () => selectProductCategoryFilter(''));
     container.appendChild(allChip);
 
@@ -5828,7 +6049,7 @@
       const chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'chip category-chip' + (productCategoryFilter === c.id ? ' active' : '');
-      chip.textContent = c.label;
+      chip.textContent = tr(c.label);
       chip.addEventListener('click', () => selectProductCategoryFilter(c.id));
       container.appendChild(chip);
     });
@@ -5881,7 +6102,7 @@
   function selectProductSort(id) {
     productSortMode = id;
     const opt = PRODUCT_SORT_OPTIONS.find((o) => o.id === id);
-    $('productSortLabel').textContent = opt.label;
+    $('productSortLabel').textContent = tr(opt.label);
     closeProductSortMenu();
     renderProducts();
   }
@@ -5893,7 +6114,7 @@
       const item = document.createElement('div');
       item.className = 'product-dropdown-item' + (opt.id === productSortMode ? ' active-sort' : '');
       const nameEl = document.createElement('span');
-      nameEl.textContent = opt.label;
+      nameEl.textContent = tr(opt.label);
       item.appendChild(nameEl);
       item.addEventListener('click', () => selectProductSort(opt.id));
       listEl.appendChild(item);
@@ -5903,15 +6124,15 @@
   function addFromProduct() {
     const grams = parseFloat($('productGrams').value);
 
-    if (!selectedProductId) { showToast('Избери продукт'); return; }
-    if (!grams || grams <= 0) { showToast('Въведи грамове/мл'); return; }
+    if (!selectedProductId) { showToast(tr('Избери продукт')); return; }
+    if (!grams || grams <= 0) { showToast(tr('Въведи грамове/мл')); return; }
 
     const product = state.vitals.products.find((p) => p.id === selectedProductId);
     if (!product) return;
 
     const ratio = grams / 100;
     commitMeal(
-      `${product.name} (${formatNumber(grams)}г)`,
+      `${product.name} (${formatNumber(grams)}${tr('г')})`,
       product.calories * ratio,
       product.protein * ratio,
       product.carbs * ratio,
@@ -5989,7 +6210,7 @@
       listEl.innerHTML = '';
       const hint = document.createElement('div');
       hint.className = 'product-dropdown-empty';
-      hint.textContent = 'Избери категория или потърси продукт';
+      hint.textContent = tr('Избери категория или потърси продукт');
       listEl.appendChild(hint);
       return;
     }
@@ -6005,7 +6226,7 @@
     if (!list.length) {
       const empty = document.createElement('div');
       empty.className = 'product-dropdown-empty';
-      empty.textContent = state.vitals.products.length ? 'Няма съвпадения' : 'Няма добавени продукти';
+      empty.textContent = state.vitals.products.length ? tr('Няма съвпадения') : tr('Няма добавени продукти');
       listEl.appendChild(empty);
       return;
     }
@@ -6024,7 +6245,7 @@
       }
       const metaEl = document.createElement('span');
       metaEl.className = 'product-dropdown-item-meta';
-      metaEl.textContent = `${formatNumber(p.calories)} ккал/100г`;
+      metaEl.textContent = `${formatNumber(p.calories)} ${tr('ккал/100г')}`;
       item.append(nameEl, metaEl);
       item.addEventListener('click', () => selectProduct(p.id, p.name));
       listEl.appendChild(item);
@@ -6059,8 +6280,8 @@
         container.appendChild(createRecordRow({
           date: '',
           desc: descNode,
-          meta: `Б${Math.round(p.protein)} В${Math.round(p.carbs)} М${Math.round(p.fat)}`,
-          cost: formatNumber(p.calories) + ' ккал/100г',
+          meta: `${tr('Б')}${Math.round(p.protein)} ${tr('В')}${Math.round(p.carbs)} ${tr('М')}${Math.round(p.fat)}`,
+          cost: formatNumber(p.calories) + ' ' + tr('ккал/100г'),
           onDelete: () => deleteProduct(p.id),
           onEdit: () => openProductEditModal(p.id)
         }));
@@ -6069,7 +6290,7 @@
 
     if (!state.vitals.products.some((p) => p.id === selectedProductId)) {
       selectedProductId = '';
-      $('productDropdownLabel').textContent = '— избери продукт —';
+      $('productDropdownLabel').textContent = tr('— избери продукт —');
     }
 
     filterProductDropdown($('productSearchInput').value || '');
@@ -6085,8 +6306,8 @@
     $('editProductCarbs').value = '';
     $('editProductFat').value = '';
     $('editProductRefGrams').value = 100;
-    $('productEditModalTitle').textContent = 'ДОБАВИ ПРОДУКТ';
-    $('productEditSaveBtn').textContent = 'Добави';
+    $('productEditModalTitle').textContent = tr('ДОБАВИ ПРОДУКТ');
+    $('productEditSaveBtn').textContent = tr('Добави');
     $('productEditModal').classList.remove('hidden');
     $('editProductName').focus();
   }
@@ -6103,8 +6324,8 @@
     $('editProductCarbs').value = Math.round(p.carbs * 10) / 10;
     $('editProductFat').value = Math.round(p.fat * 10) / 10;
     $('editProductRefGrams').value = 100;
-    $('productEditModalTitle').textContent = 'РЕДАКТИРАЙ ПРОДУКТ';
-    $('productEditSaveBtn').textContent = 'Запиши';
+    $('productEditModalTitle').textContent = tr('РЕДАКТИРАЙ ПРОДУКТ');
+    $('productEditSaveBtn').textContent = tr('Запиши');
     $('productEditModal').classList.remove('hidden');
   }
 
@@ -6122,8 +6343,8 @@
     const fat = parseFloat($('editProductFat').value) || 0;
     const refGrams = parseFloat($('editProductRefGrams').value) || 100;
 
-    if (!name) { showToast('Въведи име на продукта'); return; }
-    if (!calories && !protein && !carbs && !fat) { showToast('Въведи поне една стойност'); return; }
+    if (!name) { showToast(tr('Въведи име на продукта')); return; }
+    if (!calories && !protein && !carbs && !fat) { showToast(tr('Въведи поне една стойност')); return; }
 
     const ratio = 100 / refGrams;
     const values = {
@@ -6176,7 +6397,7 @@
     const container = $('mealHistoryList');
     container.innerHTML = '';
 
-    $('mealHistoryCount').textContent = meals.length ? `${meals.length} ДОБАВЯНИЯ` : '';
+    $('mealHistoryCount').textContent = meals.length ? `${meals.length} ${tr('ДОБАВЯНИЯ')}` : '';
 
     if (!meals.length) { renderEmptyRow(container, 'Няма добавяния днес'); return; }
 
@@ -6184,7 +6405,7 @@
       container.appendChild(createRecordRow({
         date: m.time,
         desc: m.desc,
-        meta: `Б${Math.round(m.protein)} В${Math.round(m.carbs)} М${Math.round(m.fat)}`,
+        meta: `${tr('Б')}${Math.round(m.protein)} ${tr('В')}${Math.round(m.carbs)} ${tr('М')}${Math.round(m.fat)}`,
         cost: formatNumber(m.calories) + ' ккал',
         onDelete: () => deleteMeal(m.id)
       }));
@@ -6261,9 +6482,9 @@
     today.setHours(0, 0, 0, 0);
     const exp = new Date(expiry + 'T00:00:00');
     const diffDays = Math.round((exp - today) / 86400000);
-    if (diffDays < 0) return { cls: 'expired', label: 'Изтекъл' };
-    if (diffDays <= 30) return { cls: 'soon', label: `${diffDays} дни` };
-    return { cls: 'valid', label: 'Валиден' };
+    if (diffDays < 0) return { cls: 'expired', label: tr('Изтекъл') };
+    if (diffDays <= 30) return { cls: 'soon', label: `${diffDays} ${tr('дни')}` };
+    return { cls: 'valid', label: tr('Валиден') };
   }
 
   function createRecordRow({ date, desc, meta, cost, onDelete, onEdit, onPhoto, hasPhoto }) {
@@ -6301,7 +6522,7 @@
       const photoBtn = document.createElement('button');
       photoBtn.className = 'record-row-edit' + (hasPhoto ? ' has-receipt' : '');
       photoBtn.textContent = '▣';
-      photoBtn.title = hasPhoto ? 'Виж фактура' : 'Добави снимка на фактура';
+      photoBtn.title = hasPhoto ? tr('Виж фактура') : tr('Добави снимка на фактура');
       photoBtn.addEventListener('click', onPhoto);
       row.appendChild(photoBtn);
     }
@@ -6310,7 +6531,7 @@
       const editBtn = document.createElement('button');
       editBtn.className = 'record-row-edit';
       editBtn.textContent = '✎';
-      editBtn.title = 'Редактирай';
+      editBtn.title = tr('Редактирай');
       editBtn.addEventListener('click', onEdit);
       row.appendChild(editBtn);
     }
@@ -6327,7 +6548,7 @@
     container.innerHTML = '';
     const el = document.createElement('div');
     el.className = 'record-empty';
-    el.textContent = text;
+    el.textContent = tr(text);
     container.appendChild(el);
   }
 
@@ -6389,7 +6610,7 @@
     list.forEach((f) => {
       container.appendChild(createRecordRow({
         date: formatDateDisplay(f.date),
-        desc: f.liters ? formatNumber(f.liters) + ' л' : '',
+        desc: f.liters ? formatNumber(f.liters) + ' ' + tr('л') : '',
         meta: f.km ? formatNumber(f.km) + ' km' : '',
         cost: formatNumber(f.cost) + ' €',
         onDelete: () => deleteFuel(f.id)
@@ -6399,7 +6620,7 @@
     const totalLiters = list.reduce((s, f) => s + f.liters, 0);
     const avgPrice = totalLiters ? totalCost / totalLiters : 0;
 
-    $('fuelStats').textContent = `ОБЩО ${formatNumber(totalCost)} € · СР. ЦЕНА ${avgPrice.toFixed(2)} €/Л`;
+    $('fuelStats').textContent = `${tr('ОБЩО')} ${formatNumber(totalCost)} € · ${tr('СР. ЦЕНА')} ${avgPrice.toFixed(2)} €/${tr('Л')}`;
   }
 
   function addFuel() {
@@ -6470,8 +6691,8 @@
     list.forEach((f) => {
       const chip = document.createElement('span');
       chip.className = 'status-chip ' + (f.paid ? 'paid' : 'unpaid');
-      chip.textContent = f.paid ? 'Платен' : 'Неплатен';
-      chip.title = 'Кликни, за да превключиш';
+      chip.textContent = f.paid ? tr('Платен') : tr('Неплатен');
+      chip.title = tr('Кликни, за да превключиш');
       chip.addEventListener('click', () => toggleFinePaid(f.id));
       container.appendChild(createRecordRow({
         date: formatDateDisplay(f.date),
@@ -6525,7 +6746,7 @@
     $('ovFinesUnpaid').textContent = formatNumber(finesUnpaid) + '€';
 
     const avgConsumption = calcAvgFuelConsumption(records.fuel);
-    $('ovFuelConsumption').textContent = avgConsumption === null ? '—' : `${avgConsumption.toFixed(1)} Л/100КМ`;
+    $('ovFuelConsumption').textContent = avgConsumption === null ? '—' : `${avgConsumption.toFixed(1)} ${tr('Л/100КМ')}`;
 
     const docsContainer = $('ovDocsAlerts');
     docsContainer.innerHTML = '';
@@ -6537,7 +6758,7 @@
     if (!alertDocs.length) {
       const e = document.createElement('div');
       e.className = 'garage-alert-empty';
-      e.textContent = 'Няма документи, изтичащи скоро';
+      e.textContent = tr('Няма документи, изтичащи скоро');
       docsContainer.appendChild(e);
     } else {
       alertDocs.forEach((d) => {
@@ -6560,14 +6781,14 @@
     if (!unpaidFines.length) {
       const e = document.createElement('div');
       e.className = 'garage-alert-empty';
-      e.textContent = 'Няма неплатени фишове';
+      e.textContent = tr('Няма неплатени фишове');
       finesContainer.appendChild(e);
     } else {
       unpaidFines.forEach((f) => {
         const item = document.createElement('div');
         item.className = 'garage-alert-item';
         const label = document.createElement('span');
-        label.textContent = `${f.desc || 'Фиш'} — ${formatDateDisplay(f.date)}`;
+        label.textContent = `${f.desc || tr('Фиш')} — ${formatDateDisplay(f.date)}`;
         const amt = document.createElement('span');
         amt.className = 'record-row-cost';
         amt.textContent = formatNumber(f.amount) + ' €';
@@ -6693,11 +6914,11 @@
     for (const file of files) {
       if (!file.type.startsWith('image/')) continue;
       if (file.size > MAX_PHOTO_MB * 1024 * 1024) {
-        showToast(`"${file.name}" е над ${MAX_PHOTO_MB}MB — прескочена`);
+        showToast(`"${file.name}" ${tr('е над')} ${MAX_PHOTO_MB}MB — ${tr('прескочена')}`);
         continue;
       }
 
-      hint.textContent = `Обработка ${uploaded + 1}/${files.length}...`;
+      hint.textContent = `${tr('Обработка')} ${uploaded + 1}/${files.length}...`;
       let blob;
       try {
         blob = await compressImage(file, PHOTO_MAX_DIM, 0.82);
@@ -6705,12 +6926,12 @@
         blob = file;
       }
 
-      hint.textContent = `Качване ${uploaded + 1}/${files.length}...`;
+      hint.textContent = `${tr('Качване')} ${uploaded + 1}/${files.length}...`;
       const path = `${currentUser.id}/${vehicleId}/${genId('p')}.jpg`;
       const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
 
       if (error) {
-        showToast('Грешка при качване на снимка');
+        showToast(tr('Грешка при качване на снимка'));
         continue;
       }
 
@@ -6745,7 +6966,7 @@
       container.innerHTML = '';
       const e = document.createElement('div');
       e.className = 'record-empty';
-      e.textContent = 'Няма добавени снимки за тази кола';
+      e.textContent = tr('Няма добавени снимки за тази кола');
       container.appendChild(e);
       return;
     }
@@ -6803,7 +7024,7 @@
       a.click();
       URL.revokeObjectURL(objectUrl);
     } catch {
-      showToast('Грешка при изтегляне');
+      showToast(tr('Грешка при изтегляне'));
     }
   }
 
@@ -6814,9 +7035,9 @@
     if (window.claude && window.claude.downloads) {
       try {
         await window.claude.downloads.save({ filename: 'lifeos-backup.json', data: payload });
-        showToast('Резервно копие изтеглено');
+        showToast(tr('Резервно копие изтеглено'));
       } catch {
-        showToast('Изтеглянето беше отказано');
+        showToast(tr('Изтеглянето беше отказано'));
       }
     } else {
       const blob = new Blob([payload], { type: 'application/json' });
@@ -6876,9 +7097,9 @@
         $('calcActivity').value = state.vitals.calc.activity;
         renderVehicleSelect();
         showScreen(currentScreen);
-        showToast('Данните са възстановени');
+        showToast(tr('Данните са възстановени'));
       } catch {
-        showToast('Невалиден файл');
+        showToast(tr('Невалиден файл'));
       }
       e.target.value = '';
     };
@@ -6890,11 +7111,11 @@
   /* ============ Auth ============ */
 
   function initAuth() {
-    $('authMessage').textContent = 'Проверка на сесията...';
+    $('authMessage').textContent = tr('Проверка на сесията...');
     sb.auth.getSession().then(({ data }) => {
       if (data.session) {
         currentUser = data.session.user;
-        $('authMessage').textContent = 'Зареждане...';
+        $('authMessage').textContent = tr('Зареждане...');
         startApp();
       } else {
         $('authMessage').textContent = '';
@@ -6905,10 +7126,10 @@
   function toggleAuthMode(e) {
     if (e) e.preventDefault();
     authMode = authMode === 'signin' ? 'signup' : 'signin';
-    $('authSubtitle').textContent = authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ';
-    $('authSubmitBtn').textContent = authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ';
-    $('authSwitchText').textContent = authMode === 'signin' ? 'Нямаш акаунт?' : 'Вече имаш акаунт?';
-    $('authSwitchLink').textContent = authMode === 'signin' ? 'Регистрирай се' : 'Влез';
+    $('authSubtitle').textContent = tr(authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ');
+    $('authSubmitBtn').textContent = tr(authMode === 'signin' ? 'ВХОД' : 'РЕГИСТРАЦИЯ');
+    $('authSwitchText').textContent = tr(authMode === 'signin' ? 'Нямаш акаунт?' : 'Вече имаш акаунт?');
+    $('authSwitchLink').textContent = tr(authMode === 'signin' ? 'Регистрирай се' : 'Влез');
     $('authMessage').textContent = '';
     $('authMessage').className = 'auth-message';
   }
@@ -6920,7 +7141,7 @@
     const btn = $('authSubmitBtn');
 
     if (!email || !password) {
-      msg.textContent = 'Въведи имейл и парола';
+      msg.textContent = tr('Въведи имейл и парола');
       msg.className = 'auth-message error';
       return;
     }
@@ -6933,7 +7154,7 @@
       const { data, error } = await sb.auth.signInWithPassword({ email, password });
       if (error) { btn.disabled = false; msg.textContent = error.message; msg.className = 'auth-message error'; return; }
       currentUser = data.user;
-      msg.textContent = 'Зареждане...';
+      msg.textContent = tr('Зареждане...');
       msg.className = 'auth-message ok';
       await startApp();
     } else {
@@ -6941,12 +7162,12 @@
       if (error) { btn.disabled = false; msg.textContent = error.message; msg.className = 'auth-message error'; return; }
       if (data.session) {
         currentUser = data.user;
-        msg.textContent = 'Зареждане...';
+        msg.textContent = tr('Зареждане...');
         msg.className = 'auth-message ok';
         await startApp();
       } else {
         btn.disabled = false;
-        msg.textContent = 'Провери имейла си, за да потвърдиш акаунта.';
+        msg.textContent = tr('Провери имейла си, за да потвърдиш акаунта.');
         msg.className = 'auth-message ok';
       }
     }
@@ -6984,6 +7205,7 @@
     $('brandMark').addEventListener('click', onBrandMarkClick);
 
     $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
+    $('langToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleLang(); });
     $('settingsToggleBtn').addEventListener('click', toggleSettingsCollapse);
     $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
     $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); });
@@ -7159,6 +7381,7 @@
   }
 
   initTheme();
+  initLang();
   wireEvents();
   initAuth();
 </script>
