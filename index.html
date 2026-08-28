@@ -4157,7 +4157,7 @@
   let currentUser = null;
   let authMode = 'signin';
   let saveTimer = null;
-  let currentLang = 'bg';
+  let currentLang = 'en';
 
   let state = {
     workdays: { dailyRate: 100, workDays: {} },
@@ -4459,7 +4459,7 @@
   function initLang() {
     let saved = null;
     try { saved = localStorage.getItem('lifeos_lang'); } catch {}
-    currentLang = saved === 'en' ? 'en' : 'bg';
+    currentLang = saved === 'bg' ? 'bg' : 'en';
     $('langToggle').setAttribute('aria-checked', currentLang === 'en' ? 'true' : 'false');
     applyI18n();
   }
