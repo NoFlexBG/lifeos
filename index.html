@@ -5965,13 +5965,6 @@
     const container = $('productDropdownCategoryFilter');
     container.innerHTML = '';
 
-    const allChip = document.createElement('button');
-    allChip.type = 'button';
-    allChip.className = 'chip category-chip category-chip-sm' + (productDropdownCategoryFilter === '' ? ' active' : '');
-    allChip.textContent = 'Всички';
-    allChip.addEventListener('click', (e) => { e.stopPropagation(); selectProductDropdownCategory(''); });
-    container.appendChild(allChip);
-
     PRODUCT_CATEGORIES.forEach((c) => {
       const chip = document.createElement('button');
       chip.type = 'button';
