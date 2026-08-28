@@ -1977,13 +1977,15 @@
     font-size: 12px;
   }
 
+  .record-row > * { min-width: 0; }
+
   .record-row-date {
     font-family: var(--font-mono);
     color: var(--text-dim);
     font-size: 11px;
   }
 
-  .record-row-desc { color: var(--text); }
+  .record-row-desc { color: var(--text); overflow-wrap: break-word; word-break: break-word; }
   .record-row-meta { font-family: var(--font-mono); color: var(--text-dim); font-size: 11px; white-space: nowrap; }
   .record-row-cost { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 
