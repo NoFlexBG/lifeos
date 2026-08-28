@@ -5779,6 +5779,7 @@
   let productSortMode = 'name-asc';
   let productCategoryFilter = '';
   let productDropdownCategoryFilter = '';
+  let productDropdownShowList = false;
 
   const PRODUCT_CATEGORIES = [
     { id: 'fruits', label: 'Плодове' },
@@ -5934,9 +5935,9 @@
       $('productDropdownBtn').classList.add('open');
       $('productSearchInput').value = '';
       productDropdownCategoryFilter = '';
+      productDropdownShowList = false;
       renderProductDropdownCategoryFilter();
       filterProductDropdown('');
-      $('productSearchInput').focus();
     }
   }
 
@@ -5983,18 +5984,29 @@
 
   function selectProductDropdownCategory(id) {
     productDropdownCategoryFilter = id;
+    productDropdownShowList = true;
     renderProductDropdownCategoryFilter();
     filterProductDropdown($('productSearchInput').value || '');
   }
 
   function filterProductDropdown(query) {
+    const listEl = $('productDropdownList');
+
+    if (!productDropdownShowList) {
+      listEl.innerHTML = '';
+      const hint = document.createElement('div');
+      hint.className = 'product-dropdown-empty';
+      hint.textContent = 'Избери категория или потърси продукт';
+      listEl.appendChild(hint);
+      return;
+    }
+
     const q = query.trim().toLowerCase();
     let list = state.vitals.products
       .filter((p) => p.name.toLowerCase().includes(q))
       .sort((a, b) => a.name.localeCompare(b.name, 'bg'));
     if (productDropdownCategoryFilter) list = list.filter((p) => (p.category || 'other') === productDropdownCategoryFilter);
 
-    const listEl = $('productDropdownList');
     listEl.innerHTML = '';
 
     if (!list.length) {
@@ -7018,7 +7030,10 @@
     });
     $('productDropdownBtn').addEventListener('click', (e) => { e.stopPropagation(); toggleProductDropdown(); });
     $('productSearchInput').addEventListener('click', (e) => e.stopPropagation());
-    $('productSearchInput').addEventListener('input', (e) => filterProductDropdown(e.target.value));
+    $('productSearchInput').addEventListener('input', (e) => {
+      if (e.target.value.trim()) productDropdownShowList = true;
+      filterProductDropdown(e.target.value);
+    });
     $('productSearchInput').addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         const first = $('productDropdownList').querySelector('.product-dropdown-item');
