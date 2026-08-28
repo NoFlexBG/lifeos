@@ -1423,6 +1423,38 @@
     font-size: 11px;
   }
 
+  .coin-counter-btn {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+
+  .coin-counter-btn:hover { border-color: var(--violet); color: var(--violet); box-shadow: 0 0 8px var(--violet-dim); }
+  .coin-counter-btn:active { transform: scale(0.92); }
+
+  .coin-counter-value {
+    min-width: 30px;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    color: var(--text);
+    cursor: ns-resize;
+    user-select: none;
+  }
+
   .coin-row-subtotal {
     font-family: var(--font-mono);
     color: var(--text-dim);
@@ -4157,7 +4189,7 @@
     'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД': 'ENERGY EXPENDITURE CALCULATOR', 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ': 'VEHICLE SERVICING',
     'СПЕСТЕНИ ПАРИ': 'SAVED MONEY', 'СЛУЖЕБНИ ПАРИ': 'COMPANY MONEY', 'СЛУЖЕБНО ТАБЛО': 'ADMIN DASHBOARD',
 
-    'Плодове': 'Fruits', 'Зеленчуци': 'Vegetables', 'Месо и риба': 'Meat & fish', 'Хляб': 'Bread',
+    'Плодове': 'Fruits', 'Зеленчуци': 'Vegetables', 'Салати': 'Salads', 'Месо и риба': 'Meat & fish', 'Хляб': 'Bread',
     'Млечни': 'Dairy', 'Ядки и семена': 'Nuts & seeds', 'Сладко': 'Sweets', 'Напитки': 'Drinks',
     'Готови храни': 'Ready meals', 'Домашно приготвени': 'Homemade', 'Сосове': 'Sauces', 'Чипсове': 'Chips', 'Други': 'Other',
 
@@ -4809,6 +4841,44 @@
     return 'tier-copper';
   }
 
+  function createCounterRow(count, onChange) {
+    const row = document.createElement('div');
+
+    const times = document.createElement('span');
+    times.className = 'coin-card-times';
+    times.textContent = '×';
+
+    const minusBtn = document.createElement('button');
+    minusBtn.type = 'button';
+    minusBtn.className = 'coin-counter-btn';
+    minusBtn.textContent = '−';
+
+    const valueEl = document.createElement('span');
+    valueEl.className = 'coin-counter-value';
+    valueEl.textContent = count;
+
+    const plusBtn = document.createElement('button');
+    plusBtn.type = 'button';
+    plusBtn.className = 'coin-counter-btn';
+    plusBtn.textContent = '+';
+
+    const setCount = (next) => {
+      count = Math.max(0, next);
+      valueEl.textContent = count;
+      onChange(count);
+    };
+
+    minusBtn.addEventListener('click', () => setCount(count - 1));
+    plusBtn.addEventListener('click', () => setCount(count + 1));
+    valueEl.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      setCount(count + (e.deltaY < 0 ? 1 : -1));
+    }, { passive: false });
+
+    row.append(times, minusBtn, valueEl, plusBtn);
+    return row;
+  }
+
   function renderCoinGroup(denominations, containerId) {
     const container = $(containerId);
     container.innerHTML = '';
@@ -4823,30 +4893,11 @@
       disc.textContent = formatMoney(d) + '€';
       card.appendChild(disc);
 
-      const inputRow = document.createElement('div');
-      inputRow.className = 'coin-card-input-row';
-
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.className = 'mini-input coin-row-input';
-      input.min = '0';
-      input.step = '1';
-      input.value = state.savings.coins[d] || 0;
-
-      const times = document.createElement('span');
-      times.className = 'coin-card-times';
-      times.textContent = '×';
-
-      inputRow.append(times, input);
-      card.appendChild(inputRow);
-
       const subtotal = document.createElement('span');
       subtotal.className = 'coin-row-subtotal';
       subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' €';
-      card.appendChild(subtotal);
 
-      input.addEventListener('input', () => {
-        const count = Math.max(0, parseInt(input.value) || 0);
+      const inputRow = createCounterRow(state.savings.coins[d] || 0, (count) => {
         state.savings.coins[d] = count;
         subtotal.textContent = formatMoney(count * d) + ' €';
         updateGroupTotalDisplay(denominations, totalElId);
@@ -4854,6 +4905,9 @@
         renderSavingsOverview();
         renderHubIfVisible();
       });
+      inputRow.className = 'coin-card-input-row';
+      card.appendChild(inputRow);
+      card.appendChild(subtotal);
 
       container.appendChild(card);
     });
@@ -4884,30 +4938,11 @@
 
       card.appendChild(face);
 
-      const inputRow = document.createElement('div');
-      inputRow.className = 'banknote-card-input-row';
-
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.className = 'mini-input coin-row-input';
-      input.min = '0';
-      input.step = '1';
-      input.value = state.savings.coins[d] || 0;
-
-      const times = document.createElement('span');
-      times.className = 'coin-card-times';
-      times.textContent = '×';
-
-      inputRow.append(times, input);
-      card.appendChild(inputRow);
-
       const subtotal = document.createElement('span');
       subtotal.className = 'banknote-card-subtotal';
       subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' €';
-      card.appendChild(subtotal);
 
-      input.addEventListener('input', () => {
-        const count = Math.max(0, parseInt(input.value) || 0);
+      const inputRow = createCounterRow(state.savings.coins[d] || 0, (count) => {
         state.savings.coins[d] = count;
         subtotal.textContent = formatMoney(count * d) + ' €';
         updateGroupTotalDisplay(BANKNOTE_DENOMINATIONS, 'banknoteGroupTotal');
@@ -4915,6 +4950,9 @@
         renderSavingsOverview();
         renderHubIfVisible();
       });
+      inputRow.className = 'banknote-card-input-row';
+      card.appendChild(inputRow);
+      card.appendChild(subtotal);
 
       container.appendChild(card);
     });
@@ -6056,6 +6094,7 @@
   const PRODUCT_CATEGORIES = [
     { id: 'fruits', label: 'Плодове' },
     { id: 'vegetables', label: 'Зеленчуци' },
+    { id: 'salads', label: 'Салати' },
     { id: 'meat', label: 'Месо и риба' },
     { id: 'grains', label: 'Хляб' },
     { id: 'dairy', label: 'Млечни' },
