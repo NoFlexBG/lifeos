@@ -1293,6 +1293,11 @@
     gap: 10px;
   }
 
+  .chart-range-tabs {
+    display: flex;
+    gap: 6px;
+  }
+
   .chart-head-actions {
     display: flex;
     align-items: center;
@@ -3194,7 +3199,7 @@
               <div class="garage-stat-value" id="weightStatCurrent">—</div>
             </div>
             <div class="console-panel garage-stat" data-accent="cyan">
-              <span class="gauge-label" data-i18n>ПРОМЯНА (30 ДНИ)</span>
+              <span class="gauge-label" id="weightStatChangeLabel" data-i18n>ПРОМЯНА (30 ДНИ)</span>
               <div class="garage-stat-value" id="weightStatChange">—</div>
             </div>
             <div class="console-panel garage-stat" data-accent="amber">
@@ -3211,7 +3216,13 @@
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
             <div class="chart-head">
-              <span class="gauge-label" data-i18n>ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ</span>
+              <span class="gauge-label" id="weightChartRangeLabel" data-i18n>ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ</span>
+              <div class="chart-range-tabs" id="weightRangeTabs">
+                <button type="button" class="chip category-chip category-chip-sm" data-weight-range="7" data-i18n>7Д</button>
+                <button type="button" class="chip category-chip category-chip-sm active" data-weight-range="30" data-i18n>30Д</button>
+                <button type="button" class="chip category-chip category-chip-sm" data-weight-range="90" data-i18n>90Д</button>
+                <button type="button" class="chip category-chip category-chip-sm" data-weight-range="all" data-i18n>ВСИЧКО</button>
+              </div>
             </div>
             <div id="weightLineChart" class="line-chart"></div>
           </div>
@@ -4027,7 +4038,11 @@
     'ИСТОРИЯ ДНЕС': "TODAY'S HISTORY", 'ПОСЛЕДНИ 7 ДНИ': 'LAST 7 DAYS', 'КАЛОРИИ': 'CALORIES', 'ВОДА': 'WATER',
     'ТЕГЛО ДНЕС': 'WEIGHT TODAY', '/ цел': '/ goal', 'кг': 'kg', 'Запиши': 'Save',
     'ТЕКУЩО': 'CURRENT', 'ПРОМЯНА (30 ДНИ)': 'CHANGE (30 DAYS)', 'СРЕДНО': 'AVERAGE', 'ЦЕЛ': 'GOAL',
+    'ПРОМЯНА (7 ДНИ)': 'CHANGE (7 DAYS)', 'ПРОМЯНА (90 ДНИ)': 'CHANGE (90 DAYS)', 'ПРОМЯНА (ЦЯЛАТА ИСТОРИЯ)': 'CHANGE (FULL HISTORY)',
     'ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ': 'WEIGHT — LAST 30 DAYS',
+    'ТЕГЛО — ПОСЛЕДНИТЕ 7 ДНИ': 'WEIGHT — LAST 7 DAYS', 'ТЕГЛО — ПОСЛЕДНИТЕ 90 ДНИ': 'WEIGHT — LAST 90 DAYS',
+    'ТЕГЛО — ЦЯЛАТА ИСТОРИЯ': 'WEIGHT — FULL HISTORY',
+    '7Д': '7D', '30Д': '30D', '90Д': '90D', 'ВСИЧКО': 'ALL',
     'МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)': 'MY PRODUCTS (PER 100G/ML)', 'Търси храна...': 'Search food...', '+ Добави продукт': '+ Add product',
 
     'ДАННИ': 'DATA', 'По формулата на Mifflin-St Jeor': 'Using the Mifflin-St Jeor formula',
@@ -5882,6 +5897,21 @@
     `;
   }
 
+  let weightChartRange = 30;
+
+  function getEarliestWeightKey() {
+    const keys = Object.keys(state.vitals.days).filter((k) => state.vitals.days[k].weight > 0).sort();
+    return keys.length ? keys[0] : null;
+  }
+
+  function selectWeightRange(range) {
+    weightChartRange = range === 'all' ? 'all' : parseInt(range, 10);
+    document.querySelectorAll('#weightRangeTabs .category-chip').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.weightRange === String(range));
+    });
+    renderWeightTab();
+  }
+
   function renderWeightTab() {
     $('weightGoalInput').value = state.vitals.goals.weight;
     const goal = state.vitals.goals.weight || 0;
@@ -5889,8 +5919,28 @@
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    let spanDays;
+    if (weightChartRange === 'all') {
+      const earliestKey = getEarliestWeightKey();
+      if (earliestKey) {
+        const [y, m, d] = earliestKey.split('-').map(Number);
+        const earliestDate = new Date(y, m - 1, d);
+        spanDays = Math.max(1, Math.round((today - earliestDate) / 86400000) + 1);
+      } else {
+        spanDays = 30;
+      }
+      $('weightChartRangeLabel').textContent = tr('ТЕГЛО — ЦЯЛАТА ИСТОРИЯ');
+      $('weightStatChangeLabel').textContent = tr('ПРОМЯНА (ЦЯЛАТА ИСТОРИЯ)');
+    } else {
+      spanDays = weightChartRange;
+      const rangeLabelKey = spanDays === 7 ? 'ТЕГЛО — ПОСЛЕДНИТЕ 7 ДНИ' : spanDays === 90 ? 'ТЕГЛО — ПОСЛЕДНИТЕ 90 ДНИ' : 'ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ';
+      const changeLabelKey = spanDays === 7 ? 'ПРОМЯНА (7 ДНИ)' : spanDays === 90 ? 'ПРОМЯНА (90 ДНИ)' : 'ПРОМЯНА (30 ДНИ)';
+      $('weightChartRangeLabel').textContent = tr(rangeLabelKey);
+      $('weightStatChangeLabel').textContent = tr(changeLabelKey);
+    }
+
     const days = [];
-    for (let i = 29; i >= 0; i--) {
+    for (let i = spanDays - 1; i >= 0; i--) {
       const d = new Date(today);
       d.setDate(d.getDate() - i);
       const key = dateKey(d.getFullYear(), d.getMonth(), d.getDate());
@@ -7218,6 +7268,10 @@
 
     document.querySelectorAll('.vitals-tab[data-tab]').forEach((btn) => {
       btn.addEventListener('click', () => switchVitalsTab(btn.dataset.tab));
+    });
+
+    document.querySelectorAll('#weightRangeTabs [data-weight-range]').forEach((btn) => {
+      btn.addEventListener('click', () => selectWeightRange(btn.dataset.weightRange));
     });
 
     document.querySelectorAll('.vitals-tab[data-garage-tab]').forEach((btn) => {
