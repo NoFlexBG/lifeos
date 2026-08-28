@@ -6190,7 +6190,7 @@
       const chip = document.createElement('button');
       chip.type = 'button';
       chip.className = 'chip category-chip category-chip-sm' + (productDropdownCategoryFilter === c.id ? ' active' : '');
-      chip.textContent = c.label;
+      chip.textContent = tr(c.label);
       chip.addEventListener('click', (e) => { e.stopPropagation(); selectProductDropdownCategory(c.id); });
       container.appendChild(chip);
     });
