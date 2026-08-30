@@ -1066,6 +1066,65 @@
   .line-chart-entry-dot { opacity: 0.9; }
   .line-chart-goal { stroke: var(--violet); stroke-width: 1.3; opacity: 0.6; }
   .line-chart-goal-label { font-family: var(--font-mono); font-size: 9px; fill: var(--violet); letter-spacing: 0.5px; }
+  .line-chart-hit { cursor: pointer; }
+
+  .weight-tooltip {
+    position: fixed;
+    z-index: 20;
+    width: 210px;
+    background: var(--surface-2);
+    border: 1px solid var(--line-strong);
+    border-radius: 8px;
+    padding: 12px 14px;
+    box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.55), 0 0 20px -6px var(--amber-dim);
+    pointer-events: none;
+  }
+
+  .weight-tooltip.hidden { display: none; }
+
+  .weight-tooltip-date {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    color: var(--amber);
+    margin-bottom: 4px;
+  }
+
+  .weight-tooltip-weight {
+    font-family: var(--font-mono);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 8px;
+  }
+
+  .weight-tooltip-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+  }
+
+  .weight-tooltip-stat { display: flex; flex-direction: column; gap: 2px; }
+  .weight-tooltip-label { font-size: 8.5px; letter-spacing: 1px; color: var(--text-faint); }
+  .weight-tooltip-stat b { font-family: var(--font-mono); font-size: 12px; color: var(--text); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .weight-tooltip-macros {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+  }
+
+  .weight-tooltip-meals {
+    margin-top: 6px;
+    font-size: 10.5px;
+    color: var(--text-dim);
+    line-height: 1.4;
+  }
 
   /* ---- creative variant (weight chart) ---- */
   .line-chart-line-glow {
@@ -4036,6 +4095,18 @@
 
 <div class="toast" id="toast"></div>
 
+<div class="weight-tooltip hidden" id="weightTooltip">
+  <div class="weight-tooltip-date" id="wtDate"></div>
+  <div class="weight-tooltip-weight" id="wtWeight"></div>
+  <div class="weight-tooltip-grid">
+    <div class="weight-tooltip-stat"><span class="weight-tooltip-label" data-i18n>ККАЛ</span><b id="wtCalories"></b></div>
+    <div class="weight-tooltip-stat"><span class="weight-tooltip-label" data-i18n>МЛ</span><b id="wtWater"></b></div>
+    <div class="weight-tooltip-stat"><span class="weight-tooltip-label" data-i18n>КРАЧКИ</span><b id="wtSteps"></b></div>
+  </div>
+  <div class="weight-tooltip-macros" id="wtMacros"></div>
+  <div class="weight-tooltip-meals" id="wtMeals"></div>
+</div>
+
 <script>
   const MONTH_NAMES_BG = ['Януари','Февруари','Март','Април','Май','Юни','Юли','Август','Септември','Октомври','Ноември','Декември'];
   const MONTH_NAMES_EN = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -4178,7 +4249,7 @@
     'Б': 'P', 'В': 'C', 'М': 'F',
     'ДОБАВИ ПРОДУКТ': 'ADD PRODUCT', 'РЕДАКТИРАЙ ПРОДУКТ': 'EDIT PRODUCT',
     'Въведи име на продукта': 'Enter the product name',
-    'ДОБАВЯНИЯ': 'ADDED', 'Няма добавяния днес': 'Nothing added today',
+    'ДОБАВЯНИЯ': 'ADDED', 'Няма добавяния днес': 'Nothing added today', 'Няма записано хранене': 'No food recorded',
     'Изтекъл': 'Expired', 'Валиден': 'Valid',
     'Виж фактура': 'View receipt', 'Добави снимка на фактура': 'Add receipt photo',
     'Няма записани ремонти': 'No repairs recorded', 'Няма записано гориво': 'No fuel recorded',
@@ -4365,6 +4436,7 @@
 
   function showScreen(name) {
     currentScreen = name;
+    hideWeightTooltip();
     document.querySelectorAll('.screen').forEach((s) => s.classList.add('hidden'));
     $('screen-' + name).classList.remove('hidden');
 
@@ -5816,6 +5888,7 @@
     $('vitalsTabToday').classList.toggle('hidden', tab !== 'today');
     $('vitalsTabWeight').classList.toggle('hidden', tab !== 'weight');
     $('vitalsTabProducts').classList.toggle('hidden', tab !== 'products');
+    if (tab !== 'weight') hideWeightTooltip();
     if (tab === 'weight') renderWeightTab();
     if (tab === 'products') renderProducts();
   }
@@ -5885,6 +5958,10 @@
     const lastX = xFor(points.length - 1);
     const lastY = yFor(last.value);
 
+    const hitAreas = opts.interactive === false ? '' : points.map((p, i) =>
+      `<circle class="line-chart-hit" data-index="${i}" cx="${xFor(i).toFixed(1)}" cy="${yFor(p.value).toFixed(1)}" r="14" fill="transparent" />`
+    ).join('');
+
     const entryDots = points.map((p, i) => {
       if (!p.hasEntry || i === points.length - 1) return '';
       if (opts.creative) {
@@ -5920,6 +5997,7 @@
           <circle class="line-chart-dot-current" style="fill:var(--amber)" cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4.5" />
           <text class="line-chart-endpoint-label-glow" style="fill:var(--amber)" x="${Math.min(lastX + 8, width - padR - 34)}" y="${(lastY - 8).toFixed(1)}">${formatValue(last.value)}</text>
           ${xLabels}
+          ${hitAreas}
         </svg>
       `;
     }
@@ -5940,8 +6018,54 @@
         <circle class="line-chart-dot" style="fill:${color}" cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="4" />
         <text class="line-chart-endpoint-label" style="fill:${color}" x="${Math.min(lastX + 8, width - padR - 34)}" y="${(lastY - 8).toFixed(1)}">${formatValue(last.value)}</text>
         ${xLabels}
+        ${hitAreas}
       </svg>
     `;
+  }
+
+  function hideWeightTooltip() {
+    $('weightTooltip').classList.add('hidden');
+  }
+
+  function showWeightTooltip(point, targetEl) {
+    const d = point.dayStats;
+    const kgUnit = tr('кг');
+
+    $('wtDate').textContent = point.label;
+    $('wtWeight').textContent = point.value > 0 ? `${point.value.toFixed(1)} ${kgUnit}` : '—';
+    $('wtCalories').textContent = formatNumber(d.calories);
+    $('wtWater').textContent = formatNumber(d.water);
+    $('wtSteps').textContent = formatNumber(d.steps);
+    $('wtMacros').textContent = `${tr('Б')} ${Math.round(d.protein)}${tr('г')} · ${tr('В')} ${Math.round(d.carbs)}${tr('г')} · ${tr('М')} ${Math.round(d.fat)}${tr('г')}`;
+
+    const mealNames = (d.meals || []).map((m) => m.desc).filter(Boolean);
+    $('wtMeals').textContent = mealNames.length ? mealNames.join(', ') : tr('Няма записано хранене');
+
+    const tip = $('weightTooltip');
+    tip.classList.remove('hidden');
+
+    const targetRect = targetEl.getBoundingClientRect();
+    const tipRect = tip.getBoundingClientRect();
+    const margin = 8;
+    let left = targetRect.left + targetRect.width / 2 - tipRect.width / 2;
+    let top = targetRect.top - tipRect.height - 10;
+    left = Math.max(margin, Math.min(left, window.innerWidth - tipRect.width - margin));
+    if (top < margin) top = targetRect.bottom + 10;
+    tip.style.left = left + 'px';
+    tip.style.top = top + 'px';
+  }
+
+  function wireWeightChartInteraction(container, series) {
+    container.querySelectorAll('.line-chart-hit').forEach((hit) => {
+      const point = series[parseInt(hit.dataset.index, 10)];
+      if (!point) return;
+      hit.addEventListener('mouseenter', () => showWeightTooltip(point, hit));
+      hit.addEventListener('mouseleave', hideWeightTooltip);
+      hit.addEventListener('click', (e) => {
+        e.stopPropagation();
+        showWeightTooltip(point, hit);
+      });
+    });
   }
 
   let weightChartRange = 30;
@@ -5996,15 +6120,16 @@
 
     let last = getPreviousWeight(days[0].key) || 0;
     const series = days.map((d) => {
-      const w = getVitalsDay(d.key).weight;
-      const hasEntry = w > 0;
-      if (hasEntry) last = w;
-      return { ...d, value: last, hasEntry };
+      const dayStats = getVitalsDay(d.key);
+      const hasEntry = dayStats.weight > 0;
+      if (hasEntry) last = dayStats.weight;
+      return { ...d, value: last, hasEntry, dayStats };
     });
 
     const container = $('weightLineChart');
     const hasData = series.some((p) => p.value > 0);
 
+    hideWeightTooltip();
     ['weightStatCurrent','weightStatChange','weightStatAvg','weightStatGoal'].forEach((id) => $(id).textContent = '—');
 
     if (!hasData) {
@@ -6020,6 +6145,7 @@
       goalValue: goal || null,
       creative: true
     });
+    wireWeightChartInteraction(container, series);
 
     const recorded = series.filter((p) => p.value > 0);
     const current = recorded[recorded.length - 1].value;
@@ -7365,6 +7491,7 @@
     document.addEventListener('click', (e) => {
       if (!$('productDropdown').contains(e.target)) closeProductDropdown();
       if (!$('productSortDropdown').contains(e.target)) closeProductSortMenu();
+      if (!e.target.closest('.line-chart-hit')) hideWeightTooltip();
     });
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') { closeProductDropdown(); closeProductSortMenu(); closePhotoLightbox(); closeProductEditModal(); closeMealAddModal(); closeAdvanceModal(); closeExpenseModal(); closeProfileModal(); closeNoteModal(); }
