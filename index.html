@@ -4155,6 +4155,7 @@
     'ТЕГЛО — ПОСЛЕДНИТЕ 7 ДНИ': 'WEIGHT — LAST 7 DAYS', 'ТЕГЛО — ПОСЛЕДНИТЕ 90 ДНИ': 'WEIGHT — LAST 90 DAYS',
     'ТЕГЛО — ЦЯЛАТА ИСТОРИЯ': 'WEIGHT — FULL HISTORY',
     '7Д': '7D', '30Д': '30D', '90Д': '90D', 'ВСИЧКО': 'ALL',
+    'ТЕГЛО — ПОСЛЕДНИТЕ': 'WEIGHT — LAST', 'ДНИ': 'DAYS', 'ПРОМЯНА': 'CHANGE',
     'МОИТЕ ПРОДУКТИ (НА 100Г/МЛ)': 'MY PRODUCTS (PER 100G/ML)', 'Търси храна...': 'Search food...', '+ Добави продукт': '+ Add product',
 
     'ДАННИ': 'DATA', 'По формулата на Mifflin-St Jeor': 'Using the Mifflin-St Jeor formula',
@@ -6075,12 +6076,65 @@
     return keys.length ? keys[0] : null;
   }
 
+  function getMaxWeightSpan() {
+    const earliestKey = getEarliestWeightKey();
+    if (!earliestKey) return 30;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const [y, m, d] = earliestKey.split('-').map(Number);
+    const earliestDate = new Date(y, m - 1, d);
+    return Math.max(3, Math.round((today - earliestDate) / 86400000) + 1);
+  }
+
   function selectWeightRange(range) {
     weightChartRange = range === 'all' ? 'all' : parseInt(range, 10);
     document.querySelectorAll('#weightRangeTabs .category-chip').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.weightRange === String(range));
     });
     renderWeightTab();
+  }
+
+  let weightPinchState = null;
+  let weightPinchRafPending = false;
+
+  function touchDistance(touches) {
+    const dx = touches[0].clientX - touches[1].clientX;
+    const dy = touches[0].clientY - touches[1].clientY;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  function wireWeightChartPinch(container) {
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2) {
+        weightPinchState = {
+          startDist: touchDistance(e.touches),
+          startSpan: weightChartRange === 'all' ? getMaxWeightSpan() : weightChartRange
+        };
+      }
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+      if (e.touches.length !== 2 || !weightPinchState) return;
+      e.preventDefault();
+      const scale = touchDistance(e.touches) / weightPinchState.startDist;
+      const maxSpan = getMaxWeightSpan();
+      const newSpan = Math.max(3, Math.min(maxSpan, Math.round(weightPinchState.startSpan / scale)));
+      if (newSpan !== weightChartRange) {
+        weightChartRange = newSpan;
+        if (!weightPinchRafPending) {
+          weightPinchRafPending = true;
+          requestAnimationFrame(() => {
+            weightPinchRafPending = false;
+            document.querySelectorAll('#weightRangeTabs .category-chip').forEach((btn) => btn.classList.remove('active'));
+            renderWeightTab();
+          });
+        }
+      }
+    }, { passive: false });
+
+    const endPinch = (e) => { if (e.touches.length < 2) weightPinchState = null; };
+    container.addEventListener('touchend', endPinch);
+    container.addEventListener('touchcancel', endPinch);
   }
 
   function renderWeightTab() {
@@ -6104,10 +6158,8 @@
       $('weightStatChangeLabel').textContent = tr('ПРОМЯНА (ЦЯЛАТА ИСТОРИЯ)');
     } else {
       spanDays = weightChartRange;
-      const rangeLabelKey = spanDays === 7 ? 'ТЕГЛО — ПОСЛЕДНИТЕ 7 ДНИ' : spanDays === 90 ? 'ТЕГЛО — ПОСЛЕДНИТЕ 90 ДНИ' : 'ТЕГЛО — ПОСЛЕДНИТЕ 30 ДНИ';
-      const changeLabelKey = spanDays === 7 ? 'ПРОМЯНА (7 ДНИ)' : spanDays === 90 ? 'ПРОМЯНА (90 ДНИ)' : 'ПРОМЯНА (30 ДНИ)';
-      $('weightChartRangeLabel').textContent = tr(rangeLabelKey);
-      $('weightStatChangeLabel').textContent = tr(changeLabelKey);
+      $('weightChartRangeLabel').textContent = `${tr('ТЕГЛО — ПОСЛЕДНИТЕ')} ${spanDays} ${tr('ДНИ')}`;
+      $('weightStatChangeLabel').textContent = `${tr('ПРОМЯНА')} (${spanDays} ${tr('ДНИ')})`;
     }
 
     const days = [];
@@ -7447,6 +7499,7 @@
     document.querySelectorAll('#weightRangeTabs [data-weight-range]').forEach((btn) => {
       btn.addEventListener('click', () => selectWeightRange(btn.dataset.weightRange));
     });
+    wireWeightChartPinch($('weightLineChart'));
 
     document.querySelectorAll('.vitals-tab[data-garage-tab]').forEach((btn) => {
       btn.addEventListener('click', () => switchGarageTab(btn.dataset.garageTab));
