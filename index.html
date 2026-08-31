@@ -4435,6 +4435,45 @@
 
   /* ============ Routing ============ */
 
+  /* ============ Back-gesture / history navigation ============ */
+
+  let navStack = [];
+  let navConsumingOwnPop = false;
+  let navHandlingPop = false;
+
+  function pushNav(onBack) {
+    if (navHandlingPop) return;
+    navStack.push(onBack);
+    try { history.pushState({ __lifeosNav: true }, ''); } catch {}
+  }
+
+  function popNav() {
+    if (navHandlingPop || !navStack.length) return;
+    navStack.pop();
+    navConsumingOwnPop = true;
+    history.back();
+  }
+
+  window.addEventListener('popstate', () => {
+    if (navConsumingOwnPop) { navConsumingOwnPop = false; return; }
+    if (navStack.length) {
+      const onBack = navStack.pop();
+      navHandlingPop = true;
+      onBack();
+      navHandlingPop = false;
+    }
+  });
+
+  function enterScreen(name) {
+    pushNav(() => showScreen('hub'));
+    showScreen(name);
+  }
+
+  function goHome() {
+    if (navStack.length) popNav();
+    else showScreen('hub');
+  }
+
   function showScreen(name) {
     currentScreen = name;
     hideWeightTooltip();
@@ -4516,7 +4555,7 @@
   }
 
   function onBrandMarkClick() {
-    if (currentUser && currentUser.id === ADMIN_UID) showScreen('admin');
+    if (currentUser && currentUser.id === ADMIN_UID) enterScreen('admin');
   }
 
   /* ============ Settings & theme ============ */
@@ -4594,8 +4633,8 @@
     applyI18n();
   }
 
-  function openMatrixModal() { $('matrixModal').classList.remove('hidden'); }
-  function closeMatrixModal() { $('matrixModal').classList.add('hidden'); }
+  function openMatrixModal() { $('matrixModal').classList.remove('hidden'); pushNav(closeMatrixModal); }
+  function closeMatrixModal() { $('matrixModal').classList.add('hidden'); popNav(); }
 
   let matrixRainState = null;
 
@@ -5152,6 +5191,7 @@
     $('advanceSaveBtn').textContent = tr('Добави');
     $('advanceModal').classList.remove('hidden');
     $('advanceAmountInput').focus();
+    pushNav(closeAdvanceModal);
   }
 
   function openAdvanceEditModal(id) {
@@ -5164,11 +5204,13 @@
     $('advanceModalTitle').textContent = tr('РЕДАКТИРАЙ АВАНС');
     $('advanceSaveBtn').textContent = tr('Запиши');
     $('advanceModal').classList.remove('hidden');
+    pushNav(closeAdvanceModal);
   }
 
   function closeAdvanceModal() {
     editingAdvanceId = '';
     $('advanceModal').classList.add('hidden');
+    popNav();
   }
 
   function saveAdvanceFromModal() {
@@ -5211,6 +5253,7 @@
     $('expenseSaveBtn').textContent = tr('Добави');
     $('expenseModal').classList.remove('hidden');
     $('expenseDescInput').focus();
+    pushNav(closeExpenseModal);
   }
 
   function openExpenseEditModal(id) {
@@ -5223,11 +5266,13 @@
     $('expenseModalTitle').textContent = tr('РЕДАКТИРАЙ РАЗХОД');
     $('expenseSaveBtn').textContent = tr('Запиши');
     $('expenseModal').classList.remove('hidden');
+    pushNav(closeExpenseModal);
   }
 
   function closeExpenseModal() {
     editingExpenseId = '';
     $('expenseModal').classList.add('hidden');
+    popNav();
   }
 
   function saveExpenseFromModal() {
@@ -5449,10 +5494,12 @@
     $('settingsToggleBtn').classList.remove('open');
     $('profileModal').classList.remove('hidden');
     $('profileNameInput').focus();
+    pushNav(closeProfileModal);
   }
 
   function closeProfileModal() {
     $('profileModal').classList.add('hidden');
+    popNav();
   }
 
   function toggleSettingsCollapse() {
@@ -5573,6 +5620,7 @@
     $('noteSaveBtn').textContent = tr('Запази');
     $('noteModal').classList.remove('hidden');
     $('noteTitleInput').focus();
+    pushNav(closeNoteModal);
   }
 
   function openNoteEditModal(id) {
@@ -5584,11 +5632,13 @@
     $('noteModalTitle').textContent = tr('РЕДАКТИРАЙ БЕЛЕЖКА');
     $('noteSaveBtn').textContent = tr('Запази');
     $('noteModal').classList.remove('hidden');
+    pushNav(closeNoteModal);
   }
 
   function closeNoteModal() {
     editingNoteId = '';
     $('noteModal').classList.add('hidden');
+    popNav();
   }
 
   function saveNoteFromModal() {
@@ -6259,11 +6309,13 @@
   function openMealAddModal() {
     switchMealAddMode('product');
     $('mealAddModal').classList.remove('hidden');
+    pushNav(closeMealAddModal);
   }
 
   function closeMealAddModal() {
     $('mealAddModal').classList.add('hidden');
     closeProductDropdown();
+    popNav();
   }
 
   function saveMealFromModal() {
@@ -6587,6 +6639,7 @@
     $('productEditSaveBtn').textContent = tr('Добави');
     $('productEditModal').classList.remove('hidden');
     $('editProductName').focus();
+    pushNav(closeProductEditModal);
   }
 
   function openProductEditModal(id) {
@@ -6604,11 +6657,13 @@
     $('productEditModalTitle').textContent = tr('РЕДАКТИРАЙ ПРОДУКТ');
     $('productEditSaveBtn').textContent = tr('Запиши');
     $('productEditModal').classList.remove('hidden');
+    pushNav(closeProductEditModal);
   }
 
   function closeProductEditModal() {
     editingProductId = '';
     $('productEditModal').classList.add('hidden');
+    popNav();
   }
 
   function saveProductFromModal() {
@@ -7280,11 +7335,13 @@
     $('photoLightboxImg').dataset.url = url;
     $('photoLightboxImg').dataset.filename = path.split('/').pop() || 'photo.jpg';
     $('photoLightbox').classList.remove('hidden');
+    pushNav(closePhotoLightbox);
   }
 
   function closePhotoLightbox() {
     $('photoLightbox').classList.add('hidden');
     $('photoLightboxImg').src = '';
+    popNav();
   }
 
   async function downloadCurrentPhoto() {
@@ -7478,7 +7535,7 @@
     $('settingsExportBtn').addEventListener('click', exportData);
     $('settingsImportBtn').addEventListener('click', () => { $('importFile').click(); });
     $('importFile').addEventListener('change', importData);
-    $('homeBtn').addEventListener('click', () => showScreen('hub'));
+    $('homeBtn').addEventListener('click', () => goHome());
     $('brandMark').addEventListener('click', onBrandMarkClick);
 
     $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
@@ -7489,7 +7546,7 @@
     $('matrixNoBtn').addEventListener('click', closeMatrixModal);
 
     document.querySelectorAll('.tile').forEach((tile) => {
-      tile.addEventListener('click', () => showScreen(tile.dataset.app));
+      tile.addEventListener('click', () => enterScreen(tile.dataset.app));
     });
 
     document.querySelectorAll('.vitals-tab[data-tab]').forEach((btn) => {
