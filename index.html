@@ -4997,7 +4997,7 @@
   function selectLang(lang) {
     if (lang === currentLang) return;
     applyLang(lang);
-    location.reload();
+    showScreen(currentScreen);
   }
 
   function initLang() {
