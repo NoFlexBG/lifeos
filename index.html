@@ -2929,6 +2929,38 @@
   .chat-attach-menu button:hover { background: var(--surface-2); color: var(--text); }
   .chat-attach-menu button svg { flex-shrink: 0; color: var(--violet); }
 
+  .chat-emoji-picker {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+    width: 260px;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 8px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.5);
+    z-index: 5;
+  }
+
+  .chat-emoji-picker.hidden { display: none; }
+
+  .chat-emoji-picker button {
+    border: none;
+    background: transparent;
+    font-size: 19px;
+    line-height: 1;
+    padding: 6px 0;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .chat-emoji-picker button:hover { background: var(--surface-2); }
+
   /* ============ Settings (in profile modal) ============ */
 
   .settings-row {
@@ -4119,6 +4151,10 @@
             </div>
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
             <input type="file" id="chatCameraInput" accept="image/*" capture="environment" class="hidden" />
+            <div class="chat-attach-wrap">
+              <button class="chip chat-photo-btn" id="chatEmojiBtn" title="Емотикони" data-i18n-title>☺</button>
+              <div class="chat-emoji-picker hidden" id="chatEmojiPicker"></div>
+            </div>
             <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
             <button class="chip" id="chatSendBtn" data-i18n>Изпрати</button>
           </div>
@@ -4948,6 +4984,7 @@
     'Заявката вече е изпратена': 'Request already sent', 'ИЗЧАКВА ОТГОВОР': 'AWAITING REPLY',
     'Премахни приятел': 'Remove friend', 'Приятелят е премахнат': 'Friend removed',
     'Изпрати снимка': 'Send photo', 'Прикачи': 'Attach', 'Камера': 'Camera', 'Галерия': 'Gallery', 'Локация': 'Location',
+    'Емотикони': 'Emoji',
     '📍 Локация': '📍 Location',
     'Локацията не се поддържа на това устройство': 'Location is not supported on this device',
     'Определяне на локация...': 'Getting location...',
@@ -5149,6 +5186,7 @@
     'Заявката вече е изпратена': 'Anfrage bereits gesendet', 'ИЗЧАКВА ОТГОВОР': 'WARTET AUF ANTWORT',
     'Премахни приятел': 'Freund entfernen', 'Приятелят е премахнат': 'Freund entfernt',
     'Изпрати снимка': 'Foto senden', 'Прикачи': 'Anhängen', 'Камера': 'Kamera', 'Галерия': 'Galerie', 'Локация': 'Standort',
+    'Емотикони': 'Emoji',
     '📍 Локация': '📍 Standort',
     'Локацията не се поддържа на това устройство': 'Standort wird auf diesem Gerät nicht unterstützt',
     'Определяне на локация...': 'Standort wird ermittelt...',
@@ -5350,6 +5388,7 @@
     'Заявката вече е изпратена': 'İstek zaten gönderildi', 'ИЗЧАКВА ОТГОВОР': 'YANIT BEKLENİYOR',
     'Премахни приятел': 'Arkadaşı kaldır', 'Приятелят е премахнат': 'Arkadaş kaldırıldı',
     'Изпрати снимка': 'Fotoğraf gönder', 'Прикачи': 'Ekle', 'Камера': 'Kamera', 'Галерия': 'Galeri', 'Локация': 'Konum',
+    'Емотикони': 'Emoji',
     '📍 Локация': '📍 Konum',
     'Локацията не се поддържа на това устройство': 'Konum bu cihazda desteklenmiyor',
     'Определяне на локация...': 'Konum belirleniyor...',
@@ -7521,6 +7560,39 @@
     );
   }
 
+  const CHAT_EMOJIS = [
+    '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰',
+    '😘','😋','😛','😜','🤪','🤨','🧐','🤓','😎','🥳','😏','😒','😞','😔','🙁','☹️',
+    '😣','😖','😫','😩','🥺','😢','😭','😤','😠','😡','🤯','😳','🥵','🥶','😱','😨',
+    '😰','😥','🤗','🤔','🤭','🤫','🤥','😐','😑','🙄','😯','😮','😲','😴','🤤','🥴',
+    '🤢','🤮','🤧','😷','🤒','🤕','🤑','😈','👻','💀','🤖','🙈','🙉','🙊',
+    '👍','👎','👏','🙌','👐','🤲','🙏','✌️','🤞','🤟','🤘','👌','🤌','👋','💪',
+    '❤️','🧡','💛','💚','💙','💜','🖤','🤍','💔','❣️','💕','💞','💓','💗','💖','💘',
+    '🔥','✨','🎉','🎊','🎁','🎂','⭐','🌟','💯','✅','❌','❓','❗',
+    '☕','🍕','🍔','🍟','🍩','🍺','🍷','🎮','⚽','🚗','✈️','🌈','☀️','🌙'
+  ];
+
+  function buildChatEmojiPicker() {
+    const picker = $('chatEmojiPicker');
+    CHAT_EMOJIS.forEach((emoji) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = emoji;
+      btn.addEventListener('click', () => insertEmojiIntoChatInput(emoji));
+      picker.appendChild(btn);
+    });
+  }
+
+  function insertEmojiIntoChatInput(emoji) {
+    const input = $('chatMessageInput');
+    const start = input.selectionStart != null ? input.selectionStart : input.value.length;
+    const end = input.selectionEnd != null ? input.selectionEnd : input.value.length;
+    input.value = input.value.slice(0, start) + emoji + input.value.slice(end);
+    const newPos = start + emoji.length;
+    input.focus();
+    input.setSelectionRange(newPos, newPos);
+  }
+
   async function sendChatMessage() {
     const input = $('chatMessageInput');
     const body = (input.value || '').trim();
@@ -9511,11 +9583,21 @@
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
     $('chatAttachBtn').addEventListener('click', (e) => {
       e.stopPropagation();
+      $('chatEmojiPicker').classList.add('hidden');
       $('chatAttachMenu').classList.toggle('hidden');
     });
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.chat-attach-wrap')) $('chatAttachMenu').classList.add('hidden');
+    $('chatEmojiBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      $('chatAttachMenu').classList.add('hidden');
+      $('chatEmojiPicker').classList.toggle('hidden');
     });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.chat-attach-wrap')) {
+        $('chatAttachMenu').classList.add('hidden');
+        $('chatEmojiPicker').classList.add('hidden');
+      }
+    });
+    buildChatEmojiPicker();
     $('chatAttachCameraBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatCameraInput').click(); });
     $('chatAttachGalleryBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatPhotoInput').click(); });
     $('chatAttachLocationBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); sendChatLocation(); });
