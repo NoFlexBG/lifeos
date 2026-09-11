@@ -2850,7 +2850,15 @@
   }
 
   .chat-input-row .mini-input { flex: 1; width: auto; }
-  .chat-photo-btn { flex-shrink: 0; padding: 8px 12px; }
+  .chat-photo-btn {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
   /* ============ Settings (in profile modal) ============ */
 
@@ -4008,7 +4016,13 @@
           </div>
           <div class="chat-messages" id="chatMessages"></div>
           <div class="chat-input-row">
-            <button class="chip chat-photo-btn" id="chatPhotoBtn" title="Изпрати снимка" data-i18n-title>▣</button>
+            <button class="chip chat-photo-btn" id="chatPhotoBtn" title="Изпрати снимка" data-i18n-title>
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                <circle cx="8.5" cy="8.5" r="1.6"></circle>
+                <path d="M21 15.5l-5.5-5.5L5 20"></path>
+              </svg>
+            </button>
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
             <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
             <button class="chip" id="chatSendBtn" data-i18n>Изпрати</button>
