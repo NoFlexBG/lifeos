@@ -2277,6 +2277,7 @@
   }
 
   .profile-avatar-btn {
+    position: relative;
     width: 28px;
     height: 28px;
     border-radius: 50%;
@@ -2298,6 +2299,8 @@
   .profile-avatar-btn:hover { border-color: var(--violet); }
 
   .profile-avatar-btn img {
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -6266,28 +6269,6 @@
     renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), path);
     renderAvatarInto($('profileAvatarImg'), $('profileAvatarInitial'), path);
     showToast(tr('Снимката е обновена'));
-
-    const dbgImg = $('profileModalAvatarImg');
-    const check = () => {
-      if (dbgImg.naturalWidth) {
-        const big = document.createElement('img');
-        big.src = dbgImg.src;
-        big.style.cssText = 'position:fixed;top:10px;left:10px;width:300px;height:300px;z-index:99999;border:3px solid lime;background:#333;';
-        big.id = 'avatarBigPreview';
-        const old = document.getElementById('avatarBigPreview');
-        if (old) old.remove();
-        document.body.appendChild(big);
-        alert('DISPLAYED AVATAR\n' + JSON.stringify({
-          naturalWidth: dbgImg.naturalWidth,
-          naturalHeight: dbgImg.naturalHeight,
-          blobType: blob.type,
-          blobSize: blob.size
-        }, null, 1));
-      } else {
-        setTimeout(check, 300);
-      }
-    };
-    setTimeout(check, 300);
   }
 
   function onProfileAvatarFileSelected(evt) {
@@ -6296,7 +6277,6 @@
     if (!file) return;
     if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
     if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
-    alert('ORIGINAL FILE\n' + JSON.stringify({ name: file.name, type: file.type, size: file.size }, null, 1));
     openAvatarCropModal(file);
   }
 
