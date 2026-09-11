@@ -2668,6 +2668,15 @@
 
   .chat-request-actions { display: flex; gap: 8px; }
 
+  .chat-sent-requests .chat-request-card { border-color: var(--line); }
+  .chat-sent-requests .chat-request-name { color: var(--text-dim); }
+  .chat-request-pending-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-faint);
+    letter-spacing: 0.5px;
+  }
+
   .chat-friends-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -3944,6 +3953,7 @@
           </div>
 
           <div class="chat-requests" id="chatRequestsList"></div>
+          <div class="chat-requests chat-sent-requests" id="chatSentRequestsList"></div>
           <div class="chat-friends-grid" id="chatFriendsGrid"></div>
           <div class="chat-empty hidden" id="chatEmptyState" data-i18n>Все още нямаш приятели — добави някой по имейл.</div>
         </div>
@@ -4769,6 +4779,7 @@
     'Вече сте свързани': 'You are already connected',
     'Грешка при изпращане на заявката': 'Error sending the request',
     'Заявката е изпратена': 'Request sent',
+    'Заявката вече е изпратена': 'Request already sent', 'ИЗЧАКВА ОТГОВОР': 'AWAITING REPLY',
     'Ново съобщение': 'New message',
     'Грешка при изпращане': 'Error sending'
   };
@@ -4957,6 +4968,7 @@
     'Вече сте свързани': 'Ihr seid bereits verbunden',
     'Грешка при изпращане на заявката': 'Fehler beim Senden der Anfrage',
     'Заявката е изпратена': 'Anfrage gesendet',
+    'Заявката вече е изпратена': 'Anfrage bereits gesendet', 'ИЗЧАКВА ОТГОВОР': 'WARTET AUF ANTWORT',
     'Ново съобщение': 'Neue Nachricht',
     'Грешка при изпращане': 'Fehler beim Senden'
   };
@@ -5145,6 +5157,7 @@
     'Вече сте свързани': 'Zaten bağlısınız',
     'Грешка при изпращане на заявката': 'İstek gönderilirken hata oluştu',
     'Заявката е изпратена': 'İstek gönderildi',
+    'Заявката вече е изпратена': 'İstek zaten gönderildi', 'ИЗЧАКВА ОТГОВОР': 'YANIT BEKLENİYOR',
     'Ново съобщение': 'Yeni mesaj',
     'Грешка при изпращане': 'Gönderme hatası'
   };
@@ -6917,6 +6930,7 @@
   /* ============ Chat ============ */
 
   let chatFriendRequests = [];
+  let chatSentRequests = [];
   let chatFriends = [];
   let chatProfilesById = {};
   let activeChatFriendId = '';
@@ -6954,7 +6968,16 @@
     if (error || !rows) return;
 
     chatFriendRequests = rows.filter((r) => r.status === 'pending' && r.to_user_id === currentUser.id);
-    chatFriends = rows.filter((r) => r.status === 'accepted');
+    chatSentRequests = rows.filter((r) => r.status === 'pending' && r.from_user_id === currentUser.id);
+
+    const seenFriendIds = new Set();
+    chatFriends = rows.filter((r) => {
+      if (r.status !== 'accepted') return false;
+      const otherId = chatOtherUserId(r);
+      if (seenFriendIds.has(otherId)) return false;
+      seenFriendIds.add(otherId);
+      return true;
+    });
 
     const otherIds = new Set();
     rows.forEach((r) => {
@@ -7025,6 +7048,29 @@
       reqEl.appendChild(card);
     });
 
+    const sentEl = $('chatSentRequestsList');
+    sentEl.innerHTML = '';
+    chatSentRequests.forEach((r) => {
+      const profile = chatProfilesById[r.to_user_id];
+      const card = document.createElement('div');
+      card.className = 'chat-request-card';
+      const name = document.createElement('span');
+      name.className = 'chat-request-name';
+      name.textContent = chatFriendDisplayName(profile, r.to_user_id);
+      const pendingLabel = document.createElement('span');
+      pendingLabel.className = 'chat-request-pending-label';
+      pendingLabel.textContent = tr('ИЗЧАКВА ОТГОВОР');
+      const cancelBtn = document.createElement('button');
+      cancelBtn.className = 'chip';
+      cancelBtn.textContent = tr('Отказ');
+      cancelBtn.addEventListener('click', () => cancelSentRequest(r.id));
+      const right = document.createElement('div');
+      right.className = 'chat-request-actions';
+      right.append(pendingLabel, cancelBtn);
+      card.append(name, right);
+      sentEl.appendChild(card);
+    });
+
     const gridEl = $('chatFriendsGrid');
     gridEl.innerHTML = '';
     chatFriends.forEach((r) => {
@@ -7045,10 +7091,13 @@
       gridEl.appendChild(card);
     });
 
-    $('chatEmptyState').classList.toggle('hidden', chatFriends.length > 0 || chatFriendRequests.length > 0);
+    $('chatEmptyState').classList.toggle('hidden', chatFriends.length > 0 || chatFriendRequests.length > 0 || chatSentRequests.length > 0);
   }
 
+  let addFriendBusy = false;
+
   async function addFriendByEmail() {
+    if (addFriendBusy) return;
     const input = $('addFriendEmailInput');
     const email = (input.value || '').trim();
     if (!email) return;
@@ -7056,28 +7105,64 @@
       showToast(tr('Не можеш да добавиш себе си'));
       return;
     }
-    const { data, error } = await sb.rpc('find_user_by_email', { lookup_email: email });
-    const match = Array.isArray(data) ? data[0] : data;
-    if (error || !match) {
-      showToast(tr('Няма потребител с този имейл'));
-      return;
+    addFriendBusy = true;
+    try {
+      const { data, error } = await sb.rpc('find_user_by_email', { lookup_email: email });
+      const match = Array.isArray(data) ? data[0] : data;
+      if (error || !match) {
+        showToast(tr('Няма потребител с този имейл'));
+        return;
+      }
+
+      // The unique constraint only blocks a duplicate in the SAME direction, so check
+      // both directions first to avoid ending up with two rows for the same pair.
+      const { data: existingRows } = await sb
+        .from('friend_requests')
+        .select('*')
+        .or(`and(from_user_id.eq.${currentUser.id},to_user_id.eq.${match.id}),and(from_user_id.eq.${match.id},to_user_id.eq.${currentUser.id})`);
+      const existing = (existingRows || [])[0];
+
+      if (existing) {
+        if (existing.status === 'accepted') {
+          showToast(tr('Вече сте свързани'));
+        } else if (existing.status === 'pending' && existing.to_user_id === currentUser.id) {
+          await respondFriendRequest(existing.id, 'accepted');
+          showToast(tr('Вече сте свързани'));
+        } else if (existing.status === 'pending') {
+          showToast(tr('Заявката вече е изпратена'));
+        } else {
+          await sb.from('friend_requests').update({ status: 'pending', from_user_id: currentUser.id, to_user_id: match.id }).eq('id', existing.id);
+          showToast(tr('Заявката е изпратена'));
+          loadChatData();
+        }
+        input.value = '';
+        return;
+      }
+
+      const { error: insertError } = await sb.from('friend_requests').insert({
+        from_user_id: currentUser.id,
+        to_user_id: match.id,
+        status: 'pending'
+      });
+      if (insertError) {
+        showToast(tr('Грешка при изпращане на заявката'));
+        return;
+      }
+      input.value = '';
+      showToast(tr('Заявката е изпратена'));
+      loadChatData();
+    } finally {
+      addFriendBusy = false;
     }
-    const { error: insertError } = await sb.from('friend_requests').insert({
-      from_user_id: currentUser.id,
-      to_user_id: match.id,
-      status: 'pending'
-    });
-    if (insertError) {
-      showToast(insertError.code === '23505' ? tr('Вече сте свързани') : tr('Грешка при изпращане на заявката'));
-      return;
-    }
-    input.value = '';
-    showToast(tr('Заявката е изпратена'));
-    loadChatData();
   }
 
   async function respondFriendRequest(id, status) {
     await sb.from('friend_requests').update({ status }).eq('id', id);
+    loadChatData();
+  }
+
+  async function cancelSentRequest(id) {
+    await sb.from('friend_requests').delete().eq('id', id);
     loadChatData();
   }
 
