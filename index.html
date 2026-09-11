@@ -3025,7 +3025,7 @@
       <div class="rate-box hidden" id="rateBox">
         <label for="dailyRate" data-i18n>ДНЕВНА СТАВКА</label>
         <input id="dailyRate" type="number" min="0" step="1" />
-        <span class="currency">€</span>
+        <span class="currency cur-sym">€</span>
       </div>
       <div class="goals-box hidden" id="goalsBox">
         <div class="goal-field"><label for="goalCalories" data-i18n>ККАЛ</label><input id="goalCalories" type="number" min="0" step="50" /></div>
@@ -3103,7 +3103,7 @@
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="tile-top">
-            <div class="tile-icon">€</div>
+            <div class="tile-icon cur-sym">€</div>
             <div class="tile-arrow">→</div>
           </div>
           <div class="tile-name">SAVINGS</div>
@@ -3199,7 +3199,7 @@
               </div>
               <div class="gauge-row">
                 <div class="gauge-value-wrap"><span class="gauge-value" id="firstHalfDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
-                <div class="gauge-value-wrap"><span class="gauge-value money" id="firstHalfEarnings">0</span><span class="gauge-unit">€</span></div>
+                <div class="gauge-value-wrap"><span class="gauge-value money" id="firstHalfEarnings">0</span><span class="gauge-unit cur-sym">€</span></div>
               </div>
             </div>
 
@@ -3210,7 +3210,7 @@
               </div>
               <div class="gauge-row">
                 <div class="gauge-value-wrap"><span class="gauge-value" id="secondHalfDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
-                <div class="gauge-value-wrap"><span class="gauge-value money" id="secondHalfEarnings">0</span><span class="gauge-unit">€</span></div>
+                <div class="gauge-value-wrap"><span class="gauge-value money" id="secondHalfEarnings">0</span><span class="gauge-unit cur-sym">€</span></div>
               </div>
             </div>
           </div>
@@ -3222,7 +3222,7 @@
             </div>
             <div class="gauge-row">
               <div class="gauge-value-wrap"><span class="gauge-value" id="monthDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
-              <div class="gauge-value-wrap"><span class="gauge-value money" id="monthEarnings">0</span><span class="gauge-unit">€</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value money" id="monthEarnings">0</span><span class="gauge-unit cur-sym">€</span></div>
             </div>
           </div>
 
@@ -3233,7 +3233,7 @@
             </div>
             <div class="gauge-row">
               <div class="gauge-value-wrap"><span class="gauge-value" id="yearDays">0</span><span class="gauge-unit" data-i18n>дни</span></div>
-              <div class="gauge-value-wrap"><span class="gauge-value money" id="yearEarnings">0</span><span class="gauge-unit">€</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value money" id="yearEarnings">0</span><span class="gauge-unit cur-sym">€</span></div>
             </div>
           </div>
 
@@ -3526,7 +3526,7 @@
               <span class="gauge-label" data-i18n>ОБЩО СПЕСТЕНО</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsTotalValue">0.00</span><span class="gauge-unit">€</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsTotalValue">0.00</span><span class="gauge-unit cur-sym">€</span></div>
             </div>
           </div>
 
@@ -3536,7 +3536,7 @@
               <span class="gauge-delta flat" id="savingsGoalStatus">—</span>
             </div>
             <div class="gauge-row">
-              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsGoalCurrentValue">0.00</span><span class="gauge-unit">/ <input id="savingsGoalInput" class="inline-goal-input" type="number" min="0" /> €</span></div>
+              <div class="gauge-value-wrap"><span class="gauge-value metric" id="savingsGoalCurrentValue">0.00</span><span class="gauge-unit">/ <input id="savingsGoalInput" class="inline-goal-input" type="number" min="0" /> <span class="cur-sym">€</span></span></div>
             </div>
             <div class="progress-track"><div class="progress-fill" id="savingsGoalProgress"></div></div>
           </div>
@@ -4128,6 +4128,15 @@
           <button type="button" class="chip category-chip category-chip-sm" data-lang="tr">TR</button>
         </div>
       </div>
+      <div class="settings-row">
+        <span id="currencyLabel" class="theme-label" data-i18n>ВАЛУТА</span>
+        <div class="lang-chip-row" id="currencyChipRow">
+          <button type="button" class="chip category-chip category-chip-sm" data-currency="EUR">€</button>
+          <button type="button" class="chip category-chip category-chip-sm" data-currency="USD">$</button>
+          <button type="button" class="chip category-chip category-chip-sm" data-currency="GBP">£</button>
+          <button type="button" class="chip category-chip category-chip-sm" data-currency="TRY">₺</button>
+        </div>
+      </div>
       <button class="settings-action" id="settingsExportBtn" data-i18n>⭳ Изтегли резервно копие</button>
       <button class="settings-action" id="settingsImportBtn" data-i18n>⭱ Възстанови от файл</button>
       <button class="settings-action" id="settingsTourBtn" data-i18n>? Обиколка на приложението</button>
@@ -4337,7 +4346,7 @@
 
     'ПРОФИЛ': 'PROFILE', 'Смени снимка': 'Change photo', 'Твоето име': 'Your name', 'Имейл': 'Email',
     '⚙ Настройки': '⚙ Settings', 'ТЕМА': 'THEME', 'Смени темата': 'Change theme',
-    'ЕЗИК': 'LANGUAGE', 'Смени езика': 'Change language',
+    'ЕЗИК': 'LANGUAGE', 'Смени езика': 'Change language', 'ВАЛУТА': 'CURRENCY',
     '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
 
     'НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
@@ -4405,7 +4414,7 @@
 
     '? Обиколка на приложението': '? App tour', 'Пропусни': 'Skip', 'Напред': 'Next', 'Разбрах': 'Got it',
     'Твоят профил': 'Your profile',
-    'От тук сменяш профилната снимка, името си, темата и езика на приложението.': 'From here you can change your profile photo, name, theme and app language.',
+    'От тук сменяш профилната снимка, името си, темата, езика и валутата на приложението.': 'From here you can change your profile photo, name, theme, language and currency.',
     'Следи калории, вода, крачки и тегло всеки ден.': 'Track calories, water, steps and weight every day.',
     'Отбелязвай работните си дни и виж дохода си по месеци.': 'Mark your work days and see your income by month.',
     'Ремонти, гориво, документи и фишове за колата ти.': 'Repairs, fuel, documents and tickets for your car.',
@@ -4509,7 +4518,7 @@
 
     'ПРОФИЛ': 'PROFIL', 'Смени снимка': 'Foto ändern', 'Твоето име': 'Dein Name', 'Имейл': 'E-Mail',
     '⚙ Настройки': '⚙ Einstellungen', 'ТЕМА': 'DESIGN', 'Смени темата': 'Design ändern',
-    'ЕЗИК': 'SPRACHE', 'Смени езика': 'Sprache ändern',
+    'ЕЗИК': 'SPRACHE', 'Смени езика': 'Sprache ändern', 'ВАЛУТА': 'WÄHRUNG',
     '⭳ Изтегли резервно копие': '⭳ Backup herunterladen', '⭱ Възстанови от файл': '⭱ Aus Datei wiederherstellen', '⏻ Изход': '⏻ Abmelden',
 
     'НОВА БЕЛЕЖКА': 'NEUE NOTIZ', 'Заглавие (по избор)': 'Titel (optional)', 'Текст': 'Text',
@@ -4577,7 +4586,7 @@
 
     '? Обиколка на приложението': '? App-Tour', 'Пропусни': 'Überspringen', 'Напред': 'Weiter', 'Разбрах': 'Verstanden',
     'Твоят профил': 'Dein Profil',
-    'От тук сменяш профилната снимка, името си, темата и езика на приложението.': 'Hier änderst du dein Profilfoto, deinen Namen, das Design und die Sprache der App.',
+    'От тук сменяш профилната снимка, името си, темата, езика и валутата на приложението.': 'Hier änderst du dein Profilfoto, deinen Namen, das Design, die Sprache und die Währung.',
     'Следи калории, вода, крачки и тегло всеки ден.': 'Verfolge täglich Kalorien, Wasser, Schritte und Gewicht.',
     'Отбелязвай работните си дни и виж дохода си по месеци.': 'Markiere deine Arbeitstage und sieh dein Einkommen nach Monat.',
     'Ремонти, гориво, документи и фишове за колата ти.': 'Reparaturen, Kraftstoff, Dokumente und Bußgelder für dein Auto.',
@@ -4681,7 +4690,7 @@
 
     'ПРОФИЛ': 'PROFİL', 'Смени снимка': 'Fotoğrafı değiştir', 'Твоето име': 'Adın', 'Имейл': 'E-posta',
     '⚙ Настройки': '⚙ Ayarlar', 'ТЕМА': 'TEMA', 'Смени темата': 'Temayı değiştir',
-    'ЕЗИК': 'DİL', 'Смени езика': 'Dili değiştir',
+    'ЕЗИК': 'DİL', 'Смени езика': 'Dili değiştir', 'ВАЛУТА': 'PARA BİRİMİ',
     '⭳ Изтегли резервно копие': '⭳ Yedeği indir', '⭱ Възстанови от файл': '⭱ Dosyadan geri yükle', '⏻ Изход': '⏻ Çıkış yap',
 
     'НОВА БЕЛЕЖКА': 'YENİ NOT', 'Заглавие (по избор)': 'Başlık (isteğe bağlı)', 'Текст': 'Metin',
@@ -4749,7 +4758,7 @@
 
     '? Обиколка на приложението': '? Uygulama turu', 'Пропусни': 'Atla', 'Напред': 'İleri', 'Разбрах': 'Anladım',
     'Твоят профил': 'Profilin',
-    'От тук сменяш профилната снимка, името си, темата и езика на приложението.': 'Buradan profil fotoğrafını, adını, temayı ve uygulama dilini değiştirebilirsin.',
+    'От тук сменяш профилната снимка, името си, темата, езика и валутата на приложението.': 'Buradan profil fotoğrafını, adını, temayı, dili ve para birimini değiştirebilirsin.',
     'Следи калории, вода, крачки и тегло всеки ден.': 'Her gün kalori, su, adım ve kiloyu takip et.',
     'Отбелязвай работните си дни и виж дохода си по месеци.': 'Çalışma günlerini işaretle ve aylık gelirini gör.',
     'Ремонти, гориво, документи и фишове за колата ти.': 'Araban için tamirler, yakıt, belgeler ve cezalar.',
@@ -4784,7 +4793,7 @@
     },
     savings: { goal: 1000, coins: {} },
     company: { advances: [], expenses: [] },
-    profile: { name: '', avatarPath: '' },
+    profile: { name: '', avatarPath: '', currency: 'EUR' },
     notes: { entries: [] }
   };
 
@@ -4830,7 +4839,8 @@
           },
           profile: {
             name: (parsed.profile && parsed.profile.name) || '',
-            avatarPath: (parsed.profile && parsed.profile.avatarPath) || ''
+            avatarPath: (parsed.profile && parsed.profile.avatarPath) || '',
+            currency: (parsed.profile && parsed.profile.currency) || 'EUR'
           },
           notes: {
             entries: (parsed.notes && parsed.notes.entries) || []
@@ -5002,7 +5012,7 @@
     const rate = state.workdays.dailyRate || 0;
 
     $('hubWorkMonthDays').textContent = monthDays;
-    $('hubWorkMonthEarnings').textContent = formatNumber(monthDays * rate) + '€';
+    $('hubWorkMonthEarnings').textContent = formatNumber(monthDays * rate) + curSym();
 
     const entry = getVitalsDay(todayKey());
     $('hubVitalsCalories').textContent = formatNumber(entry.calories);
@@ -5020,15 +5030,15 @@
       unpaidFinesTotal += (rec.fines || []).filter((f) => !f.paid).reduce((s, f) => s + f.amount, 0);
       docsAlertCount += (rec.documents || []).filter((d) => docStatus(d.expiry).cls !== 'valid').length;
     });
-    $('hubGarageFines').textContent = formatNumber(unpaidFinesTotal) + '€';
+    $('hubGarageFines').textContent = formatNumber(unpaidFinesTotal) + curSym();
     $('hubGarageDocs').textContent = docsAlertCount;
 
     const savingsTotal = getSavingsTotal();
-    $('hubSavingsTotal').textContent = formatMoney(savingsTotal) + '€';
-    $('hubSavingsToGoal').textContent = formatMoney(Math.max(0, (state.savings.goal || 0) - savingsTotal)) + '€';
+    $('hubSavingsTotal').textContent = formatMoney(savingsTotal) + curSym();
+    $('hubSavingsToGoal').textContent = formatMoney(Math.max(0, (state.savings.goal || 0) - savingsTotal)) + curSym();
 
-    $('hubCompanyBalance').textContent = formatMoney(getCompanyBalance()) + '€';
-    $('hubCompanyMonthSpent').textContent = formatMoney(getCompanyMonthSpent()) + '€';
+    $('hubCompanyBalance').textContent = formatMoney(getCompanyBalance()) + curSym();
+    $('hubCompanyMonthSpent').textContent = formatMoney(getCompanyMonthSpent()) + curSym();
 
     $('hubNotesCount').textContent = state.notes.entries.length;
     const lastNote = state.notes.entries.slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
@@ -5074,32 +5084,49 @@
     return dict && dict[bg] !== undefined ? dict[bg] : bg;
   }
 
+  const CURRENCY_SYMBOLS = { EUR: '€', USD: '$', GBP: '£', TRY: '₺' };
+
+  function curSym() {
+    return CURRENCY_SYMBOLS[state.profile.currency] || '€';
+  }
+
+  function withCur(s) {
+    return typeof s === 'string' && s.indexOf('€') !== -1 ? s.split('€').join(curSym()) : s;
+  }
+
   function applyI18n() {
     document.querySelectorAll('[data-i18n]').forEach((el) => {
       if (el.dataset.i18nOrig === undefined) el.dataset.i18nOrig = el.textContent;
-      el.textContent = tr(el.dataset.i18nOrig);
+      el.textContent = withCur(tr(el.dataset.i18nOrig));
     });
     document.querySelectorAll('[data-i18n-ph]').forEach((el) => {
       if (el.dataset.i18nPhOrig === undefined) el.dataset.i18nPhOrig = el.getAttribute('placeholder') || '';
-      el.setAttribute('placeholder', tr(el.dataset.i18nPhOrig));
+      el.setAttribute('placeholder', withCur(tr(el.dataset.i18nPhOrig)));
     });
     document.querySelectorAll('[data-i18n-title]').forEach((el) => {
       if (el.dataset.i18nTitleOrig === undefined) el.dataset.i18nTitleOrig = el.getAttribute('title') || '';
-      el.setAttribute('title', tr(el.dataset.i18nTitleOrig));
+      el.setAttribute('title', withCur(tr(el.dataset.i18nTitleOrig)));
     });
     document.querySelectorAll('[data-i18n-aria]').forEach((el) => {
       if (el.dataset.i18nAriaOrig === undefined) el.dataset.i18nAriaOrig = el.getAttribute('aria-label') || '';
-      el.setAttribute('aria-label', tr(el.dataset.i18nAriaOrig));
+      el.setAttribute('aria-label', withCur(tr(el.dataset.i18nAriaOrig)));
     });
     document.querySelectorAll('[data-i18n-dataph]').forEach((el) => {
       if (el.dataset.i18nDataphOrig === undefined) el.dataset.i18nDataphOrig = el.getAttribute('data-placeholder') || '';
-      el.setAttribute('data-placeholder', tr(el.dataset.i18nDataphOrig));
+      el.setAttribute('data-placeholder', withCur(tr(el.dataset.i18nDataphOrig)));
     });
+    document.querySelectorAll('.cur-sym').forEach((el) => { el.textContent = curSym(); });
   }
 
   function updateLangChipRow() {
     document.querySelectorAll('#langChipRow [data-lang]').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.lang === currentLang);
+    });
+  }
+
+  function updateCurrencyChipRow() {
+    document.querySelectorAll('#currencyChipRow [data-currency]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.currency === state.profile.currency);
     });
   }
 
@@ -5124,13 +5151,22 @@
     applyI18n();
   }
 
+  function selectCurrency(cur) {
+    if (!CURRENCY_SYMBOLS[cur] || cur === state.profile.currency) return;
+    state.profile.currency = cur;
+    saveState();
+    updateCurrencyChipRow();
+    applyI18n();
+    showScreen(currentScreen);
+  }
+
   function openMatrixModal() { $('matrixModal').classList.remove('hidden'); pushNav(closeMatrixModal); }
   function closeMatrixModal() { $('matrixModal').classList.add('hidden'); popNav(); }
 
   /* ============ Onboarding tour ============ */
 
   const TOUR_STEPS = [
-    { selector: '#profileAvatarBtn', title: 'Твоят профил', text: 'От тук сменяш профилната снимка, името си, темата и езика на приложението.' },
+    { selector: '#profileAvatarBtn', title: 'Твоят профил', text: 'От тук сменяш профилната снимка, името си, темата, езика и валутата на приложението.' },
     { selector: '.tile[data-app="vitals"]', title: 'Vitals', text: 'Следи калории, вода, крачки и тегло всеки ден.' },
     { selector: '.tile[data-app="workdays"]', title: 'Workdays', text: 'Отбелязвай работните си дни и виж дохода си по месеци.' },
     { selector: '.tile[data-app="garage"]', title: 'Garage', text: 'Ремонти, гориво, документи и фишове за колата ти.' },
@@ -5476,7 +5512,7 @@
 
       const tooltip = document.createElement('div');
       tooltip.className = 'week-bar-tooltip';
-      tooltip.textContent = `${formatNumber(val)} €`;
+      tooltip.textContent = `${formatNumber(val)} ${curSym()}`;
       wrap.appendChild(tooltip);
 
       const bar = document.createElement('div');
@@ -5517,7 +5553,7 @@
 
   function updateGroupTotalDisplay(denominations, totalElId) {
     const el = $(totalElId);
-    if (el) el.textContent = formatMoney(getGroupTotal(denominations)) + ' €';
+    if (el) el.textContent = formatMoney(getGroupTotal(denominations)) + ' ' + curSym();
   }
 
   function renderSavingsOverview() {
@@ -5585,16 +5621,16 @@
 
       const disc = document.createElement('div');
       disc.className = 'coin-disc ' + getCoinTier(d);
-      disc.textContent = formatMoney(d) + '€';
+      disc.textContent = formatMoney(d) + curSym();
       card.appendChild(disc);
 
       const subtotal = document.createElement('span');
       subtotal.className = 'coin-row-subtotal';
-      subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' €';
+      subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' ' + curSym();
 
       const inputRow = createCounterRow(state.savings.coins[d] || 0, (count) => {
         state.savings.coins[d] = count;
-        subtotal.textContent = formatMoney(count * d) + ' €';
+        subtotal.textContent = formatMoney(count * d) + ' ' + curSym();
         updateGroupTotalDisplay(denominations, totalElId);
         saveState();
         renderSavingsOverview();
@@ -5623,7 +5659,7 @@
 
       const value = document.createElement('div');
       value.className = 'banknote-value';
-      value.textContent = d + '€';
+      value.textContent = d + curSym();
       face.appendChild(value);
 
       const tag = document.createElement('div');
@@ -5635,11 +5671,11 @@
 
       const subtotal = document.createElement('span');
       subtotal.className = 'banknote-card-subtotal';
-      subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' €';
+      subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' ' + curSym();
 
       const inputRow = createCounterRow(state.savings.coins[d] || 0, (count) => {
         state.savings.coins[d] = count;
-        subtotal.textContent = formatMoney(count * d) + ' €';
+        subtotal.textContent = formatMoney(count * d) + ' ' + curSym();
         updateGroupTotalDisplay(BANKNOTE_DENOMINATIONS, 'banknoteGroupTotal');
         saveState();
         renderSavingsOverview();
@@ -5709,9 +5745,9 @@
   }
 
   function renderCompanyOverview() {
-    $('companyBalanceValue').textContent = formatMoney(getCompanyBalance()) + '€';
-    $('companyAdvancesTotal').textContent = formatMoney(getAdvancesTotal()) + '€';
-    $('companyExpensesTotal').textContent = formatMoney(getExpensesTotal()) + '€';
+    $('companyBalanceValue').textContent = formatMoney(getCompanyBalance()) + curSym();
+    $('companyAdvancesTotal').textContent = formatMoney(getAdvancesTotal()) + curSym();
+    $('companyExpensesTotal').textContent = formatMoney(getExpensesTotal()) + curSym();
   }
 
   function renderAdvancesList() {
@@ -5724,7 +5760,7 @@
         date: formatDateDisplay(a.date),
         desc: a.note || tr('Аванс'),
         meta: '',
-        cost: formatMoney(a.amount) + ' €',
+        cost: formatMoney(a.amount) + ' ' + curSym(),
         onDelete: () => deleteAdvance(a.id),
         onEdit: () => openAdvanceEditModal(a.id)
       }));
@@ -5741,7 +5777,7 @@
         date: formatDateDisplay(e.date),
         desc: e.desc,
         meta: '',
-        cost: formatMoney(e.amount) + ' €',
+        cost: formatMoney(e.amount) + ' ' + curSym(),
         onDelete: () => deleteExpense(e.id),
         onEdit: () => openExpenseEditModal(e.id),
         onPhoto: () => onExpensePhotoClick(e.id),
@@ -6001,16 +6037,16 @@
           const tdDesc = document.createElement('td');
           tdDesc.textContent = e.desc || '';
           const tdAmount = document.createElement('td');
-          tdAmount.textContent = formatMoney(e.amount) + ' €';
+          tdAmount.textContent = formatMoney(e.amount) + ' ' + curSym();
           rowEl.append(tdDate, tdDesc, tdAmount);
           rows.appendChild(rowEl);
         });
       }
 
-      $('reportTotalSpent').textContent = formatMoney(expensesTotal) + ' €';
-      $('reportTotalAdvances').textContent = formatMoney(advancesTotal) + ' €';
-      $('reportTotalSpent2').textContent = formatMoney(expensesTotal) + ' €';
-      $('reportBalance').textContent = formatMoney(balance) + ' €';
+      $('reportTotalSpent').textContent = formatMoney(expensesTotal) + ' ' + curSym();
+      $('reportTotalAdvances').textContent = formatMoney(advancesTotal) + ' ' + curSym();
+      $('reportTotalSpent2').textContent = formatMoney(expensesTotal) + ' ' + curSym();
+      $('reportBalance').textContent = formatMoney(balance) + ' ' + curSym();
 
       if (isStandaloneApp()) {
         downloadReportAsFile();
@@ -7471,7 +7507,7 @@
         date: formatDateDisplay(r.date),
         desc: r.desc,
         meta: r.km ? formatNumber(r.km) + ' km' : '',
-        cost: formatNumber(r.cost) + ' €',
+        cost: formatNumber(r.cost) + ' ' + curSym(),
         onDelete: () => deleteRepair(r.id)
       }));
     });
@@ -7521,7 +7557,7 @@
         date: formatDateDisplay(f.date),
         desc: f.liters ? formatNumber(f.liters) + ' ' + tr('л') : '',
         meta: f.km ? formatNumber(f.km) + ' km' : '',
-        cost: formatNumber(f.cost) + ' €',
+        cost: formatNumber(f.cost) + ' ' + curSym(),
         onDelete: () => deleteFuel(f.id)
       }));
     });
@@ -7529,7 +7565,7 @@
     const totalLiters = list.reduce((s, f) => s + f.liters, 0);
     const avgPrice = totalLiters ? totalCost / totalLiters : 0;
 
-    $('fuelStats').textContent = `${tr('ОБЩО')} ${formatNumber(totalCost)} € · ${tr('СР. ЦЕНА')} ${avgPrice.toFixed(2)} €/${tr('Л')}`;
+    $('fuelStats').textContent = `${tr('ОБЩО')} ${formatNumber(totalCost)} ${curSym()} · ${tr('СР. ЦЕНА')} ${avgPrice.toFixed(2)} ${curSym()}/${tr('Л')}`;
   }
 
   function addFuel() {
@@ -7607,7 +7643,7 @@
         date: formatDateDisplay(f.date),
         desc: f.desc,
         meta: chip,
-        cost: formatNumber(f.amount) + ' €',
+        cost: formatNumber(f.amount) + ' ' + curSym(),
         onDelete: () => deleteFine(f.id)
       }));
     });
@@ -7650,9 +7686,9 @@
     const fuelCost = records.fuel.filter((f) => f.date.startsWith(year)).reduce((s, f) => s + f.cost, 0);
     const finesUnpaid = records.fines.filter((f) => !f.paid).reduce((s, f) => s + f.amount, 0);
 
-    $('ovRepairsCost').textContent = formatNumber(repairsCost) + '€';
-    $('ovFuelCost').textContent = formatNumber(fuelCost) + '€';
-    $('ovFinesUnpaid').textContent = formatNumber(finesUnpaid) + '€';
+    $('ovRepairsCost').textContent = formatNumber(repairsCost) + curSym();
+    $('ovFuelCost').textContent = formatNumber(fuelCost) + curSym();
+    $('ovFinesUnpaid').textContent = formatNumber(finesUnpaid) + curSym();
 
     const avgConsumption = calcAvgFuelConsumption(records.fuel);
     $('ovFuelConsumption').textContent = avgConsumption === null ? '—' : `${avgConsumption.toFixed(1)} ${tr('Л/100КМ')}`;
@@ -7700,7 +7736,7 @@
         label.textContent = `${f.desc || tr('Фиш')} — ${formatDateDisplay(f.date)}`;
         const amt = document.createElement('span');
         amt.className = 'record-row-cost';
-        amt.textContent = formatNumber(f.amount) + ' €';
+        amt.textContent = formatNumber(f.amount) + ' ' + curSym();
         item.append(label, amt);
         finesContainer.appendChild(item);
       });
@@ -8045,7 +8081,8 @@
           } : state.company,
           profile: parsed.profile ? {
             name: parsed.profile.name || '',
-            avatarPath: parsed.profile.avatarPath || ''
+            avatarPath: parsed.profile.avatarPath || '',
+            currency: parsed.profile.currency || 'EUR'
           } : state.profile,
           notes: parsed.notes ? {
             entries: parsed.notes.entries || []
@@ -8062,6 +8099,8 @@
         $('calcWeight').value = state.vitals.calc.weight;
         $('calcActivity').value = state.vitals.calc.activity;
         renderVehicleSelect();
+        updateCurrencyChipRow();
+        applyI18n();
         showScreen(currentScreen);
         showToast(tr('Данните са възстановени'));
       } catch {
@@ -8176,6 +8215,12 @@
       if (!btn) return;
       e.stopPropagation();
       selectLang(btn.dataset.lang);
+    });
+    $('currencyChipRow').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-currency]');
+      if (!btn) return;
+      e.stopPropagation();
+      selectCurrency(btn.dataset.currency);
     });
     $('settingsToggleBtn').addEventListener('click', toggleSettingsCollapse);
     $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
@@ -8353,6 +8398,8 @@
 
   async function startApp() {
     await loadState();
+    updateCurrencyChipRow();
+    applyI18n();
 
     const todayISO = new Date().toISOString().slice(0, 10);
     $('repairDate').value = todayISO;
