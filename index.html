@@ -448,7 +448,6 @@
   .tile[data-app="savings"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
   .tile[data-app="company"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
   .tile[data-app="notes"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
-  .tile[data-app="chat"]:hover { box-shadow: 0 10px 30px -10px rgba(var(--violet-rgb), 0.35); }
 
   .tile-top {
     display: flex;
@@ -474,7 +473,6 @@
   .tile[data-app="savings"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
   .tile[data-app="company"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
   .tile[data-app="notes"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
-  .tile[data-app="chat"] .tile-icon { color: var(--violet); border-color: rgba(var(--violet-rgb),0.4); }
 
   .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
   .tile:hover .tile-arrow { transform: translateX(3px); color: var(--text-dim); }
@@ -1785,6 +1783,53 @@
   }
 
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .chat-fab {
+    position: fixed;
+    right: 16px;
+    bottom: max(16px, calc(env(safe-area-inset-bottom) + 10px));
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--violet-dim);
+    border: 1px solid var(--violet);
+    color: var(--violet);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    cursor: pointer;
+    z-index: 30;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.45);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+
+  .chat-fab.hidden { display: none; }
+  .chat-fab:hover { transform: scale(1.06); }
+  .chat-fab:active { transform: scale(0.94); }
+
+  .chat-fab-icon { pointer-events: none; }
+
+  .chat-fab-badge {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    border-radius: 9px;
+    background: var(--danger);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 0 2px var(--bg, #07070f);
+  }
+
+  .chat-fab-badge.hidden { display: none; }
 
   #importFile { display: none; }
   .hidden { display: none !important; }
@@ -3367,21 +3412,6 @@
           </div>
         </div>
 
-        <div class="console-panel tile" data-app="chat">
-          <span class="corner tl"></span><span class="corner tr"></span>
-          <span class="corner bl"></span><span class="corner br"></span>
-          <div class="tile-top">
-            <div class="tile-icon">✉</div>
-            <div class="tile-arrow">→</div>
-          </div>
-          <div class="tile-name">CHAT</div>
-          <div class="tile-desc" data-i18n>Приятели и съобщения</div>
-          <div class="tile-preview">
-            <div class="tile-stat"><span class="tile-stat-value" id="hubChatUnread">0</span><span class="tile-stat-label" data-i18n>НЕПРОЧЕТЕНИ</span></div>
-            <div class="tile-stat"><span class="tile-stat-value" id="hubChatRequests">0</span><span class="tile-stat-label" data-i18n>ЗАЯВКИ</span></div>
-          </div>
-        </div>
-
         <div class="console-panel tile" data-app="tdee">
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
@@ -4513,6 +4543,11 @@
   <div class="weight-tooltip-meals" id="wtMeals"></div>
 </div>
 
+<button class="chat-fab hidden" id="chatFabBtn" title="Чат" data-i18n-title>
+  <span class="chat-fab-icon">✉</span>
+  <span class="chat-fab-badge hidden" id="chatFabBadge">0</span>
+</button>
+
 <div class="tour-overlay hidden" id="tourOverlay">
   <div class="tour-highlight" id="tourHighlight"></div>
   <div class="tour-card console-panel" id="tourCard">
@@ -4727,7 +4762,7 @@
     'ПРИЯТЕЛИ И СЪОБЩЕНИЯ': 'FRIENDS AND MESSAGES',
     'Имейл на приятел...': "Friend's email...", '+ Добави': '+ Add',
     'Все още нямаш приятели — добави някой по имейл.': 'No friends yet — add someone by email.',
-    'Съобщение...': 'Message...', 'Изпрати': 'Send', 'Назад': 'Back',
+    'Съобщение...': 'Message...', 'Изпрати': 'Send', 'Назад': 'Back', 'Чат': 'Chat',
     'Приеми': 'Accept', 'Откажи': 'Decline',
     'Не можеш да добавиш себе си': "You can't add yourself",
     'Няма потребител с този имейл': 'No user with this email',
@@ -4915,7 +4950,7 @@
     'ПРИЯТЕЛИ И СЪОБЩЕНИЯ': 'FREUNDE UND NACHRICHTEN',
     'Имейл на приятел...': 'E-Mail des Freundes...', '+ Добави': '+ Hinzufügen',
     'Все още нямаш приятели — добави някой по имейл.': 'Noch keine Freunde — füge jemanden per E-Mail hinzu.',
-    'Съобщение...': 'Nachricht...', 'Изпрати': 'Senden', 'Назад': 'Zurück',
+    'Съобщение...': 'Nachricht...', 'Изпрати': 'Senden', 'Назад': 'Zurück', 'Чат': 'Chat',
     'Приеми': 'Annehmen', 'Откажи': 'Ablehnen',
     'Не можеш да добавиш себе си': 'Du kannst dich nicht selbst hinzufügen',
     'Няма потребител с този имейл': 'Kein Nutzer mit dieser E-Mail',
@@ -5103,7 +5138,7 @@
     'ПРИЯТЕЛИ И СЪОБЩЕНИЯ': 'ARKADAŞLAR VE MESAJLAR',
     'Имейл на приятел...': "Arkadaşın e-postası...", '+ Добави': '+ Ekle',
     'Все още нямаш приятели — добави някой по имейл.': 'Henüz arkadaşın yok — birini e-posta ile ekle.',
-    'Съобщение...': 'Mesaj...', 'Изпрати': 'Gönder', 'Назад': 'Geri',
+    'Съобщение...': 'Mesaj...', 'Изпрати': 'Gönder', 'Назад': 'Geri', 'Чат': 'Sohbet',
     'Приеми': 'Kabul et', 'Откажи': 'Reddet',
     'Не можеш да добавиш себе си': 'Kendini ekleyemezsin',
     'Няма потребител с този имейл': 'Bu e-postaya sahip kullanıcı yok',
@@ -5332,6 +5367,7 @@
     $('rateBox').classList.toggle('hidden', name !== 'workdays');
     $('goalsBox').classList.toggle('hidden', name !== 'vitals');
     $('vehicleBox').classList.toggle('hidden', name !== 'garage');
+    updateChatFabVisibility();
 
     const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', chat: 'CHAT', admin: 'ADMIN' };
     const subs = {
@@ -5532,7 +5568,7 @@
     { selector: '.tile[data-app="savings"]', title: 'Savings', text: 'Следи спестените си пари в брой — банкноти, монети и центове.' },
     { selector: '.tile[data-app="company"]', title: 'Expenses', text: 'Служебни аванси и разходи — генерирай отчет за шефа с един клик.' },
     { selector: '.tile[data-app="notes"]', title: 'Notes', text: 'Бързи бележки, за да не забравяш нищо важно.' },
-    { selector: '.tile[data-app="chat"]', title: 'Chat', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' },
+    { selector: '#chatFabBtn', title: 'Chat', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' },
     { selector: '.tile[data-app="tdee"]', title: 'TDEE', text: 'Калкулатор, който изчислява колко калории са ти нужни на ден.' }
   ];
 
@@ -6941,11 +6977,14 @@
   }
 
   function updateChatHubStats() {
-    const unread = chatMessagesUnreadTotal;
-    const el1 = $('hubChatUnread');
-    const el2 = $('hubChatRequests');
-    if (el1) el1.textContent = unread;
-    if (el2) el2.textContent = chatFriendRequests.length;
+    const total = chatMessagesUnreadTotal + chatFriendRequests.length;
+    const badge = $('chatFabBadge');
+    badge.textContent = total > 99 ? '99+' : total;
+    badge.classList.toggle('hidden', total === 0);
+  }
+
+  function updateChatFabVisibility() {
+    $('chatFabBtn').classList.toggle('hidden', !currentUser || currentScreen === 'chat');
   }
 
   let chatMessagesUnreadTotal = 0;
@@ -8984,6 +9023,7 @@
     if (chatRealtimeChannel) { sb.removeChannel(chatRealtimeChannel); chatRealtimeChannel = null; }
     currentUser = null;
     closeProfileModal();
+    updateChatFabVisibility();
 
     $('appRoot').classList.add('hidden');
     $('authScreen').classList.remove('hidden');
@@ -9000,6 +9040,7 @@
   function wireEvents() {
     wireAvatarCropEvents();
 
+    $('chatFabBtn').addEventListener('click', () => enterScreen('chat'));
     $('addFriendBtn').addEventListener('click', addFriendByEmail);
     $('addFriendEmailInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFriendByEmail(); });
     $('chatBackBtn').addEventListener('click', closeChatConversation);
