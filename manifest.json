@@ -1,6 +1,6 @@
 {
-  "name": "LifeOS",
-  "short_name": "LifeOS",
+  "name": "Life",
+  "short_name": "Life",
   "description": "Личен контролен център — калории, работни дни, гараж, спестявания и служебни разходи.",
   "start_url": ".",
   "scope": ".",
