@@ -5555,11 +5555,15 @@
     let blob;
     try { blob = await compressImage(file, 400, 0.85); } catch { blob = file; }
 
-    const path = `${currentUser.id}/profile/avatar.jpg`;
-    const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg', upsert: true });
+    const oldPath = state.profile.avatarPath;
+    const path = `${currentUser.id}/profile/${genId('av')}.jpg`;
+    const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
     if (error) { showToast(tr('Грешка при качване на снимка')); return; }
 
-    delete signedUrlCache[path];
+    if (oldPath && oldPath !== path) {
+      sb.storage.from(PHOTO_BUCKET).remove([oldPath]);
+      delete signedUrlCache[oldPath];
+    }
     state.profile.avatarPath = path;
     saveState();
     renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), path);
