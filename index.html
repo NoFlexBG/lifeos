@@ -5366,8 +5366,13 @@
   }
 
   function goHome() {
-    if (navStack.length) popNav();
-    else showScreen('hub');
+    const depth = navStack.length;
+    navStack = [];
+    showScreen('hub');
+    if (depth > 0) {
+      navConsumingOwnPop = true;
+      try { history.go(-depth); } catch {}
+    }
   }
 
   function showScreen(name) {
