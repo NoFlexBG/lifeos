@@ -1603,6 +1603,8 @@
   .banknote-face.note-20 { background: linear-gradient(135deg, #3f93db, #0a4f8c); }
   .banknote-face.note-50 { background: linear-gradient(135deg, #f4a94a, #c46a0f); }
   .banknote-face.note-100 { background: linear-gradient(135deg, #3fb489, #0f6f4a); }
+  .banknote-face.note-200 { background: linear-gradient(135deg, #c48fd6, #7a3d94); }
+  .banknote-face.note-1 { background: linear-gradient(135deg, #8fd6c4, #3d9482); }
 
   .banknote-card-input-row {
     display: flex;
@@ -4791,7 +4793,7 @@
       activeVehicleId: 'v1',
       records: { v1: { repairs: [], fuel: [], documents: [], fines: [], photos: [] } }
     },
-    savings: { goal: 1000, coins: {} },
+    savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
     company: { advances: [], expenses: [] },
     profile: { name: '', avatarPath: '', currency: 'EUR' },
     notes: { entries: [] }
@@ -4802,6 +4804,20 @@
   let currentScreen = 'hub';
 
   const $ = (id) => document.getElementById(id);
+
+  function buildSavingsState(parsedSavings, defaultsSavings) {
+    if (parsedSavings && parsedSavings.walletsByCurrency) {
+      return {
+        goalsByCurrency: { ...defaultsSavings.goalsByCurrency, ...(parsedSavings.goalsByCurrency || {}) },
+        walletsByCurrency: { ...defaultsSavings.walletsByCurrency, ...(parsedSavings.walletsByCurrency || {}) }
+      };
+    }
+    if (!parsedSavings) return defaultsSavings;
+    return {
+      goalsByCurrency: { EUR: parsedSavings.goal || defaultsSavings.goalsByCurrency.EUR },
+      walletsByCurrency: { EUR: parsedSavings.coins || {} }
+    };
+  }
 
   async function loadState() {
     const defaults = JSON.parse(JSON.stringify(state));
@@ -4829,10 +4845,7 @@
             activeVehicleId: (parsed.garage && parsed.garage.activeVehicleId) || defaults.garage.activeVehicleId,
             records: (parsed.garage && parsed.garage.records) || defaults.garage.records
           },
-          savings: {
-            goal: (parsed.savings && parsed.savings.goal) || defaults.savings.goal,
-            coins: (parsed.savings && parsed.savings.coins) || {}
-          },
+          savings: buildSavingsState(parsed.savings, defaults.savings),
           company: {
             advances: (parsed.company && parsed.company.advances) || [],
             expenses: (parsed.company && parsed.company.expenses) || []
@@ -5035,7 +5048,7 @@
 
     const savingsTotal = getSavingsTotal();
     $('hubSavingsTotal').textContent = formatMoney(savingsTotal) + curSym();
-    $('hubSavingsToGoal').textContent = formatMoney(Math.max(0, (state.savings.goal || 0) - savingsTotal)) + curSym();
+    $('hubSavingsToGoal').textContent = formatMoney(Math.max(0, currentSavingsGoal() - savingsTotal)) + curSym();
 
     $('hubCompanyBalance').textContent = formatMoney(getCompanyBalance()) + curSym();
     $('hubCompanyMonthSpent').textContent = formatMoney(getCompanyMonthSpent()) + curSym();
@@ -5534,21 +5547,49 @@
 
   /* ============ Savings ============ */
 
-  const COIN_DENOMINATIONS = [2, 1, 0.5, 0.2, 0.1];
-  const CENT_DENOMINATIONS = [0.05, 0.02, 0.01];
-  const BANKNOTE_DENOMINATIONS = [100, 50, 20, 10, 5];
+  const CURRENCY_DENOMS = {
+    EUR: { banknotes: [100, 50, 20, 10, 5], coins: [2, 1, 0.5, 0.2, 0.1], cents: [0.05, 0.02, 0.01], tag: 'EURO' },
+    USD: { banknotes: [100, 50, 20, 10, 5, 1], coins: [0.25, 0.10, 0.05], cents: [0.01], tag: 'DOLLAR' },
+    GBP: { banknotes: [50, 20, 10, 5], coins: [2, 1, 0.5, 0.2, 0.1], cents: [0.05, 0.02, 0.01], tag: 'POUND' },
+    TRY: { banknotes: [200, 100, 50, 20, 10, 5], coins: [1, 0.5, 0.25], cents: [0.10, 0.05], tag: 'LIRA' }
+  };
+
+  function curDenoms() {
+    return CURRENCY_DENOMS[state.profile.currency] || CURRENCY_DENOMS.EUR;
+  }
+
+  function currentWallet() {
+    if (!state.savings.walletsByCurrency) state.savings.walletsByCurrency = {};
+    const cur = state.profile.currency;
+    if (!state.savings.walletsByCurrency[cur]) state.savings.walletsByCurrency[cur] = {};
+    return state.savings.walletsByCurrency[cur];
+  }
+
+  function currentSavingsGoal() {
+    if (!state.savings.goalsByCurrency) state.savings.goalsByCurrency = {};
+    const val = state.savings.goalsByCurrency[state.profile.currency];
+    return val != null ? val : 1000;
+  }
+
+  function setCurrentSavingsGoal(val) {
+    if (!state.savings.goalsByCurrency) state.savings.goalsByCurrency = {};
+    state.savings.goalsByCurrency[state.profile.currency] = val;
+  }
 
   function formatMoney(n) {
     return (n || 0).toLocaleString('bg-BG', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   function getSavingsTotal() {
-    const denoms = COIN_DENOMINATIONS.concat(CENT_DENOMINATIONS, BANKNOTE_DENOMINATIONS);
-    return denoms.reduce((sum, d) => sum + (state.savings.coins[d] || 0) * d, 0);
+    const d = curDenoms();
+    const denoms = d.coins.concat(d.cents, d.banknotes);
+    const wallet = currentWallet();
+    return denoms.reduce((sum, denom) => sum + (wallet[denom] || 0) * denom, 0);
   }
 
   function getGroupTotal(denominations) {
-    return denominations.reduce((sum, d) => sum + (state.savings.coins[d] || 0) * d, 0);
+    const wallet = currentWallet();
+    return denominations.reduce((sum, d) => sum + (wallet[d] || 0) * d, 0);
   }
 
   function updateGroupTotalDisplay(denominations, totalElId) {
@@ -5558,7 +5599,7 @@
 
   function renderSavingsOverview() {
     const total = getSavingsTotal();
-    const goal = state.savings.goal || 0;
+    const goal = currentSavingsGoal();
     $('savingsTotalValue').textContent = formatMoney(total);
     $('savingsGoalCurrentValue').textContent = formatMoney(total);
     $('savingsGoalInput').value = goal;
@@ -5614,6 +5655,7 @@
     const container = $(containerId);
     container.innerHTML = '';
     const totalElId = containerId.replace(/Grid$/, 'GroupTotal');
+    const wallet = currentWallet();
 
     denominations.forEach((d) => {
       const card = document.createElement('div');
@@ -5626,10 +5668,10 @@
 
       const subtotal = document.createElement('span');
       subtotal.className = 'coin-row-subtotal';
-      subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' ' + curSym();
+      subtotal.textContent = formatMoney((wallet[d] || 0) * d) + ' ' + curSym();
 
-      const inputRow = createCounterRow(state.savings.coins[d] || 0, (count) => {
-        state.savings.coins[d] = count;
+      const inputRow = createCounterRow(wallet[d] || 0, (count) => {
+        wallet[d] = count;
         subtotal.textContent = formatMoney(count * d) + ' ' + curSym();
         updateGroupTotalDisplay(denominations, totalElId);
         saveState();
@@ -5649,8 +5691,10 @@
   function renderBanknoteGrid() {
     const container = $('banknoteGrid');
     container.innerHTML = '';
+    const denoms = curDenoms();
+    const wallet = currentWallet();
 
-    BANKNOTE_DENOMINATIONS.forEach((d) => {
+    denoms.banknotes.forEach((d) => {
       const card = document.createElement('div');
       card.className = 'banknote-card';
 
@@ -5664,19 +5708,19 @@
 
       const tag = document.createElement('div');
       tag.className = 'banknote-tag';
-      tag.textContent = 'EURO';
+      tag.textContent = denoms.tag;
       face.appendChild(tag);
 
       card.appendChild(face);
 
       const subtotal = document.createElement('span');
       subtotal.className = 'banknote-card-subtotal';
-      subtotal.textContent = formatMoney((state.savings.coins[d] || 0) * d) + ' ' + curSym();
+      subtotal.textContent = formatMoney((wallet[d] || 0) * d) + ' ' + curSym();
 
-      const inputRow = createCounterRow(state.savings.coins[d] || 0, (count) => {
-        state.savings.coins[d] = count;
+      const inputRow = createCounterRow(wallet[d] || 0, (count) => {
+        wallet[d] = count;
         subtotal.textContent = formatMoney(count * d) + ' ' + curSym();
-        updateGroupTotalDisplay(BANKNOTE_DENOMINATIONS, 'banknoteGroupTotal');
+        updateGroupTotalDisplay(denoms.banknotes, 'banknoteGroupTotal');
         saveState();
         renderSavingsOverview();
         renderHubIfVisible();
@@ -5688,7 +5732,7 @@
       container.appendChild(card);
     });
 
-    updateGroupTotalDisplay(BANKNOTE_DENOMINATIONS, 'banknoteGroupTotal');
+    updateGroupTotalDisplay(denoms.banknotes, 'banknoteGroupTotal');
   }
 
   function renderHubIfVisible() {
@@ -5696,15 +5740,16 @@
   }
 
   function renderSavingsAll() {
+    const denoms = curDenoms();
     renderBanknoteGrid();
-    renderCoinGroup(COIN_DENOMINATIONS, 'coinGrid');
-    renderCoinGroup(CENT_DENOMINATIONS, 'centGrid');
+    renderCoinGroup(denoms.coins, 'coinGrid');
+    renderCoinGroup(denoms.cents, 'centGrid');
     renderSavingsOverview();
   }
 
   function onSavingsGoalChange() {
     const goal = parseFloat($('savingsGoalInput').value);
-    state.savings.goal = isNaN(goal) ? 0 : goal;
+    setCurrentSavingsGoal(isNaN(goal) ? 0 : goal);
     saveState();
     renderSavingsOverview();
   }
@@ -8071,10 +8116,7 @@
             activeVehicleId: parsed.garage.activeVehicleId || parsed.garage.vehicles[0].id,
             records: parsed.garage.records || {}
           } : state.garage,
-          savings: parsed.savings ? {
-            goal: parsed.savings.goal || state.savings.goal,
-            coins: parsed.savings.coins || {}
-          } : state.savings,
+          savings: buildSavingsState(parsed.savings, state.savings),
           company: parsed.company ? {
             advances: parsed.company.advances || [],
             expenses: parsed.company.expenses || []
