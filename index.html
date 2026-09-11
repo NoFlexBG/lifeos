@@ -2110,7 +2110,7 @@
 
   .record-row {
     display: grid;
-    grid-template-columns: 90px 1fr auto auto 22px;
+    grid-template-columns: 90px 1fr auto auto auto;
     gap: 12px;
     align-items: center;
     padding: 9px 12px;
@@ -2121,6 +2121,8 @@
   }
 
   .record-row > * { min-width: 0; }
+
+  .record-row-actions { display: flex; align-items: center; gap: 4px; }
 
   .record-row-date {
     font-family: var(--font-mono);
@@ -8392,32 +8394,27 @@
     delBtn.textContent = '×';
     delBtn.addEventListener('click', onDelete);
 
-    row.append(dateEl, descEl, metaEl, costEl);
-
-    let actionCount = 0;
+    const actions = document.createElement('div');
+    actions.className = 'record-row-actions';
     if (onPhoto) {
-      actionCount++;
       const photoBtn = document.createElement('button');
       photoBtn.className = 'record-row-edit' + (hasPhoto ? ' has-receipt' : '');
       photoBtn.textContent = '▣';
       photoBtn.title = hasPhoto ? tr('Виж фактура') : tr('Добави снимка на фактура');
       photoBtn.addEventListener('click', onPhoto);
-      row.appendChild(photoBtn);
+      actions.appendChild(photoBtn);
     }
     if (onEdit) {
-      actionCount++;
       const editBtn = document.createElement('button');
       editBtn.className = 'record-row-edit';
       editBtn.textContent = '✎';
       editBtn.title = tr('Редактирай');
       editBtn.addEventListener('click', onEdit);
-      row.appendChild(editBtn);
+      actions.appendChild(editBtn);
     }
-    row.appendChild(delBtn);
+    actions.appendChild(delBtn);
 
-    if (actionCount > 0) {
-      row.style.gridTemplateColumns = `90px 1fr auto auto ${'22px '.repeat(actionCount + 1).trim()}`;
-    }
+    row.append(dateEl, descEl, metaEl, costEl, actions);
 
     return row;
   }
