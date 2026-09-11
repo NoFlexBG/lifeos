@@ -7529,6 +7529,7 @@
         img.className = 'chat-message-image';
         img.alt = '';
         img.addEventListener('click', () => { if (img.src) window.open(img.src, '_blank'); });
+        img.addEventListener('load', scrollChatToBottom);
         getSignedPhotoUrl(m.image_path).then(({ data, error }) => {
           if (!error && data) img.src = data.signedUrl;
         });
@@ -7564,7 +7565,16 @@
       bubble.appendChild(time);
       el.appendChild(bubble);
     });
+    scrollChatToBottom();
+  }
+
+  function scrollChatToBottom() {
+    const el = $('chatMessages');
     el.scrollTop = el.scrollHeight;
+    requestAnimationFrame(() => {
+      el.scrollTop = el.scrollHeight;
+      setTimeout(() => { el.scrollTop = el.scrollHeight; }, 100);
+    });
   }
 
   async function sendChatImage(file) {
