@@ -2881,25 +2881,22 @@
 
   .chat-input-row .mini-input { flex: 1; width: auto; }
 
-  .chat-input-field-wrap { position: relative; flex: 1; display: flex; }
-  .chat-input-field-wrap .mini-input { flex: 1; width: auto; padding-right: 36px; }
-
-  .chat-emoji-wrap { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); }
+  .chat-input-field-wrap { position: relative; flex: 1; }
+  .chat-input-field-wrap .mini-input { width: 100%; padding-right: 36px; }
 
   .chat-emoji-inline-btn {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     border: none;
     border-radius: 50%;
     background: transparent;
-    color: var(--text-faint);
-    font-size: 17px;
+    font-size: 19px;
     line-height: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: background 0.15s ease;
   }
 
   .chat-emoji-inline-btn:hover { color: var(--violet); background: var(--surface-2); }
@@ -2917,6 +2914,8 @@
   }
 
   .chat-attach-wrap { position: relative; flex-shrink: 0; }
+
+  .chat-emoji-wrap { position: absolute !important; right: 3px; top: 50%; transform: translateY(-50%); flex-shrink: initial; }
 
   .chat-attach-menu {
     position: absolute;
@@ -4180,7 +4179,7 @@
             <div class="chat-input-field-wrap">
               <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
               <div class="chat-attach-wrap chat-emoji-wrap">
-                <button class="chat-emoji-inline-btn" id="chatEmojiBtn" title="Емотикони" data-i18n-title>☺</button>
+                <button class="chat-emoji-inline-btn" id="chatEmojiBtn" title="Емотикони" data-i18n-title>😊</button>
                 <div class="chat-emoji-picker hidden" id="chatEmojiPicker"></div>
               </div>
             </div>
