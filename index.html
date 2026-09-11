@@ -2687,6 +2687,7 @@
   }
 
   .chat-friend-card {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
@@ -2695,11 +2696,32 @@
     border-left: 3px solid var(--violet);
     border-radius: 8px;
     padding: 12px 14px;
+    padding-right: 34px;
     cursor: pointer;
     transition: border-color 0.15s ease;
   }
 
   .chat-friend-card:hover { border-color: var(--line-strong); }
+
+  .chat-friend-del {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--text-faint);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .chat-friend-del:hover { border-color: var(--danger); color: var(--danger); }
 
   .chat-friend-avatar {
     width: 34px;
@@ -2807,6 +2829,20 @@
     color: var(--text-faint);
   }
 
+  .chat-message-image {
+    display: block;
+    max-width: 220px;
+    max-height: 260px;
+    border-radius: 10px;
+    cursor: pointer;
+    background: var(--surface);
+  }
+
+  .chat-message-caption {
+    margin-top: 6px;
+    white-space: pre-wrap;
+  }
+
   .chat-input-row {
     display: flex;
     gap: 8px;
@@ -2814,6 +2850,7 @@
   }
 
   .chat-input-row .mini-input { flex: 1; width: auto; }
+  .chat-photo-btn { flex-shrink: 0; padding: 8px 12px; }
 
   /* ============ Settings (in profile modal) ============ */
 
@@ -3971,6 +4008,8 @@
           </div>
           <div class="chat-messages" id="chatMessages"></div>
           <div class="chat-input-row">
+            <button class="chip chat-photo-btn" id="chatPhotoBtn" title="Изпрати снимка" data-i18n-title>▣</button>
+            <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
             <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
             <button class="chip" id="chatSendBtn" data-i18n>Изпрати</button>
           </div>
@@ -4798,6 +4837,8 @@
     'Грешка при изпращане на заявката': 'Error sending the request',
     'Заявката е изпратена': 'Request sent',
     'Заявката вече е изпратена': 'Request already sent', 'ИЗЧАКВА ОТГОВОР': 'AWAITING REPLY',
+    'Премахни приятел': 'Remove friend', 'Приятелят е премахнат': 'Friend removed',
+    'Изпрати снимка': 'Send photo',
     'Ново съобщение': 'New message',
     'Грешка при изпращане': 'Error sending'
   };
@@ -4993,6 +5034,8 @@
     'Грешка при изпращане на заявката': 'Fehler beim Senden der Anfrage',
     'Заявката е изпратена': 'Anfrage gesendet',
     'Заявката вече е изпратена': 'Anfrage bereits gesendet', 'ИЗЧАКВА ОТГОВОР': 'WARTET AUF ANTWORT',
+    'Премахни приятел': 'Freund entfernen', 'Приятелят е премахнат': 'Freund entfernt',
+    'Изпрати снимка': 'Foto senden',
     'Ново съобщение': 'Neue Nachricht',
     'Грешка при изпращане': 'Fehler beim Senden'
   };
@@ -5188,6 +5231,8 @@
     'Грешка при изпращане на заявката': 'İstek gönderilirken hata oluştu',
     'Заявката е изпратена': 'İstek gönderildi',
     'Заявката вече е изпратена': 'İstek zaten gönderildi', 'ИЗЧАКВА ОТГОВОР': 'YANIT BEKLENİYOR',
+    'Премахни приятел': 'Arkadaşı kaldır', 'Приятелят е премахнат': 'Arkadaş kaldırıldı',
+    'Изпрати снимка': 'Fotoğraf gönder',
     'Ново съобщение': 'Yeni mesaj',
     'Грешка при изпращане': 'Gönderme hatası'
   };
@@ -7143,7 +7188,12 @@
       name.className = 'chat-friend-name';
       name.textContent = chatFriendDisplayName(profile, otherId);
       info.appendChild(name);
-      card.append(avatar, info);
+      const delBtn = document.createElement('button');
+      delBtn.className = 'chat-friend-del';
+      delBtn.textContent = '×';
+      delBtn.title = tr('Премахни приятел');
+      delBtn.addEventListener('click', (e) => { e.stopPropagation(); unfriend(r.id); });
+      card.append(avatar, info, delBtn);
       card.addEventListener('click', () => openChatConversation(otherId, chatFriendDisplayName(profile, otherId)));
       gridEl.appendChild(card);
     });
@@ -7223,6 +7273,13 @@
     loadChatData();
   }
 
+  async function unfriend(id) {
+    if (activeChatFriendId) closeChatConversation();
+    await sb.from('friend_requests').delete().eq('id', id);
+    showToast(tr('Приятелят е премахнат'));
+    loadChatData();
+  }
+
   async function openChatConversation(friendId, friendName) {
     activeChatFriendId = friendId;
     $('chatConversationName').textContent = friendName;
@@ -7259,7 +7316,24 @@
     chatMessagesCache.forEach((m) => {
       const bubble = document.createElement('div');
       bubble.className = 'chat-message ' + (m.sender_id === currentUser.id ? 'chat-message-own' : 'chat-message-other');
-      bubble.textContent = m.body;
+      if (m.image_path) {
+        const img = document.createElement('img');
+        img.className = 'chat-message-image';
+        img.alt = '';
+        img.addEventListener('click', () => { if (img.src) window.open(img.src, '_blank'); });
+        getSignedPhotoUrl(m.image_path).then(({ data, error }) => {
+          if (!error && data) img.src = data.signedUrl;
+        });
+        bubble.appendChild(img);
+        if (m.body) {
+          const caption = document.createElement('div');
+          caption.className = 'chat-message-caption';
+          caption.textContent = m.body;
+          bubble.appendChild(caption);
+        }
+      } else {
+        bubble.appendChild(document.createTextNode(m.body || ''));
+      }
       const time = document.createElement('span');
       time.className = 'chat-message-time';
       const d = new Date(m.created_at);
@@ -7268,6 +7342,25 @@
       el.appendChild(bubble);
     });
     el.scrollTop = el.scrollHeight;
+  }
+
+  async function sendChatImage(file) {
+    if (!file || !activeChatFriendId) return;
+    if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
+    let blob;
+    try { blob = await compressImage(file, PHOTO_MAX_DIM, 0.82); } catch { blob = file; }
+    const path = `${currentUser.id}/chat/${genId('img')}.jpg`;
+    const { error: uploadError } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
+    if (uploadError) { showToast(tr('Грешка при качване на снимка')); return; }
+    const { data, error } = await sb.from('messages').insert({
+      sender_id: currentUser.id,
+      receiver_id: activeChatFriendId,
+      image_path: path
+    }).select().single();
+    if (error) { showToast(tr('Грешка при изпращане')); return; }
+    chatMessagesCache.push(data);
+    renderChatMessages();
   }
 
   async function sendChatMessage() {
@@ -9258,6 +9351,12 @@
     $('chatBackBtn').addEventListener('click', closeChatConversation);
     $('chatSendBtn').addEventListener('click', sendChatMessage);
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+    $('chatPhotoBtn').addEventListener('click', () => $('chatPhotoInput').click());
+    $('chatPhotoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      e.target.value = '';
+      sendChatImage(file);
+    });
 
     $('dailyRate').addEventListener('input', onRateChange);
     $('goalCalories').addEventListener('input', onGoalsChange);
