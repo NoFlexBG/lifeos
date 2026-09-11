@@ -6249,13 +6249,8 @@
     closeProfileModal();
   }
 
-  async function uploadProfileAvatar(file) {
-    if (!file) return;
-    if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
-    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
-
-    let blob;
-    try { blob = await compressImage(file, 400, 0.85); } catch { blob = file; }
+  async function uploadProfileAvatar(blob) {
+    if (!blob) return;
 
     const oldPath = state.profile.avatarPath;
     const path = `${currentUser.id}/profile/${genId('av')}.jpg`;
@@ -6289,8 +6284,6 @@
   let avatarCropPinchDist = 0;
   let avatarCropPinchScale = 1;
 
-  let avatarCropDebug = null;
-
   async function normalizeImageOrientation(file) {
     try {
       const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
@@ -6299,22 +6292,16 @@
       canvas.height = bitmap.height;
       canvas.getContext('2d').drawImage(bitmap, 0, 0);
       bitmap.close();
-      const blob = await new Promise((resolve, reject) => {
+      return await new Promise((resolve, reject) => {
         canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.95);
       });
-      avatarCropDebug = { normalizeOk: true, bitmapW: bitmap.width, bitmapH: bitmap.height };
-      return blob;
-    } catch (e) {
-      avatarCropDebug = { normalizeOk: false, error: String(e && e.message || e) };
+    } catch {
       return file;
     }
   }
 
   async function openAvatarCropModal(file) {
-    avatarCropDebug = { origType: file.type, origSize: file.size };
     const normalized = await normalizeImageOrientation(file);
-    avatarCropDebug.normType = normalized.type;
-    avatarCropDebug.normSize = normalized.size;
     const img = $('avatarCropImg');
     const url = URL.createObjectURL(normalized);
     avatarCrop = { url, natW: 0, natH: 0, scale: 1, minScale: 1, x: 0, y: 0, viewport: 240 };
@@ -6331,9 +6318,6 @@
       avatarCrop.y = (avatarCrop.viewport - avatarCrop.natH * avatarCrop.scale) / 2;
       $('avatarCropZoomSlider').value = 100;
       applyAvatarCropTransform();
-      avatarCropDebug.imgNaturalW = img.naturalWidth;
-      avatarCropDebug.imgNaturalH = img.naturalHeight;
-      alert('DEBUG\n' + JSON.stringify(avatarCropDebug, null, 1));
     };
     img.src = url;
 
@@ -6455,21 +6439,6 @@
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, OUT, OUT);
     ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, OUT, OUT);
-
-    alert('SAVE DEBUG\n' + JSON.stringify({
-      naturalWidth: img.naturalWidth, naturalHeight: img.naturalHeight,
-      vpRect: { left: vpRect.left, top: vpRect.top, width: vpRect.width, height: vpRect.height },
-      imgRect: { left: imgRect.left, top: imgRect.top, width: imgRect.width, height: imgRect.height },
-      sx, sy, sSize
-    }, null, 1));
-    const dbgImg = document.createElement('img');
-    dbgImg.src = canvas.toDataURL('image/jpeg', 0.9);
-    dbgImg.style.cssText = 'position:fixed;top:10px;left:10px;width:150px;height:150px;z-index:99999;border:3px solid lime;';
-    dbgImg.id = 'avatarCropDebugPreview';
-    const oldDbg = document.getElementById('avatarCropDebugPreview');
-    if (oldDbg) oldDbg.remove();
-    document.body.appendChild(dbgImg);
-
     canvas.toBlob((blob) => {
       if (!blob) return;
       closeAvatarCropModal();
