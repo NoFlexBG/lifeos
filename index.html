@@ -6408,8 +6408,17 @@
   }
 
   function saveAvatarCrop() {
-    const c = avatarCrop;
-    if (!c) return;
+    if (!avatarCrop) return;
+    const img = $('avatarCropImg');
+    const vp = $('avatarCropViewport');
+    const vpRect = vp.getBoundingClientRect();
+    const imgRect = img.getBoundingClientRect();
+
+    const natPerRendered = img.naturalWidth / imgRect.width;
+    const sx = (vpRect.left - imgRect.left) * natPerRendered;
+    const sy = (vpRect.top - imgRect.top) * natPerRendered;
+    const sSize = vpRect.width * natPerRendered;
+
     const OUT = 400;
     const canvas = document.createElement('canvas');
     canvas.width = OUT;
@@ -6417,9 +6426,7 @@
     const ctx = canvas.getContext('2d');
     ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, OUT, OUT);
-    const f = OUT / c.viewport;
-    const img = $('avatarCropImg');
-    ctx.drawImage(img, c.x * f, c.y * f, c.natW * c.scale * f, c.natH * c.scale * f);
+    ctx.drawImage(img, sx, sy, sSize, sSize, 0, 0, OUT, OUT);
     canvas.toBlob((blob) => {
       if (!blob) return;
       closeAvatarCropModal();
