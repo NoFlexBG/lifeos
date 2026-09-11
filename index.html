@@ -6289,9 +6289,26 @@
   let avatarCropPinchDist = 0;
   let avatarCropPinchScale = 1;
 
-  function openAvatarCropModal(file) {
+  async function normalizeImageOrientation(file) {
+    try {
+      const bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+      const canvas = document.createElement('canvas');
+      canvas.width = bitmap.width;
+      canvas.height = bitmap.height;
+      canvas.getContext('2d').drawImage(bitmap, 0, 0);
+      bitmap.close();
+      return await new Promise((resolve, reject) => {
+        canvas.toBlob((blob) => (blob ? resolve(blob) : reject(new Error('toBlob failed'))), 'image/jpeg', 0.95);
+      });
+    } catch {
+      return file;
+    }
+  }
+
+  async function openAvatarCropModal(file) {
+    const normalized = await normalizeImageOrientation(file);
     const img = $('avatarCropImg');
-    const url = URL.createObjectURL(file);
+    const url = URL.createObjectURL(normalized);
     avatarCrop = { url, natW: 0, natH: 0, scale: 1, minScale: 1, x: 0, y: 0, viewport: 240 };
 
     img.onload = () => {
