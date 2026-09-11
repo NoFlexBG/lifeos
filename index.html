@@ -2716,6 +2716,8 @@
     flex-shrink: 0;
   }
 
+  .chat-friend-avatar-sm { width: 26px; height: 26px; font-size: 11px; }
+
   .chat-friend-name {
     font-family: var(--font-mono);
     font-size: 12.5px;
@@ -6597,6 +6599,7 @@
     saveState();
     renderProfileIdentity();
     closeProfileModal();
+    syncOwnProfile();
   }
 
   async function uploadProfileAvatar(blob) {
@@ -6616,6 +6619,7 @@
     renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), path);
     renderAvatarInto($('profileAvatarImg'), $('profileAvatarInitial'), path);
     showToast(tr('Снимката е обновена'));
+    syncOwnProfile();
   }
 
   function onProfileAvatarFileSelected(evt) {
@@ -6977,6 +6981,7 @@
         id: currentUser.id,
         email: currentUser.email,
         name: state.profile.name || '',
+        avatar_path: state.profile.avatarPath || '',
         updated_at: new Date().toISOString()
       });
     } catch {}
@@ -6990,6 +6995,19 @@
   function chatInitial(profile) {
     const name = chatFriendDisplayName(profile, '');
     return name ? name.charAt(0).toUpperCase() : '?';
+  }
+
+  function renderChatAvatarInto(el, profile) {
+    el.textContent = chatInitial(profile);
+    el.style.backgroundImage = '';
+    if (!profile || !profile.avatar_path) return;
+    getSignedPhotoUrl(profile.avatar_path).then(({ data, error }) => {
+      if (error || !data) return;
+      el.textContent = '';
+      el.style.backgroundImage = `url("${data.signedUrl}")`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+    });
   }
 
   async function loadChatData() {
@@ -7017,7 +7035,7 @@
       otherIds.add(r.from_user_id === currentUser.id ? r.to_user_id : r.from_user_id);
     });
     if (otherIds.size) {
-      const { data: profiles } = await sb.from('profiles').select('id, name, email').in('id', [...otherIds]);
+      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path').in('id', [...otherIds]);
       chatProfilesById = {};
       (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
     } else {
@@ -7063,6 +7081,9 @@
       const profile = chatProfilesById[r.from_user_id];
       const card = document.createElement('div');
       card.className = 'chat-request-card';
+      const avatar = document.createElement('div');
+      avatar.className = 'chat-friend-avatar chat-friend-avatar-sm';
+      renderChatAvatarInto(avatar, profile);
       const name = document.createElement('span');
       name.className = 'chat-request-name';
       name.textContent = chatFriendDisplayName(profile, r.from_user_id);
@@ -7077,7 +7098,7 @@
       declineBtn.textContent = tr('Откажи');
       declineBtn.addEventListener('click', () => respondFriendRequest(r.id, 'declined'));
       actions.append(acceptBtn, declineBtn);
-      card.append(name, actions);
+      card.append(avatar, name, actions);
       reqEl.appendChild(card);
     });
 
@@ -7087,6 +7108,9 @@
       const profile = chatProfilesById[r.to_user_id];
       const card = document.createElement('div');
       card.className = 'chat-request-card';
+      const avatar = document.createElement('div');
+      avatar.className = 'chat-friend-avatar chat-friend-avatar-sm';
+      renderChatAvatarInto(avatar, profile);
       const name = document.createElement('span');
       name.className = 'chat-request-name';
       name.textContent = chatFriendDisplayName(profile, r.to_user_id);
@@ -7100,7 +7124,7 @@
       const right = document.createElement('div');
       right.className = 'chat-request-actions';
       right.append(pendingLabel, cancelBtn);
-      card.append(name, right);
+      card.append(avatar, name, right);
       sentEl.appendChild(card);
     });
 
@@ -7113,7 +7137,7 @@
       card.className = 'chat-friend-card';
       const avatar = document.createElement('div');
       avatar.className = 'chat-friend-avatar';
-      avatar.textContent = chatInitial(profile);
+      renderChatAvatarInto(avatar, profile);
       const info = document.createElement('div');
       const name = document.createElement('div');
       name.className = 'chat-friend-name';
