@@ -2843,6 +2843,35 @@
     white-space: pre-wrap;
   }
 
+  .chat-message-map {
+    position: relative;
+    width: 220px;
+    height: 140px;
+    border-radius: 10px;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--surface);
+  }
+
+  .chat-message-map iframe {
+    width: 100%;
+    height: 100%;
+    border: 0;
+    pointer-events: none;
+  }
+
+  .chat-message-map-label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    padding: 5px 9px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 11px;
+  }
+
   .chat-input-row {
     display: flex;
     gap: 8px;
@@ -2859,6 +2888,45 @@
     align-items: center;
     justify-content: center;
   }
+
+  .chat-attach-wrap { position: relative; flex-shrink: 0; }
+
+  .chat-attach-menu {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 160px;
+    padding: 6px;
+    background: var(--surface);
+    border: 1px solid var(--line-strong);
+    border-radius: 10px;
+    box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.5);
+    z-index: 5;
+  }
+
+  .chat-attach-menu.hidden { display: none; }
+
+  .chat-attach-menu button {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border: none;
+    border-radius: 7px;
+    background: transparent;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+
+  .chat-attach-menu button:hover { background: var(--surface-2); color: var(--text); }
+  .chat-attach-menu button svg { flex-shrink: 0; color: var(--violet); }
 
   /* ============ Settings (in profile modal) ============ */
 
@@ -4016,14 +4084,39 @@
           </div>
           <div class="chat-messages" id="chatMessages"></div>
           <div class="chat-input-row">
-            <button class="chip chat-photo-btn" id="chatPhotoBtn" title="Изпрати снимка" data-i18n-title>
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="3" width="18" height="18" rx="3"></rect>
-                <circle cx="8.5" cy="8.5" r="1.6"></circle>
-                <path d="M21 15.5l-5.5-5.5L5 20"></path>
-              </svg>
-            </button>
+            <div class="chat-attach-wrap">
+              <button class="chip chat-photo-btn" id="chatAttachBtn" title="Прикачи" data-i18n-title>
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 5v14M5 12h14"></path>
+                </svg>
+              </button>
+              <div class="chat-attach-menu hidden" id="chatAttachMenu">
+                <button type="button" id="chatAttachCameraBtn">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                    <circle cx="12" cy="13" r="4"></circle>
+                  </svg>
+                  <span data-i18n>Камера</span>
+                </button>
+                <button type="button" id="chatAttachGalleryBtn">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                    <circle cx="8.5" cy="8.5" r="1.6"></circle>
+                    <path d="M21 15.5l-5.5-5.5L5 20"></path>
+                  </svg>
+                  <span data-i18n>Галерия</span>
+                </button>
+                <button type="button" id="chatAttachLocationBtn">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4.5 8-11a8 8 0 1 0-16 0c0 6.5 8 11 8 11z"></path>
+                    <circle cx="12" cy="11" r="2.5"></circle>
+                  </svg>
+                  <span data-i18n>Локация</span>
+                </button>
+              </div>
+            </div>
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
+            <input type="file" id="chatCameraInput" accept="image/*" capture="environment" class="hidden" />
             <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
             <button class="chip" id="chatSendBtn" data-i18n>Изпрати</button>
           </div>
@@ -4852,7 +4945,11 @@
     'Заявката е изпратена': 'Request sent',
     'Заявката вече е изпратена': 'Request already sent', 'ИЗЧАКВА ОТГОВОР': 'AWAITING REPLY',
     'Премахни приятел': 'Remove friend', 'Приятелят е премахнат': 'Friend removed',
-    'Изпрати снимка': 'Send photo',
+    'Изпрати снимка': 'Send photo', 'Прикачи': 'Attach', 'Камера': 'Camera', 'Галерия': 'Gallery', 'Локация': 'Location',
+    '📍 Локация': '📍 Location',
+    'Локацията не се поддържа на това устройство': 'Location is not supported on this device',
+    'Определяне на локация...': 'Getting location...',
+    'Не успяхме да определим локацията ти': "We couldn't get your location",
     'Ново съобщение': 'New message',
     'Грешка при изпращане': 'Error sending'
   };
@@ -5049,7 +5146,11 @@
     'Заявката е изпратена': 'Anfrage gesendet',
     'Заявката вече е изпратена': 'Anfrage bereits gesendet', 'ИЗЧАКВА ОТГОВОР': 'WARTET AUF ANTWORT',
     'Премахни приятел': 'Freund entfernen', 'Приятелят е премахнат': 'Freund entfernt',
-    'Изпрати снимка': 'Foto senden',
+    'Изпрати снимка': 'Foto senden', 'Прикачи': 'Anhängen', 'Камера': 'Kamera', 'Галерия': 'Galerie', 'Локация': 'Standort',
+    '📍 Локация': '📍 Standort',
+    'Локацията не се поддържа на това устройство': 'Standort wird auf diesem Gerät nicht unterstützt',
+    'Определяне на локация...': 'Standort wird ermittelt...',
+    'Не успяхме да определим локацията ти': 'Dein Standort konnte nicht ermittelt werden',
     'Ново съобщение': 'Neue Nachricht',
     'Грешка при изпращане': 'Fehler beim Senden'
   };
@@ -5246,7 +5347,11 @@
     'Заявката е изпратена': 'İstek gönderildi',
     'Заявката вече е изпратена': 'İstek zaten gönderildi', 'ИЗЧАКВА ОТГОВОР': 'YANIT BEKLENİYOR',
     'Премахни приятел': 'Arkadaşı kaldır', 'Приятелят е премахнат': 'Arkadaş kaldırıldı',
-    'Изпрати снимка': 'Fotoğraf gönder',
+    'Изпрати снимка': 'Fotoğraf gönder', 'Прикачи': 'Ekle', 'Камера': 'Kamera', 'Галерия': 'Galeri', 'Локация': 'Konum',
+    '📍 Локация': '📍 Konum',
+    'Локацията не се поддържа на това устройство': 'Konum bu cihazda desteklenmiyor',
+    'Определяне на локация...': 'Konum belirleniyor...',
+    'Не успяхме да определим локацията ти': 'Konumun belirlenemedi',
     'Ново съобщение': 'Yeni mesaj',
     'Грешка при изпращане': 'Gönderme hatası'
   };
@@ -7345,6 +7450,21 @@
           caption.textContent = m.body;
           bubble.appendChild(caption);
         }
+      } else if (m.lat != null && m.lng != null) {
+        const mapBox = document.createElement('div');
+        mapBox.className = 'chat-message-map';
+        mapBox.addEventListener('click', () => window.open(`https://www.google.com/maps?q=${m.lat},${m.lng}`, '_blank'));
+        const iframe = document.createElement('iframe');
+        const d = 0.01;
+        iframe.src = `https://www.openstreetmap.org/export/embed.html?bbox=${m.lng - d}%2C${m.lat - d}%2C${m.lng + d}%2C${m.lat + d}&marker=${m.lat}%2C${m.lng}&layer=mapnik`;
+        iframe.loading = 'lazy';
+        iframe.setAttribute('tabindex', '-1');
+        mapBox.appendChild(iframe);
+        const label = document.createElement('div');
+        label.className = 'chat-message-map-label';
+        label.textContent = tr('📍 Локация');
+        mapBox.appendChild(label);
+        bubble.appendChild(mapBox);
       } else {
         bubble.appendChild(document.createTextNode(m.body || ''));
       }
@@ -7375,6 +7495,27 @@
     if (error) { showToast(tr('Грешка при изпращане')); return; }
     chatMessagesCache.push(data);
     renderChatMessages();
+  }
+
+  function sendChatLocation() {
+    if (!activeChatFriendId) return;
+    if (!navigator.geolocation) { showToast(tr('Локацията не се поддържа на това устройство')); return; }
+    showToast(tr('Определяне на локация...'));
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { data, error } = await sb.from('messages').insert({
+          sender_id: currentUser.id,
+          receiver_id: activeChatFriendId,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        }).select().single();
+        if (error) { showToast(tr('Грешка при изпращане')); return; }
+        chatMessagesCache.push(data);
+        renderChatMessages();
+      },
+      () => showToast(tr('Не успяхме да определим локацията ти')),
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
   }
 
   async function sendChatMessage() {
@@ -9365,8 +9506,22 @@
     $('chatBackBtn').addEventListener('click', closeChatConversation);
     $('chatSendBtn').addEventListener('click', sendChatMessage);
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
-    $('chatPhotoBtn').addEventListener('click', () => $('chatPhotoInput').click());
+    $('chatAttachBtn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      $('chatAttachMenu').classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.chat-attach-wrap')) $('chatAttachMenu').classList.add('hidden');
+    });
+    $('chatAttachCameraBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatCameraInput').click(); });
+    $('chatAttachGalleryBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatPhotoInput').click(); });
+    $('chatAttachLocationBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); sendChatLocation(); });
     $('chatPhotoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      e.target.value = '';
+      sendChatImage(file);
+    });
+    $('chatCameraInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       e.target.value = '';
       sendChatImage(file);
