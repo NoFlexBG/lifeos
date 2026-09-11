@@ -2880,6 +2880,32 @@
   }
 
   .chat-input-row .mini-input { flex: 1; width: auto; }
+
+  .chat-input-field-wrap { position: relative; flex: 1; display: flex; }
+  .chat-input-field-wrap .mini-input { flex: 1; width: auto; padding-right: 36px; }
+
+  .chat-emoji-wrap { position: absolute; right: 3px; top: 50%; transform: translateY(-50%); }
+
+  .chat-emoji-inline-btn {
+    width: 28px;
+    height: 28px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text-faint);
+    font-size: 17px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .chat-emoji-inline-btn:hover { color: var(--violet); background: var(--surface-2); }
+
+  .chat-emoji-wrap .chat-emoji-picker { right: 0; left: auto; }
+
   .chat-photo-btn {
     flex-shrink: 0;
     width: 42px;
@@ -4151,11 +4177,13 @@
             </div>
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
             <input type="file" id="chatCameraInput" accept="image/*" capture="environment" class="hidden" />
-            <div class="chat-attach-wrap">
-              <button class="chip chat-photo-btn" id="chatEmojiBtn" title="Емотикони" data-i18n-title>☺</button>
-              <div class="chat-emoji-picker hidden" id="chatEmojiPicker"></div>
+            <div class="chat-input-field-wrap">
+              <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
+              <div class="chat-attach-wrap chat-emoji-wrap">
+                <button class="chat-emoji-inline-btn" id="chatEmojiBtn" title="Емотикони" data-i18n-title>☺</button>
+                <div class="chat-emoji-picker hidden" id="chatEmojiPicker"></div>
+              </div>
             </div>
-            <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
             <button class="chip" id="chatSendBtn" data-i18n>Изпрати</button>
           </div>
         </div>
