@@ -4455,6 +4455,14 @@
           <button type="button" class="chip category-chip category-chip-sm" data-currency="TRY">₺</button>
         </div>
       </div>
+      <div class="settings-row">
+        <span id="pushLabel" class="theme-label" data-i18n>ИЗВЕСТИЯ ЗА ЧАТ</span>
+        <button class="theme-toggle" id="pushToggle" type="button" role="switch" aria-checked="false" title="Включи известия" data-i18n-title>
+          <span class="theme-toggle-icon">✕</span>
+          <span class="theme-toggle-icon">✓</span>
+          <span class="theme-toggle-thumb"></span>
+        </button>
+      </div>
       <button class="settings-action" id="settingsExportBtn" data-i18n>⭳ Изтегли резервно копие</button>
       <button class="settings-action" id="settingsImportBtn" data-i18n>⭱ Възстанови от файл</button>
       <button class="settings-action" id="settingsTourBtn" data-i18n>? Обиколка на приложението</button>
@@ -4693,6 +4701,12 @@
     'ПОЗИЦИОНИРАЙ СНИМКАТА': 'POSITION YOUR PHOTO', 'Плъзни, за да преместиш · щипни или превърти, за да увеличиш': 'Drag to move · pinch or scroll to zoom',
     '⚙ Настройки': '⚙ Settings', 'ТЕМА': 'THEME', 'Смени темата': 'Change theme',
     'ЕЗИК': 'LANGUAGE', 'Смени езика': 'Change language', 'ВАЛУТА': 'CURRENCY',
+    'ИЗВЕСТИЯ ЗА ЧАТ': 'CHAT NOTIFICATIONS', 'Включи известия': 'Turn on notifications',
+    'Известията не се поддържат на това устройство': 'Notifications are not supported on this device',
+    'Известията са отказани': 'Notifications were denied',
+    'Известията са включени': 'Notifications turned on',
+    'Грешка при включване на известията': 'Error turning on notifications',
+    'Известията са изключени': 'Notifications turned off',
     '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
 
     'НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
@@ -4882,6 +4896,12 @@
     'ПОЗИЦИОНИРАЙ СНИМКАТА': 'FOTO POSITIONIEREN', 'Плъзни, за да преместиш · щипни или превърти, за да увеличиш': 'Ziehen zum Verschieben · zum Zoomen kneifen oder scrollen',
     '⚙ Настройки': '⚙ Einstellungen', 'ТЕМА': 'DESIGN', 'Смени темата': 'Design ändern',
     'ЕЗИК': 'SPRACHE', 'Смени езика': 'Sprache ändern', 'ВАЛУТА': 'WÄHRUNG',
+    'ИЗВЕСТИЯ ЗА ЧАТ': 'CHAT-BENACHRICHTIGUNGEN', 'Включи известия': 'Benachrichtigungen aktivieren',
+    'Известията не се поддържат на това устройство': 'Benachrichtigungen werden auf diesem Gerät nicht unterstützt',
+    'Известията са отказани': 'Benachrichtigungen wurden abgelehnt',
+    'Известията са включени': 'Benachrichtigungen aktiviert',
+    'Грешка при включване на известията': 'Fehler beim Aktivieren der Benachrichtigungen',
+    'Известията са изключени': 'Benachrichtigungen deaktiviert',
     '⭳ Изтегли резервно копие': '⭳ Backup herunterladen', '⭱ Възстанови от файл': '⭱ Aus Datei wiederherstellen', '⏻ Изход': '⏻ Abmelden',
 
     'НОВА БЕЛЕЖКА': 'NEUE NOTIZ', 'Заглавие (по избор)': 'Titel (optional)', 'Текст': 'Text',
@@ -5071,6 +5091,12 @@
     'ПОЗИЦИОНИРАЙ СНИМКАТА': 'FOTOĞRAFI KONUMLANDIR', 'Плъзни, за да преместиш · щипни или превърти, за да увеличиш': 'Taşımak için sürükle · yakınlaştırmak için sıkıştır veya kaydır',
     '⚙ Настройки': '⚙ Ayarlar', 'ТЕМА': 'TEMA', 'Смени темата': 'Temayı değiştir',
     'ЕЗИК': 'DİL', 'Смени езика': 'Dili değiştir', 'ВАЛУТА': 'PARA BİRİMİ',
+    'ИЗВЕСТИЯ ЗА ЧАТ': 'SOHBET BİLDİRİMLERİ', 'Включи известия': 'Bildirimleri aç',
+    'Известията не се поддържат на това устройство': 'Bildirimler bu cihazda desteklenmiyor',
+    'Известията са отказани': 'Bildirimler reddedildi',
+    'Известията са включени': 'Bildirimler açıldı',
+    'Грешка при включване на известията': 'Bildirimler açılırken hata oluştu',
+    'Известията са изключени': 'Bildirimler kapatıldı',
     '⭳ Изтегли резервно копие': '⭳ Yedeği indir', '⭱ Възстанови от файл': '⭱ Dosyadan geri yükle', '⏻ Изход': '⏻ Çıkış yap',
 
     'НОВА БЕЛЕЖКА': 'YENİ NOT', 'Заглавие (по избор)': 'Başlık (isteğe bağlı)', 'Текст': 'Metin',
@@ -7254,6 +7280,81 @@
       .subscribe();
   }
 
+  /* ============ Push notifications ============ */
+
+  const VAPID_PUBLIC_KEY = 'BHDVQmOmIap8qeWzBk8VXMKTOPT65wV38JRmL4j8fEooHuBPlG_NxpifXMcbOtBIM_MGaO1tC7ymNAWA-3aaxzE';
+
+  function urlBase64ToUint8Array(base64String) {
+    const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+    const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+    const raw = atob(base64);
+    return Uint8Array.from([...raw].map((c) => c.charCodeAt(0)));
+  }
+
+  function pushSupported() {
+    return 'serviceWorker' in navigator && 'PushManager' in window;
+  }
+
+  async function getCurrentPushSubscription() {
+    if (!pushSupported()) return null;
+    try {
+      const reg = await navigator.serviceWorker.ready;
+      return await reg.pushManager.getSubscription();
+    } catch { return null; }
+  }
+
+  async function updatePushToggleUI() {
+    const toggle = $('pushToggle');
+    if (!pushSupported()) { toggle.closest('.settings-row').classList.add('hidden'); return; }
+    const sub = await getCurrentPushSubscription();
+    toggle.setAttribute('aria-checked', sub ? 'true' : 'false');
+  }
+
+  async function enablePushNotifications() {
+    if (!pushSupported()) { showToast(tr('Известията не се поддържат на това устройство')); return; }
+    try {
+      const permission = await Notification.requestPermission();
+      if (permission !== 'granted') { showToast(tr('Известията са отказани')); return; }
+      const reg = await navigator.serviceWorker.ready;
+      let sub = await reg.pushManager.getSubscription();
+      if (!sub) {
+        sub = await reg.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY)
+        });
+      }
+      const json = sub.toJSON();
+      await sb.from('push_subscriptions').upsert({
+        user_id: currentUser.id,
+        endpoint: json.endpoint,
+        p256dh: json.keys.p256dh,
+        auth: json.keys.auth
+      }, { onConflict: 'endpoint' });
+      showToast(tr('Известията са включени'));
+    } catch {
+      showToast(tr('Грешка при включване на известията'));
+    }
+    updatePushToggleUI();
+  }
+
+  async function disablePushNotifications() {
+    try {
+      const sub = await getCurrentPushSubscription();
+      if (sub) {
+        await sb.from('push_subscriptions').delete().eq('endpoint', sub.endpoint);
+        await sub.unsubscribe();
+      }
+      showToast(tr('Известията са изключени'));
+    } catch {}
+    updatePushToggleUI();
+  }
+
+  async function togglePushNotifications() {
+    const sub = await getCurrentPushSubscription();
+    if (sub) disablePushNotifications();
+    else enablePushNotifications();
+  }
+
   /* ============ Vitals ============ */
 
   function getVitalsDay(key) {
@@ -9148,6 +9249,7 @@
     $('brandMark').addEventListener('click', onBrandMarkClick);
 
     $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
+    $('pushToggle').addEventListener('click', (e) => { e.stopPropagation(); togglePushNotifications(); });
     $('langChipRow').addEventListener('click', (e) => {
       const btn = e.target.closest('[data-lang]');
       if (!btn) return;
@@ -9364,6 +9466,7 @@
     wireChatRealtime();
     loadChatData();
     refreshUnreadCount();
+    updatePushToggleUI();
   }
 
   initTheme();
