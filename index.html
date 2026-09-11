@@ -2316,6 +2316,60 @@
     margin-top: 16px;
   }
 
+  .avatar-crop-inner { text-align: center; }
+
+  .avatar-crop-viewport {
+    position: relative;
+    width: 240px;
+    height: 240px;
+    max-width: 100%;
+    margin: 16px auto 10px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #0a0a12;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .avatar-crop-viewport:active { cursor: grabbing; }
+
+  .avatar-crop-viewport img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+  }
+
+  .avatar-crop-mask {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.45);
+    pointer-events: none;
+  }
+
+  .avatar-crop-hint {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.3px;
+    color: var(--text-faint);
+    margin-bottom: 12px;
+  }
+
+  .avatar-crop-zoom-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .avatar-crop-zoom-row input[type="range"] {
+    flex: 1;
+    accent-color: var(--violet);
+  }
+
   #profileEmailDisplay { opacity: 0.6; cursor: not-allowed; }
 
   .profile-modal-divider { margin-top: 18px; }
@@ -4154,6 +4208,28 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="avatarCropModal">
+  <div class="console-panel product-edit-modal-inner avatar-crop-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>ПОЗИЦИОНИРАЙ СНИМКАТА</span>
+    <div class="avatar-crop-viewport" id="avatarCropViewport">
+      <img id="avatarCropImg" alt="" draggable="false" />
+      <div class="avatar-crop-mask"></div>
+    </div>
+    <div class="avatar-crop-hint" data-i18n>Плъзни, за да преместиш · щипни или превърти, за да увеличиш</div>
+    <div class="avatar-crop-zoom-row">
+      <button type="button" class="coin-counter-btn" id="avatarCropZoomOutBtn">−</button>
+      <input type="range" id="avatarCropZoomSlider" min="100" max="400" value="100" step="1" />
+      <button type="button" class="coin-counter-btn" id="avatarCropZoomInBtn">+</button>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="avatarCropCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="avatarCropSaveBtn" data-i18n>Запази</button>
+    </div>
+  </div>
+</div>
+
 <div class="product-edit-modal hidden" id="noteModal">
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
@@ -4347,6 +4423,7 @@
     'Похарчено': 'Spent', 'Текущ баланс': 'Current balance', 'Генериран с LifeOS': 'Generated with LifeOS',
 
     'ПРОФИЛ': 'PROFILE', 'Смени снимка': 'Change photo', 'Твоето име': 'Your name', 'Имейл': 'Email',
+    'ПОЗИЦИОНИРАЙ СНИМКАТА': 'POSITION YOUR PHOTO', 'Плъзни, за да преместиш · щипни или превърти, за да увеличиш': 'Drag to move · pinch or scroll to zoom',
     '⚙ Настройки': '⚙ Settings', 'ТЕМА': 'THEME', 'Смени темата': 'Change theme',
     'ЕЗИК': 'LANGUAGE', 'Смени езика': 'Change language', 'ВАЛУТА': 'CURRENCY',
     '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
@@ -4519,6 +4596,7 @@
     'Похарчено': 'Ausgegeben', 'Текущ баланс': 'Aktueller Saldo', 'Генериран с LifeOS': 'Erstellt mit LifeOS',
 
     'ПРОФИЛ': 'PROFIL', 'Смени снимка': 'Foto ändern', 'Твоето име': 'Dein Name', 'Имейл': 'E-Mail',
+    'ПОЗИЦИОНИРАЙ СНИМКАТА': 'FOTO POSITIONIEREN', 'Плъзни, за да преместиш · щипни или превърти, за да увеличиш': 'Ziehen zum Verschieben · zum Zoomen kneifen oder scrollen',
     '⚙ Настройки': '⚙ Einstellungen', 'ТЕМА': 'DESIGN', 'Смени темата': 'Design ändern',
     'ЕЗИК': 'SPRACHE', 'Смени езика': 'Sprache ändern', 'ВАЛУТА': 'WÄHRUNG',
     '⭳ Изтегли резервно копие': '⭳ Backup herunterladen', '⭱ Възстанови от файл': '⭱ Aus Datei wiederherstellen', '⏻ Изход': '⏻ Abmelden',
@@ -4691,6 +4769,7 @@
     'Похарчено': 'Harcanan', 'Текущ баланс': 'Güncel bakiye', 'Генериран с LifeOS': 'LifeOS ile oluşturuldu',
 
     'ПРОФИЛ': 'PROFİL', 'Смени снимка': 'Fotoğrafı değiştir', 'Твоето име': 'Adın', 'Имейл': 'E-posta',
+    'ПОЗИЦИОНИРАЙ СНИМКАТА': 'FOTOĞRAFI KONUMLANDIR', 'Плъзни, за да преместиш · щипни или превърти, за да увеличиш': 'Taşımak için sürükle · yakınlaştırmak için sıkıştır veya kaydır',
     '⚙ Настройки': '⚙ Ayarlar', 'ТЕМА': 'TEMA', 'Смени темата': 'Temayı değiştir',
     'ЕЗИК': 'DİL', 'Смени езика': 'Dili değiştir', 'ВАЛУТА': 'PARA BİRİMİ',
     '⭳ Изтегли резервно копие': '⭳ Yedeği indir', '⭱ Възстанови от файл': '⭱ Dosyadan geri yükle', '⏻ Изход': '⏻ Çıkış yap',
@@ -6197,7 +6276,155 @@
   function onProfileAvatarFileSelected(evt) {
     const file = evt.target.files[0];
     evt.target.value = '';
-    uploadProfileAvatar(file);
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
+    openAvatarCropModal(file);
+  }
+
+  /* ============ Avatar crop ============ */
+
+  let avatarCrop = null;
+  let avatarCropDrag = null;
+  let avatarCropPinchDist = 0;
+  let avatarCropPinchScale = 1;
+
+  function openAvatarCropModal(file) {
+    const img = $('avatarCropImg');
+    const url = URL.createObjectURL(file);
+    avatarCrop = { url, natW: 0, natH: 0, scale: 1, minScale: 1, x: 0, y: 0, viewport: 240 };
+
+    img.onload = () => {
+      if (!avatarCrop) return;
+      const vp = $('avatarCropViewport');
+      avatarCrop.viewport = vp.clientWidth || 240;
+      avatarCrop.natW = img.naturalWidth;
+      avatarCrop.natH = img.naturalHeight;
+      avatarCrop.minScale = Math.max(avatarCrop.viewport / avatarCrop.natW, avatarCrop.viewport / avatarCrop.natH);
+      avatarCrop.scale = avatarCrop.minScale;
+      avatarCrop.x = (avatarCrop.viewport - avatarCrop.natW * avatarCrop.scale) / 2;
+      avatarCrop.y = (avatarCrop.viewport - avatarCrop.natH * avatarCrop.scale) / 2;
+      $('avatarCropZoomSlider').value = 100;
+      applyAvatarCropTransform();
+    };
+    img.src = url;
+
+    $('avatarCropModal').classList.remove('hidden');
+    pushNav(closeAvatarCropModal);
+  }
+
+  function closeAvatarCropModal() {
+    $('avatarCropModal').classList.add('hidden');
+    if (avatarCrop && avatarCrop.url) URL.revokeObjectURL(avatarCrop.url);
+    avatarCrop = null;
+    popNav();
+  }
+
+  function clampAvatarCrop() {
+    const c = avatarCrop;
+    const scaledW = c.natW * c.scale;
+    const scaledH = c.natH * c.scale;
+    c.x = Math.min(0, Math.max(c.viewport - scaledW, c.x));
+    c.y = Math.min(0, Math.max(c.viewport - scaledH, c.y));
+  }
+
+  function applyAvatarCropTransform() {
+    const c = avatarCrop;
+    const img = $('avatarCropImg');
+    img.style.width = (c.natW * c.scale) + 'px';
+    img.style.height = (c.natH * c.scale) + 'px';
+    img.style.left = c.x + 'px';
+    img.style.top = c.y + 'px';
+  }
+
+  function setAvatarCropScale(newScale, pivotX, pivotY) {
+    const c = avatarCrop;
+    if (!c) return;
+    newScale = Math.max(c.minScale, Math.min(c.minScale * 4, newScale));
+    const px = pivotX != null ? pivotX : c.viewport / 2;
+    const py = pivotY != null ? pivotY : c.viewport / 2;
+    const imgPtX = (px - c.x) / c.scale;
+    const imgPtY = (py - c.y) / c.scale;
+    c.scale = newScale;
+    c.x = px - imgPtX * c.scale;
+    c.y = py - imgPtY * c.scale;
+    clampAvatarCrop();
+    applyAvatarCropTransform();
+    $('avatarCropZoomSlider').value = Math.round((c.scale / c.minScale) * 100);
+  }
+
+  function wireAvatarCropEvents() {
+    const vp = $('avatarCropViewport');
+
+    vp.addEventListener('pointerdown', (e) => {
+      if (!avatarCrop) return;
+      avatarCropDrag = { startX: e.clientX, startY: e.clientY, origX: avatarCrop.x, origY: avatarCrop.y, id: e.pointerId };
+      try { vp.setPointerCapture(e.pointerId); } catch {}
+    });
+    vp.addEventListener('pointermove', (e) => {
+      if (!avatarCropDrag || !avatarCrop || e.pointerId !== avatarCropDrag.id) return;
+      avatarCrop.x = avatarCropDrag.origX + (e.clientX - avatarCropDrag.startX);
+      avatarCrop.y = avatarCropDrag.origY + (e.clientY - avatarCropDrag.startY);
+      clampAvatarCrop();
+      applyAvatarCropTransform();
+    });
+    const endDrag = () => { avatarCropDrag = null; };
+    vp.addEventListener('pointerup', endDrag);
+    vp.addEventListener('pointercancel', endDrag);
+
+    vp.addEventListener('wheel', (e) => {
+      if (!avatarCrop) return;
+      e.preventDefault();
+      const rect = vp.getBoundingClientRect();
+      setAvatarCropScale(avatarCrop.scale * (e.deltaY < 0 ? 1.08 : 0.92), e.clientX - rect.left, e.clientY - rect.top);
+    }, { passive: false });
+
+    vp.addEventListener('touchstart', (e) => {
+      if (e.touches.length === 2 && avatarCrop) {
+        avatarCropPinchDist = touchDistance(e.touches);
+        avatarCropPinchScale = avatarCrop.scale;
+      }
+    }, { passive: true });
+    vp.addEventListener('touchmove', (e) => {
+      if (e.touches.length === 2 && avatarCrop && avatarCropPinchDist) {
+        e.preventDefault();
+        setAvatarCropScale(avatarCropPinchScale * (touchDistance(e.touches) / avatarCropPinchDist));
+      }
+    }, { passive: false });
+    const endPinch = (e) => { if (e.touches.length < 2) avatarCropPinchDist = 0; };
+    vp.addEventListener('touchend', endPinch);
+    vp.addEventListener('touchcancel', endPinch);
+
+    $('avatarCropZoomSlider').addEventListener('input', (e) => {
+      if (!avatarCrop) return;
+      const pct = parseFloat(e.target.value) || 100;
+      setAvatarCropScale(avatarCrop.minScale * (pct / 100));
+    });
+    $('avatarCropZoomOutBtn').addEventListener('click', () => { if (avatarCrop) setAvatarCropScale(avatarCrop.scale * 0.9); });
+    $('avatarCropZoomInBtn').addEventListener('click', () => { if (avatarCrop) setAvatarCropScale(avatarCrop.scale * 1.1); });
+
+    $('avatarCropCancelBtn').addEventListener('click', closeAvatarCropModal);
+    $('avatarCropSaveBtn').addEventListener('click', saveAvatarCrop);
+  }
+
+  function saveAvatarCrop() {
+    const c = avatarCrop;
+    if (!c) return;
+    const OUT = 400;
+    const canvas = document.createElement('canvas');
+    canvas.width = OUT;
+    canvas.height = OUT;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, OUT, OUT);
+    const f = OUT / c.viewport;
+    const img = $('avatarCropImg');
+    ctx.drawImage(img, c.x * f, c.y * f, c.natW * c.scale * f, c.natH * c.scale * f);
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      closeAvatarCropModal();
+      uploadProfileAvatar(blob);
+    }, 'image/jpeg', 0.9);
   }
 
   /* ============ Notes ============ */
@@ -8238,6 +8465,8 @@
   }
 
   function wireEvents() {
+    wireAvatarCropEvents();
+
     $('dailyRate').addEventListener('input', onRateChange);
     $('goalCalories').addEventListener('input', onGoalsChange);
     $('goalWater').addEventListener('input', onGoalsChange);
