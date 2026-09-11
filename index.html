@@ -2770,6 +2770,7 @@
     flex-direction: column;
     height: 62vh;
     min-height: 380px;
+    padding: 16px 20px 14px;
   }
 
   .chat-conversation-head {
@@ -4080,6 +4081,7 @@
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chat-conversation-head">
             <button class="nav-btn" id="chatBackBtn" aria-label="Назад" data-i18n-aria>‹</button>
+            <div class="chat-friend-avatar chat-friend-avatar-sm" id="chatConversationAvatar"></div>
             <span class="chat-conversation-name" id="chatConversationName"></span>
           </div>
           <div class="chat-messages" id="chatMessages"></div>
@@ -7402,6 +7404,7 @@
   async function openChatConversation(friendId, friendName) {
     activeChatFriendId = friendId;
     $('chatConversationName').textContent = friendName;
+    renderChatAvatarInto($('chatConversationAvatar'), chatProfilesById[friendId]);
     $('chatListPanel').classList.add('hidden');
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
