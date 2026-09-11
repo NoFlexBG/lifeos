@@ -448,6 +448,7 @@
   .tile[data-app="savings"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
   .tile[data-app="company"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
   .tile[data-app="notes"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
+  .tile[data-app="chat"]:hover { box-shadow: 0 10px 30px -10px rgba(var(--violet-rgb), 0.35); }
 
   .tile-top {
     display: flex;
@@ -473,6 +474,7 @@
   .tile[data-app="savings"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
   .tile[data-app="company"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
   .tile[data-app="notes"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
+  .tile[data-app="chat"] .tile-icon { color: var(--violet); border-color: rgba(var(--violet-rgb),0.4); }
 
   .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
   .tile:hover .tile-arrow { transform: translateX(3px); color: var(--text-dim); }
@@ -2593,6 +2595,168 @@
 
   .note-card-edit:hover { border-color: var(--violet); color: var(--violet); }
 
+  /* ============ Chat ============ */
+
+  .chat-requests {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .chat-request-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--violet);
+    border-radius: 8px;
+    padding: 10px 14px;
+  }
+
+  .chat-request-name {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text);
+  }
+
+  .chat-request-actions { display: flex; gap: 8px; }
+
+  .chat-friends-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .chat-friend-card {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--violet);
+    border-radius: 8px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+  }
+
+  .chat-friend-card:hover { border-color: var(--line-strong); }
+
+  .chat-friend-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: var(--violet-dim);
+    color: var(--violet);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+
+  .chat-friend-name {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chat-friend-last {
+    font-size: 11px;
+    color: var(--text-faint);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chat-empty {
+    margin-top: 24px;
+    text-align: center;
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+  }
+
+  .chat-conversation {
+    display: flex;
+    flex-direction: column;
+    height: 62vh;
+    min-height: 380px;
+  }
+
+  .chat-conversation-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 12px;
+  }
+
+  .chat-conversation-name {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    color: var(--text);
+  }
+
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-right: 4px;
+  }
+
+  .chat-message {
+    max-width: 78%;
+    padding: 8px 12px;
+    border-radius: 14px;
+    font-size: 12.5px;
+    line-height: 1.45;
+    word-break: break-word;
+    white-space: pre-wrap;
+  }
+
+  .chat-message-own {
+    align-self: flex-end;
+    background: var(--violet-dim);
+    color: var(--text);
+    border-bottom-right-radius: 4px;
+  }
+
+  .chat-message-other {
+    align-self: flex-start;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+  }
+
+  .chat-message-time {
+    display: block;
+    margin-top: 3px;
+    font-size: 9px;
+    color: var(--text-faint);
+  }
+
+  .chat-input-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+
+  .chat-input-row .mini-input { flex: 1; width: auto; }
+
   /* ============ Settings (in profile modal) ============ */
 
   .settings-row {
@@ -3203,6 +3367,21 @@
           </div>
         </div>
 
+        <div class="console-panel tile" data-app="chat">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">✉</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">CHAT</div>
+          <div class="tile-desc" data-i18n>Приятели и съобщения</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubChatUnread">0</span><span class="tile-stat-label" data-i18n>НЕПРОЧЕТЕНИ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubChatRequests">0</span><span class="tile-stat-label" data-i18n>ЗАЯВКИ</span></div>
+          </div>
+        </div>
+
         <div class="console-panel tile" data-app="tdee">
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
@@ -3713,6 +3892,44 @@
           </div>
 
           <div class="notes-grid" id="notesGrid"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CHAT ============ -->
+    <section id="screen-chat" class="screen hidden">
+      <div class="vitals-body">
+        <div class="console-panel chart-panel" id="chatListPanel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head">
+            <span class="gauge-label" data-i18n>ПРИЯТЕЛИ</span>
+            <div class="chart-head-actions">
+              <div class="product-list-search">
+                <span class="product-search-icon">✉</span>
+                <input type="email" id="addFriendEmailInput" class="product-search-input" placeholder="Имейл на приятел..." autocomplete="off" data-i18n-ph />
+              </div>
+              <button class="chip" id="addFriendBtn" data-i18n>+ Добави</button>
+            </div>
+          </div>
+
+          <div class="chat-requests" id="chatRequestsList"></div>
+          <div class="chat-friends-grid" id="chatFriendsGrid"></div>
+          <div class="chat-empty hidden" id="chatEmptyState" data-i18n>Все още нямаш приятели — добави някой по имейл.</div>
+        </div>
+
+        <div class="console-panel chat-conversation hidden" id="chatConversationPanel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chat-conversation-head">
+            <button class="nav-btn" id="chatBackBtn" aria-label="Назад" data-i18n-aria>‹</button>
+            <span class="chat-conversation-name" id="chatConversationName"></span>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+          <div class="chat-input-row">
+            <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
+            <button class="chip" id="chatSendBtn" data-i18n>Изпрати</button>
+          </div>
         </div>
       </div>
     </section>
@@ -4503,7 +4720,22 @@
     'Следи спестените си пари в брой — банкноти, монети и центове.': 'Track your cash savings — banknotes, coins and cents.',
     'Служебни аванси и разходи — генерирай отчет за шефа с един клик.': 'Business advances and expenses — generate a report for your boss with one click.',
     'Бързи бележки, за да не забравяш нищо важно.': 'Quick notes, so you never forget anything important.',
-    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'A calculator that works out how many calories you need per day.'
+    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'A calculator that works out how many calories you need per day.',
+    'Добавяй приятели по имейл и си пишете направо в приложението.': 'Add friends by email and message them right inside the app.',
+
+    'Приятели и съобщения': 'Friends and messages', 'НЕПРОЧЕТЕНИ': 'UNREAD', 'ЗАЯВКИ': 'REQUESTS', 'ПРИЯТЕЛИ': 'FRIENDS',
+    'ПРИЯТЕЛИ И СЪОБЩЕНИЯ': 'FRIENDS AND MESSAGES',
+    'Имейл на приятел...': "Friend's email...", '+ Добави': '+ Add',
+    'Все още нямаш приятели — добави някой по имейл.': 'No friends yet — add someone by email.',
+    'Съобщение...': 'Message...', 'Изпрати': 'Send', 'Назад': 'Back',
+    'Приеми': 'Accept', 'Откажи': 'Decline',
+    'Не можеш да добавиш себе си': "You can't add yourself",
+    'Няма потребител с този имейл': 'No user with this email',
+    'Вече сте свързани': 'You are already connected',
+    'Грешка при изпращане на заявката': 'Error sending the request',
+    'Заявката е изпратена': 'Request sent',
+    'Ново съобщение': 'New message',
+    'Грешка при изпращане': 'Error sending'
   };
 
   const I18N_DE = {
@@ -4676,7 +4908,22 @@
     'Следи спестените си пари в брой — банкноти, монети и центове.': 'Verfolge dein Bargeld — Banknoten, Münzen und Cent.',
     'Служебни аванси и разходи — генерирай отчет за шефа с един клик.': 'Firmenvorschüsse und -ausgaben — erstelle mit einem Klick einen Bericht für deinen Chef.',
     'Бързи бележки, за да не забравяш нищо важно.': 'Schnelle Notizen, damit du nichts Wichtiges vergisst.',
-    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'Ein Rechner, der ermittelt, wie viele Kalorien du täglich brauchst.'
+    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'Ein Rechner, der ermittelt, wie viele Kalorien du täglich brauchst.',
+    'Добавяй приятели по имейл и си пишете направо в приложението.': 'Füge Freunde per E-Mail hinzu und schreib ihnen direkt in der App.',
+
+    'Приятели и съобщения': 'Freunde und Nachrichten', 'НЕПРОЧЕТЕНИ': 'UNGELESEN', 'ЗАЯВКИ': 'ANFRAGEN', 'ПРИЯТЕЛИ': 'FREUNDE',
+    'ПРИЯТЕЛИ И СЪОБЩЕНИЯ': 'FREUNDE UND NACHRICHTEN',
+    'Имейл на приятел...': 'E-Mail des Freundes...', '+ Добави': '+ Hinzufügen',
+    'Все още нямаш приятели — добави някой по имейл.': 'Noch keine Freunde — füge jemanden per E-Mail hinzu.',
+    'Съобщение...': 'Nachricht...', 'Изпрати': 'Senden', 'Назад': 'Zurück',
+    'Приеми': 'Annehmen', 'Откажи': 'Ablehnen',
+    'Не можеш да добавиш себе си': 'Du kannst dich nicht selbst hinzufügen',
+    'Няма потребител с този имейл': 'Kein Nutzer mit dieser E-Mail',
+    'Вече сте свързани': 'Ihr seid bereits verbunden',
+    'Грешка при изпращане на заявката': 'Fehler beim Senden der Anfrage',
+    'Заявката е изпратена': 'Anfrage gesendet',
+    'Ново съобщение': 'Neue Nachricht',
+    'Грешка при изпращане': 'Fehler beim Senden'
   };
 
   const I18N_TR = {
@@ -4849,7 +5096,22 @@
     'Следи спестените си пари в брой — банкноти, монети и центове.': 'Nakit birikimini takip et — banknotlar, madeni paralar ve sentler.',
     'Служебни аванси и разходи — генерирай отчет за шефа с един клик.': 'Şirket avansları ve giderleri — tek tıkla patronun için rapor oluştur.',
     'Бързи бележки, за да не забравяш нищо важно.': 'Önemli bir şeyi unutmaman için hızlı notlar.',
-    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'Günde kaç kaloriye ihtiyacın olduğunu hesaplayan bir hesap makinesi.'
+    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'Günde kaç kaloriye ihtiyacın olduğunu hesaplayan bir hesap makinesi.',
+    'Добавяй приятели по имейл и си пишете направо в приложението.': 'Arkadaşlarını e-posta ile ekle ve doğrudan uygulama içinde yazış.',
+
+    'Приятели и съобщения': 'Arkadaşlar ve mesajlar', 'НЕПРОЧЕТЕНИ': 'OKUNMAMIŞ', 'ЗАЯВКИ': 'İSTEKLER', 'ПРИЯТЕЛИ': 'ARKADAŞLAR',
+    'ПРИЯТЕЛИ И СЪОБЩЕНИЯ': 'ARKADAŞLAR VE MESAJLAR',
+    'Имейл на приятел...': "Arkadaşın e-postası...", '+ Добави': '+ Ekle',
+    'Все още нямаш приятели — добави някой по имейл.': 'Henüz arkadaşın yok — birini e-posta ile ekle.',
+    'Съобщение...': 'Mesaj...', 'Изпрати': 'Gönder', 'Назад': 'Geri',
+    'Приеми': 'Kabul et', 'Откажи': 'Reddet',
+    'Не можеш да добавиш себе си': 'Kendini ekleyemezsin',
+    'Няма потребител с този имейл': 'Bu e-postaya sahip kullanıcı yok',
+    'Вече сте свързани': 'Zaten bağlısınız',
+    'Грешка при изпращане на заявката': 'İstek gönderilirken hata oluştu',
+    'Заявката е изпратена': 'İstek gönderildi',
+    'Ново съобщение': 'Yeni mesaj',
+    'Грешка при изпращане': 'Gönderme hatası'
   };
 
   const SUPABASE_URL = 'https://ytosvspqdmazfwymgssv.supabase.co';
@@ -5071,7 +5333,7 @@
     $('goalsBox').classList.toggle('hidden', name !== 'vitals');
     $('vehicleBox').classList.toggle('hidden', name !== 'garage');
 
-    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', admin: 'ADMIN' };
+    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', chat: 'CHAT', admin: 'ADMIN' };
     const subs = {
       hub: 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР',
       workdays: 'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ',
@@ -5081,6 +5343,7 @@
       savings: 'СПЕСТЕНИ ПАРИ',
       company: 'СЛУЖЕБНИ ПАРИ',
       notes: 'БЕЛЕЖКИ',
+      chat: 'ПРИЯТЕЛИ И СЪОБЩЕНИЯ',
       admin: 'СЛУЖЕБНО ТАБЛО'
     };
     $('brandTitle').textContent = titles[name];
@@ -5094,6 +5357,7 @@
     if (name === 'savings') renderSavingsAll();
     if (name === 'company') { renderCompanyAll(); switchCompanyTab('overview'); }
     if (name === 'notes') renderNotes();
+    if (name === 'chat') { activeChatFriendId = ''; $('chatConversationPanel').classList.add('hidden'); $('chatListPanel').classList.remove('hidden'); loadChatData(); }
     if (name === 'admin') renderAdmin();
   }
 
@@ -5268,6 +5532,7 @@
     { selector: '.tile[data-app="savings"]', title: 'Savings', text: 'Следи спестените си пари в брой — банкноти, монети и центове.' },
     { selector: '.tile[data-app="company"]', title: 'Expenses', text: 'Служебни аванси и разходи — генерирай отчет за шефа с един клик.' },
     { selector: '.tile[data-app="notes"]', title: 'Notes', text: 'Бързи бележки, за да не забравяш нищо важно.' },
+    { selector: '.tile[data-app="chat"]', title: 'Chat', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' },
     { selector: '.tile[data-app="tdee"]', title: 'TDEE', text: 'Калкулатор, който изчислява колко калории са ти нужни на ден.' }
   ];
 
@@ -6611,6 +6876,251 @@
   function clearNoteFormatting() {
     $('noteBodyInput').focus();
     document.execCommand('removeFormat', false, null);
+  }
+
+  /* ============ Chat ============ */
+
+  let chatFriendRequests = [];
+  let chatFriends = [];
+  let chatProfilesById = {};
+  let activeChatFriendId = '';
+  let chatMessagesCache = [];
+  let chatRealtimeChannel = null;
+
+  async function syncOwnProfile() {
+    if (!currentUser) return;
+    try {
+      await sb.from('profiles').upsert({
+        id: currentUser.id,
+        email: currentUser.email,
+        name: state.profile.name || '',
+        updated_at: new Date().toISOString()
+      });
+    } catch {}
+  }
+
+  function chatFriendDisplayName(profile, fallbackId) {
+    if (!profile) return fallbackId ? fallbackId.slice(0, 8) : '?';
+    return profile.name || profile.email || fallbackId.slice(0, 8);
+  }
+
+  function chatInitial(profile) {
+    const name = chatFriendDisplayName(profile, '');
+    return name ? name.charAt(0).toUpperCase() : '?';
+  }
+
+  async function loadChatData() {
+    if (!currentUser) return;
+    const { data: rows, error } = await sb
+      .from('friend_requests')
+      .select('*')
+      .or(`from_user_id.eq.${currentUser.id},to_user_id.eq.${currentUser.id}`);
+    if (error || !rows) return;
+
+    chatFriendRequests = rows.filter((r) => r.status === 'pending' && r.to_user_id === currentUser.id);
+    chatFriends = rows.filter((r) => r.status === 'accepted');
+
+    const otherIds = new Set();
+    rows.forEach((r) => {
+      otherIds.add(r.from_user_id === currentUser.id ? r.to_user_id : r.from_user_id);
+    });
+    if (otherIds.size) {
+      const { data: profiles } = await sb.from('profiles').select('id, name, email').in('id', [...otherIds]);
+      chatProfilesById = {};
+      (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
+    } else {
+      chatProfilesById = {};
+    }
+
+    renderChatList();
+    updateChatHubStats();
+  }
+
+  function chatOtherUserId(row) {
+    return row.from_user_id === currentUser.id ? row.to_user_id : row.from_user_id;
+  }
+
+  function updateChatHubStats() {
+    const unread = chatMessagesUnreadTotal;
+    const el1 = $('hubChatUnread');
+    const el2 = $('hubChatRequests');
+    if (el1) el1.textContent = unread;
+    if (el2) el2.textContent = chatFriendRequests.length;
+  }
+
+  let chatMessagesUnreadTotal = 0;
+
+  async function refreshUnreadCount() {
+    if (!currentUser) return;
+    const { count } = await sb
+      .from('messages')
+      .select('id', { count: 'exact', head: true })
+      .eq('receiver_id', currentUser.id)
+      .is('read_at', null);
+    chatMessagesUnreadTotal = count || 0;
+    updateChatHubStats();
+  }
+
+  function renderChatList() {
+    const reqEl = $('chatRequestsList');
+    reqEl.innerHTML = '';
+    chatFriendRequests.forEach((r) => {
+      const profile = chatProfilesById[r.from_user_id];
+      const card = document.createElement('div');
+      card.className = 'chat-request-card';
+      const name = document.createElement('span');
+      name.className = 'chat-request-name';
+      name.textContent = chatFriendDisplayName(profile, r.from_user_id);
+      const actions = document.createElement('div');
+      actions.className = 'chat-request-actions';
+      const acceptBtn = document.createElement('button');
+      acceptBtn.className = 'chip';
+      acceptBtn.textContent = tr('Приеми');
+      acceptBtn.addEventListener('click', () => respondFriendRequest(r.id, 'accepted'));
+      const declineBtn = document.createElement('button');
+      declineBtn.className = 'chip';
+      declineBtn.textContent = tr('Откажи');
+      declineBtn.addEventListener('click', () => respondFriendRequest(r.id, 'declined'));
+      actions.append(acceptBtn, declineBtn);
+      card.append(name, actions);
+      reqEl.appendChild(card);
+    });
+
+    const gridEl = $('chatFriendsGrid');
+    gridEl.innerHTML = '';
+    chatFriends.forEach((r) => {
+      const otherId = chatOtherUserId(r);
+      const profile = chatProfilesById[otherId];
+      const card = document.createElement('div');
+      card.className = 'chat-friend-card';
+      const avatar = document.createElement('div');
+      avatar.className = 'chat-friend-avatar';
+      avatar.textContent = chatInitial(profile);
+      const info = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'chat-friend-name';
+      name.textContent = chatFriendDisplayName(profile, otherId);
+      info.appendChild(name);
+      card.append(avatar, info);
+      card.addEventListener('click', () => openChatConversation(otherId, chatFriendDisplayName(profile, otherId)));
+      gridEl.appendChild(card);
+    });
+
+    $('chatEmptyState').classList.toggle('hidden', chatFriends.length > 0 || chatFriendRequests.length > 0);
+  }
+
+  async function addFriendByEmail() {
+    const input = $('addFriendEmailInput');
+    const email = (input.value || '').trim();
+    if (!email) return;
+    if (email.toLowerCase() === (currentUser.email || '').toLowerCase()) {
+      showToast(tr('Не можеш да добавиш себе си'));
+      return;
+    }
+    const { data, error } = await sb.rpc('find_user_by_email', { lookup_email: email });
+    const match = Array.isArray(data) ? data[0] : data;
+    if (error || !match) {
+      showToast(tr('Няма потребител с този имейл'));
+      return;
+    }
+    const { error: insertError } = await sb.from('friend_requests').insert({
+      from_user_id: currentUser.id,
+      to_user_id: match.id,
+      status: 'pending'
+    });
+    if (insertError) {
+      showToast(insertError.code === '23505' ? tr('Вече сте свързани') : tr('Грешка при изпращане на заявката'));
+      return;
+    }
+    input.value = '';
+    showToast(tr('Заявката е изпратена'));
+    loadChatData();
+  }
+
+  async function respondFriendRequest(id, status) {
+    await sb.from('friend_requests').update({ status }).eq('id', id);
+    loadChatData();
+  }
+
+  async function openChatConversation(friendId, friendName) {
+    activeChatFriendId = friendId;
+    $('chatConversationName').textContent = friendName;
+    $('chatListPanel').classList.add('hidden');
+    $('chatConversationPanel').classList.remove('hidden');
+    pushNav(closeChatConversation);
+    await loadChatMessages();
+    await sb.from('messages').update({ read_at: new Date().toISOString() })
+      .eq('receiver_id', currentUser.id).eq('sender_id', friendId).is('read_at', null);
+    refreshUnreadCount();
+  }
+
+  function closeChatConversation() {
+    activeChatFriendId = '';
+    $('chatConversationPanel').classList.add('hidden');
+    $('chatListPanel').classList.remove('hidden');
+    popNav();
+  }
+
+  async function loadChatMessages() {
+    if (!activeChatFriendId) return;
+    const { data, error } = await sb
+      .from('messages')
+      .select('*')
+      .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${activeChatFriendId}),and(sender_id.eq.${activeChatFriendId},receiver_id.eq.${currentUser.id})`)
+      .order('created_at', { ascending: true });
+    chatMessagesCache = error ? [] : (data || []);
+    renderChatMessages();
+  }
+
+  function renderChatMessages() {
+    const el = $('chatMessages');
+    el.innerHTML = '';
+    chatMessagesCache.forEach((m) => {
+      const bubble = document.createElement('div');
+      bubble.className = 'chat-message ' + (m.sender_id === currentUser.id ? 'chat-message-own' : 'chat-message-other');
+      bubble.textContent = m.body;
+      const time = document.createElement('span');
+      time.className = 'chat-message-time';
+      const d = new Date(m.created_at);
+      time.textContent = d.toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' });
+      bubble.appendChild(time);
+      el.appendChild(bubble);
+    });
+    el.scrollTop = el.scrollHeight;
+  }
+
+  async function sendChatMessage() {
+    const input = $('chatMessageInput');
+    const body = (input.value || '').trim();
+    if (!body || !activeChatFriendId) return;
+    input.value = '';
+    const { data, error } = await sb.from('messages').insert({
+      sender_id: currentUser.id,
+      receiver_id: activeChatFriendId,
+      body
+    }).select().single();
+    if (error) { showToast(tr('Грешка при изпращане')); return; }
+    chatMessagesCache.push(data);
+    renderChatMessages();
+  }
+
+  function wireChatRealtime() {
+    if (!currentUser || chatRealtimeChannel) return;
+    chatRealtimeChannel = sb.channel('chat-' + currentUser.id)
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages', filter: `receiver_id=eq.${currentUser.id}` }, (payload) => {
+        const m = payload.new;
+        if (activeChatFriendId && m.sender_id === activeChatFriendId) {
+          chatMessagesCache.push(m);
+          renderChatMessages();
+          sb.from('messages').update({ read_at: new Date().toISOString() }).eq('id', m.id);
+        } else {
+          refreshUnreadCount();
+          showToast(tr('Ново съобщение'));
+        }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `to_user_id=eq.${currentUser.id}` }, () => loadChatData())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `from_user_id=eq.${currentUser.id}` }, () => loadChatData())
+      .subscribe();
   }
 
   /* ============ Vitals ============ */
@@ -8471,6 +8981,7 @@
 
   function handleLogout() {
     sb.auth.signOut({ scope: 'local' });
+    if (chatRealtimeChannel) { sb.removeChannel(chatRealtimeChannel); chatRealtimeChannel = null; }
     currentUser = null;
     closeProfileModal();
 
@@ -8488,6 +8999,12 @@
 
   function wireEvents() {
     wireAvatarCropEvents();
+
+    $('addFriendBtn').addEventListener('click', addFriendByEmail);
+    $('addFriendEmailInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFriendByEmail(); });
+    $('chatBackBtn').addEventListener('click', closeChatConversation);
+    $('chatSendBtn').addEventListener('click', sendChatMessage);
+    $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
 
     $('dailyRate').addEventListener('input', onRateChange);
     $('goalCalories').addEventListener('input', onGoalsChange);
@@ -8714,6 +9231,11 @@
     showScreen('hub');
 
     if (!hasSeenTour()) setTimeout(startTour, 500);
+
+    syncOwnProfile();
+    wireChatRealtime();
+    loadChatData();
+    refreshUnreadCount();
   }
 
   initTheme();
