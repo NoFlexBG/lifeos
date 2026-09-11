@@ -2668,6 +2668,71 @@
     font-size: 11.5px;
   }
 
+  .tour-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+  }
+
+  .tour-overlay.hidden { display: none; }
+
+  .tour-highlight {
+    position: fixed;
+    border-radius: 14px;
+    border: 1px solid var(--violet);
+    box-shadow: 0 0 0 9999px rgba(5, 5, 10, 0.78), 0 0 22px var(--violet-dim);
+    transition: left 0.3s ease, top 0.3s ease, width 0.3s ease, height 0.3s ease;
+    pointer-events: none;
+  }
+
+  .tour-card {
+    position: fixed;
+    left: 50%;
+    bottom: max(20px, calc(env(safe-area-inset-bottom) + 14px));
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 340px;
+    padding: 18px;
+    background: var(--surface);
+    animation: productPopIn 0.18s ease;
+  }
+
+  .tour-card-title {
+    font-family: var(--font-mono);
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 6px;
+  }
+
+  .tour-card-text {
+    color: var(--text-dim);
+    font-size: 12.5px;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+
+  .tour-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .tour-card-step {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 1px;
+    color: var(--text-faint);
+    white-space: nowrap;
+  }
+
+  .tour-card-actions {
+    display: flex;
+    gap: 8px;
+  }
+
   .product-edit-modal {
     position: fixed;
     inset: 0;
@@ -4065,6 +4130,7 @@
       </div>
       <button class="settings-action" id="settingsExportBtn" data-i18n>⭳ Изтегли резервно копие</button>
       <button class="settings-action" id="settingsImportBtn" data-i18n>⭱ Възстанови от файл</button>
+      <button class="settings-action" id="settingsTourBtn" data-i18n>? Обиколка на приложението</button>
     </div>
 
     <div class="settings-divider"></div>
@@ -4138,6 +4204,23 @@
   </div>
   <div class="weight-tooltip-macros" id="wtMacros"></div>
   <div class="weight-tooltip-meals" id="wtMeals"></div>
+</div>
+
+<div class="tour-overlay hidden" id="tourOverlay">
+  <div class="tour-highlight" id="tourHighlight"></div>
+  <div class="tour-card console-panel" id="tourCard">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <div class="tour-card-title" id="tourTitle"></div>
+    <div class="tour-card-text" id="tourText"></div>
+    <div class="tour-card-footer">
+      <span class="tour-card-step" id="tourStepIndicator"></span>
+      <div class="tour-card-actions">
+        <button class="chip" id="tourSkipBtn" data-i18n>Пропусни</button>
+        <button class="chip" id="tourNextBtn" data-i18n>Напред</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -4318,7 +4401,18 @@
     'Готови храни': 'Ready meals', 'Домашно приготвени': 'Homemade', 'Сосове': 'Sauces', 'Чипсове': 'Chips', 'Други': 'Other',
 
     'Име (А-Я)': 'Name (A-Z)', 'Име (Я-А)': 'Name (Z-A)', 'Калории ↑': 'Calories ↑', 'Калории ↓': 'Calories ↓',
-    'Протеини ↓': 'Protein ↓', 'Въглехидрати ↓': 'Carbs ↓', 'Мазнини ↓': 'Fat ↓'
+    'Протеини ↓': 'Protein ↓', 'Въглехидрати ↓': 'Carbs ↓', 'Мазнини ↓': 'Fat ↓',
+
+    '? Обиколка на приложението': '? App tour', 'Пропусни': 'Skip', 'Напред': 'Next', 'Разбрах': 'Got it',
+    'Твоят профил': 'Your profile',
+    'От тук сменяш профилната снимка, името си, темата и езика на приложението.': 'From here you can change your profile photo, name, theme and app language.',
+    'Следи калории, вода, крачки и тегло всеки ден.': 'Track calories, water, steps and weight every day.',
+    'Отбелязвай работните си дни и виж дохода си по месеци.': 'Mark your work days and see your income by month.',
+    'Ремонти, гориво, документи и фишове за колата ти.': 'Repairs, fuel, documents and tickets for your car.',
+    'Следи спестените си пари в брой — банкноти, монети и центове.': 'Track your cash savings — banknotes, coins and cents.',
+    'Служебни аванси и разходи — генерирай отчет за шефа с един клик.': 'Business advances and expenses — generate a report for your boss with one click.',
+    'Бързи бележки, за да не забравяш нищо важно.': 'Quick notes, so you never forget anything important.',
+    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'A calculator that works out how many calories you need per day.'
   };
 
   const I18N_DE = {
@@ -4479,7 +4573,18 @@
     'Готови храни': 'Fertiggerichte', 'Домашно приготвени': 'Hausgemacht', 'Сосове': 'Saucen', 'Чипсове': 'Chips', 'Други': 'Sonstiges',
 
     'Име (А-Я)': 'Name (A-Z)', 'Име (Я-А)': 'Name (Z-A)', 'Калории ↑': 'Kalorien ↑', 'Калории ↓': 'Kalorien ↓',
-    'Протеини ↓': 'Protein ↓', 'Въглехидрати ↓': 'Kohlenhydrate ↓', 'Мазнини ↓': 'Fett ↓'
+    'Протеини ↓': 'Protein ↓', 'Въглехидрати ↓': 'Kohlenhydrate ↓', 'Мазнини ↓': 'Fett ↓',
+
+    '? Обиколка на приложението': '? App-Tour', 'Пропусни': 'Überspringen', 'Напред': 'Weiter', 'Разбрах': 'Verstanden',
+    'Твоят профил': 'Dein Profil',
+    'От тук сменяш профилната снимка, името си, темата и езика на приложението.': 'Hier änderst du dein Profilfoto, deinen Namen, das Design und die Sprache der App.',
+    'Следи калории, вода, крачки и тегло всеки ден.': 'Verfolge täglich Kalorien, Wasser, Schritte und Gewicht.',
+    'Отбелязвай работните си дни и виж дохода си по месеци.': 'Markiere deine Arbeitstage und sieh dein Einkommen nach Monat.',
+    'Ремонти, гориво, документи и фишове за колата ти.': 'Reparaturen, Kraftstoff, Dokumente und Bußgelder für dein Auto.',
+    'Следи спестените си пари в брой — банкноти, монети и центове.': 'Verfolge dein Bargeld — Banknoten, Münzen und Cent.',
+    'Служебни аванси и разходи — генерирай отчет за шефа с един клик.': 'Firmenvorschüsse und -ausgaben — erstelle mit einem Klick einen Bericht für deinen Chef.',
+    'Бързи бележки, за да не забравяш нищо важно.': 'Schnelle Notizen, damit du nichts Wichtiges vergisst.',
+    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'Ein Rechner, der ermittelt, wie viele Kalorien du täglich brauchst.'
   };
 
   const I18N_TR = {
@@ -4640,7 +4745,18 @@
     'Готови храни': 'Hazır yemekler', 'Домашно приготвени': 'Ev yapımı', 'Сосове': 'Soslar', 'Чипсове': 'Cipsler', 'Други': 'Diğer',
 
     'Име (А-Я)': 'İsim (A-Z)', 'Име (Я-А)': 'İsim (Z-A)', 'Калории ↑': 'Kalori ↑', 'Калории ↓': 'Kalori ↓',
-    'Протеини ↓': 'Protein ↓', 'Въглехидрати ↓': 'Karbonhidrat ↓', 'Мазнини ↓': 'Yağ ↓'
+    'Протеини ↓': 'Protein ↓', 'Въглехидрати ↓': 'Karbonhidrat ↓', 'Мазнини ↓': 'Yağ ↓',
+
+    '? Обиколка на приложението': '? Uygulama turu', 'Пропусни': 'Atla', 'Напред': 'İleri', 'Разбрах': 'Anladım',
+    'Твоят профил': 'Profilin',
+    'От тук сменяш профилната снимка, името си, темата и езика на приложението.': 'Buradan profil fotoğrafını, adını, temayı ve uygulama dilini değiştirebilirsin.',
+    'Следи калории, вода, крачки и тегло всеки ден.': 'Her gün kalori, su, adım ve kiloyu takip et.',
+    'Отбелязвай работните си дни и виж дохода си по месеци.': 'Çalışma günlerini işaretle ve aylık gelirini gör.',
+    'Ремонти, гориво, документи и фишове за колата ти.': 'Araban için tamirler, yakıt, belgeler ve cezalar.',
+    'Следи спестените си пари в брой — банкноти, монети и центове.': 'Nakit birikimini takip et — banknotlar, madeni paralar ve sentler.',
+    'Служебни аванси и разходи — генерирай отчет за шефа с един клик.': 'Şirket avansları ve giderleri — tek tıkla patronun için rapor oluştur.',
+    'Бързи бележки, за да не забравяш нищо важно.': 'Önemli bir şeyi unutmaman için hızlı notlar.',
+    'Калкулатор, който изчислява колко калории са ти нужни на ден.': 'Günde kaç kaloriye ihtiyacın olduğunu hesaplayan bir hesap makinesi.'
   };
 
   const SUPABASE_URL = 'https://ytosvspqdmazfwymgssv.supabase.co';
@@ -5010,6 +5126,89 @@
 
   function openMatrixModal() { $('matrixModal').classList.remove('hidden'); pushNav(closeMatrixModal); }
   function closeMatrixModal() { $('matrixModal').classList.add('hidden'); popNav(); }
+
+  /* ============ Onboarding tour ============ */
+
+  const TOUR_STEPS = [
+    { selector: '#profileAvatarBtn', title: 'Твоят профил', text: 'От тук сменяш профилната снимка, името си, темата и езика на приложението.' },
+    { selector: '.tile[data-app="vitals"]', title: 'Vitals', text: 'Следи калории, вода, крачки и тегло всеки ден.' },
+    { selector: '.tile[data-app="workdays"]', title: 'Workdays', text: 'Отбелязвай работните си дни и виж дохода си по месеци.' },
+    { selector: '.tile[data-app="garage"]', title: 'Garage', text: 'Ремонти, гориво, документи и фишове за колата ти.' },
+    { selector: '.tile[data-app="savings"]', title: 'Savings', text: 'Следи спестените си пари в брой — банкноти, монети и центове.' },
+    { selector: '.tile[data-app="company"]', title: 'Expenses', text: 'Служебни аванси и разходи — генерирай отчет за шефа с един клик.' },
+    { selector: '.tile[data-app="notes"]', title: 'Notes', text: 'Бързи бележки, за да не забравяш нищо важно.' },
+    { selector: '.tile[data-app="tdee"]', title: 'TDEE', text: 'Калкулатор, който изчислява колко калории са ти нужни на ден.' }
+  ];
+
+  let tourIndex = 0;
+  let tourActive = false;
+
+  function tourStorageKey() {
+    return currentUser ? `lifeos_tour_seen_${currentUser.id}` : null;
+  }
+
+  function hasSeenTour() {
+    const key = tourStorageKey();
+    if (!key) return true;
+    try { return localStorage.getItem(key) === '1'; } catch { return true; }
+  }
+
+  function markTourSeen() {
+    const key = tourStorageKey();
+    if (!key) return;
+    try { localStorage.setItem(key, '1'); } catch {}
+  }
+
+  function startTour() {
+    if (!$('profileModal').classList.contains('hidden')) closeProfileModal();
+    if (currentScreen !== 'hub') showScreen('hub');
+    tourIndex = 0;
+    tourActive = true;
+    $('tourOverlay').classList.remove('hidden');
+    renderTourStep();
+    pushNav(tourSkip);
+  }
+
+  function endTour() {
+    if (!tourActive) return;
+    tourActive = false;
+    $('tourOverlay').classList.add('hidden');
+    markTourSeen();
+    popNav();
+  }
+
+  function renderTourStep() {
+    const step = TOUR_STEPS[tourIndex];
+    if (!step) { endTour(); return; }
+    const el = document.querySelector(step.selector);
+    if (!el) { tourIndex++; renderTourStep(); return; }
+
+    $('tourTitle').textContent = tr(step.title);
+    $('tourText').textContent = tr(step.text);
+    $('tourStepIndicator').textContent = `${tourIndex + 1} / ${TOUR_STEPS.length}`;
+    $('tourNextBtn').textContent = tourIndex === TOUR_STEPS.length - 1 ? tr('Разбрах') : tr('Напред');
+
+    el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    setTimeout(() => positionTourHighlight(el), 300);
+  }
+
+  function positionTourHighlight(el) {
+    if (!tourActive) return;
+    const rect = el.getBoundingClientRect();
+    const pad = 6;
+    const hl = $('tourHighlight');
+    hl.style.left = (rect.left - pad) + 'px';
+    hl.style.top = (rect.top - pad) + 'px';
+    hl.style.width = (rect.width + pad * 2) + 'px';
+    hl.style.height = (rect.height + pad * 2) + 'px';
+  }
+
+  function tourNext() {
+    tourIndex++;
+    renderTourStep();
+  }
+
+  function tourSkip() { endTour(); }
 
   let matrixRainState = null;
 
@@ -7983,6 +8182,16 @@
     $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); });
     $('matrixNoBtn').addEventListener('click', closeMatrixModal);
 
+    $('settingsTourBtn').addEventListener('click', startTour);
+    $('tourNextBtn').addEventListener('click', tourNext);
+    $('tourSkipBtn').addEventListener('click', tourSkip);
+    window.addEventListener('resize', () => {
+      if (!tourActive) return;
+      const step = TOUR_STEPS[tourIndex];
+      const el = step && document.querySelector(step.selector);
+      if (el) positionTourHighlight(el);
+    });
+
     document.querySelectorAll('.tile').forEach((tile) => {
       tile.addEventListener('click', () => enterScreen(tile.dataset.app));
     });
@@ -8163,6 +8372,8 @@
     renderProfileIdentity();
 
     showScreen('hub');
+
+    if (!hasSeenTour()) setTimeout(startTour, 500);
   }
 
   initTheme();
