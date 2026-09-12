@@ -7487,6 +7487,13 @@
   let chatRealtimeChannel = null;
   let onlinePresenceChannel = null;
   let onlineUserIds = new Set();
+  let typingChannel = null;
+  let typingBroadcastTimer = null;
+  let friendTypingTimeout = null;
+
+  function chatPairChannelName(a, b) {
+    return 'chat-typing-' + [a, b].sort().join('-');
+  }
 
   async function syncOwnProfile() {
     if (!currentUser) return;
@@ -7764,6 +7771,7 @@
     $('chatListPanel').classList.add('hidden');
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
+    wireTypingChannel(friendId);
     await loadChatMessages();
     await sb.from('messages').update({ read_at: new Date().toISOString() })
       .eq('receiver_id', currentUser.id).eq('sender_id', friendId).is('read_at', null);
@@ -7774,7 +7782,42 @@
     activeChatFriendId = '';
     $('chatConversationPanel').classList.add('hidden');
     $('chatListPanel').classList.remove('hidden');
+    teardownTypingChannel();
     popNav();
+  }
+
+  function wireTypingChannel(friendId) {
+    teardownTypingChannel();
+    typingChannel = sb.channel(chatPairChannelName(currentUser.id, friendId));
+    typingChannel
+      .on('broadcast', { event: 'typing' }, ({ payload }) => {
+        if (payload.from !== friendId) return;
+        clearTimeout(friendTypingTimeout);
+        $('chatTypingMascot').classList.add('looking-down');
+        friendTypingTimeout = setTimeout(() => $('chatTypingMascot').classList.remove('looking-down'), 3000);
+      })
+      .on('broadcast', { event: 'stopped-typing' }, ({ payload }) => {
+        if (payload.from !== friendId) return;
+        clearTimeout(friendTypingTimeout);
+        $('chatTypingMascot').classList.remove('looking-down');
+      })
+      .subscribe();
+  }
+
+  function teardownTypingChannel() {
+    if (typingChannel) { sb.removeChannel(typingChannel); typingChannel = null; }
+    clearTimeout(friendTypingTimeout);
+    clearTimeout(typingBroadcastTimer);
+    $('chatTypingMascot').classList.remove('looking-down');
+  }
+
+  function onChatInputTyping() {
+    if (!typingChannel || !activeChatFriendId) return;
+    typingChannel.send({ type: 'broadcast', event: 'typing', payload: { from: currentUser.id } });
+    clearTimeout(typingBroadcastTimer);
+    typingBroadcastTimer = setTimeout(() => {
+      typingChannel.send({ type: 'broadcast', event: 'stopped-typing', payload: { from: currentUser.id } });
+    }, 2000);
   }
 
   async function loadChatMessages() {
@@ -7925,6 +7968,8 @@
     const body = (input.value || '').trim();
     if (!body || !activeChatFriendId) return;
     input.value = '';
+    clearTimeout(typingBroadcastTimer);
+    if (typingChannel) typingChannel.send({ type: 'broadcast', event: 'stopped-typing', payload: { from: currentUser.id } });
     const { data, error } = await sb.from('messages').insert({
       sender_id: currentUser.id,
       receiver_id: activeChatFriendId,
@@ -9912,6 +9957,7 @@
     sb.auth.signOut({ scope: 'local' });
     if (chatRealtimeChannel) { sb.removeChannel(chatRealtimeChannel); chatRealtimeChannel = null; }
     if (onlinePresenceChannel) { sb.removeChannel(onlinePresenceChannel); onlinePresenceChannel = null; }
+    teardownTypingChannel();
     onlineUserIds = new Set();
     currentUser = null;
     state = createDefaultState();
@@ -9946,8 +9992,7 @@
     $('chatBackBtn').addEventListener('click', closeChatConversation);
     $('chatSendBtn').addEventListener('click', sendChatMessage);
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
-    $('chatMessageInput').addEventListener('focus', () => $('chatTypingMascot').classList.add('looking-down'));
-    $('chatMessageInput').addEventListener('blur', () => $('chatTypingMascot').classList.remove('looking-down'));
+    $('chatMessageInput').addEventListener('input', onChatInputTyping);
     $('chatAttachBtn').addEventListener('click', (e) => {
       e.stopPropagation();
       $('chatEmojiPicker').classList.add('hidden');
