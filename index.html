@@ -7761,8 +7761,7 @@
       otherIds.add(r.from_user_id === currentUser.id ? r.to_user_id : r.from_user_id);
     });
     if (otherIds.size) {
-      const { data: profiles, error: profErr } = await sb.from('profiles').select('id, name, email, avatar_path').in('id', [...otherIds]);
-      alert('CHAT DEBUG\notherIds: ' + JSON.stringify([...otherIds]) + '\nprofiles: ' + JSON.stringify(profiles) + '\nerror: ' + JSON.stringify(profErr));
+      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path').in('id', [...otherIds]);
       (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
     } else {
       // keep entries added by loadChatGroups() for people who are only group co-members
