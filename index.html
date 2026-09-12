@@ -2916,6 +2916,7 @@
     flex-direction: column;
     gap: 8px;
     padding-right: 4px;
+    padding-bottom: 30px;
   }
 
   .chat-message {
@@ -8169,31 +8170,41 @@
     await loadChatGroups();
   }
 
+  async function getChatClearedAt(targetType, targetId) {
+    const { data } = await sb.from('chat_clears').select('cleared_at')
+      .eq('user_id', currentUser.id).eq('target_type', targetType).eq('target_id', targetId).maybeSingle();
+    return data ? data.cleared_at : null;
+  }
+
   async function deleteChatHistory() {
     if (!activeChatFriendId && !activeChatGroupId) return;
     if (!confirm(tr('Сигурни ли сте, че искате да изтриете съобщенията от този чат?'))) return;
 
-    if (activeChatGroupId) {
-      const { error } = await sb.from('group_messages').delete().eq('group_id', activeChatGroupId);
-      if (error) { showToast(tr('Грешка при изтриване')); return; }
-      groupMessagesCache = [];
-    } else {
-      const { error } = await sb.from('messages').delete()
-        .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${activeChatFriendId}),and(sender_id.eq.${activeChatFriendId},receiver_id.eq.${currentUser.id})`);
-      if (error) { showToast(tr('Грешка при изтриване')); return; }
-      chatMessagesCache = [];
-    }
+    const targetType = activeChatGroupId ? 'group' : 'dm';
+    const targetId = activeChatGroupId || activeChatFriendId;
+    // Only hides the history for the person who clicked delete — messages stay
+    // intact for the other side. Anything sent before "now" is filtered out
+    // for this user from then on; nothing is actually removed from the DB.
+    const { error } = await sb.from('chat_clears').upsert({
+      user_id: currentUser.id,
+      target_type: targetType,
+      target_id: targetId,
+      cleared_at: new Date().toISOString()
+    }, { onConflict: 'user_id,target_type,target_id' });
+    if (error) { showToast(tr('Грешка при изтриване')); return; }
+
+    if (activeChatGroupId) groupMessagesCache = [];
+    else chatMessagesCache = [];
     renderChatMessages();
     showToast(tr('Чатът е изтрит'));
   }
 
   async function loadGroupMessages() {
     if (!activeChatGroupId) return;
-    const { data, error } = await sb
-      .from('group_messages')
-      .select('*')
-      .eq('group_id', activeChatGroupId)
-      .order('created_at', { ascending: true });
+    const clearedAt = await getChatClearedAt('group', activeChatGroupId);
+    let query = sb.from('group_messages').select('*').eq('group_id', activeChatGroupId).order('created_at', { ascending: true });
+    if (clearedAt) query = query.gt('created_at', clearedAt);
+    const { data, error } = await query;
     groupMessagesCache = error ? [] : (data || []);
     renderChatMessages();
   }
@@ -8248,11 +8259,14 @@
 
   async function loadChatMessages() {
     if (!activeChatFriendId) return;
-    const { data, error } = await sb
+    const clearedAt = await getChatClearedAt('dm', activeChatFriendId);
+    let query = sb
       .from('messages')
       .select('*')
       .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${activeChatFriendId}),and(sender_id.eq.${activeChatFriendId},receiver_id.eq.${currentUser.id})`)
       .order('created_at', { ascending: true });
+    if (clearedAt) query = query.gt('created_at', clearedAt);
+    const { data, error } = await query;
     chatMessagesCache = error ? [] : (data || []);
     renderChatMessages();
   }
