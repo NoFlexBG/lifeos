@@ -2225,6 +2225,27 @@
     padding: 28px 30px;
   }
 
+  .onboard-panel { max-width: 380px; max-height: 92vh; overflow-y: auto; }
+
+  .onboard-row { padding: 8px 2px; }
+
+  .onboard-select {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 9px 12px;
+    color: var(--text);
+    font-family: var(--font-mono);
+    font-size: 13px;
+  }
+
+  .onboard-skip {
+    margin-top: 12px;
+    text-align: center;
+    color: var(--text-faint);
+  }
+
   .auth-brand {
     display: flex;
     flex-direction: column;
@@ -3472,6 +3493,67 @@
     <div class="auth-switch">
       <span id="authSwitchText">Don't have an account?</span> <a id="authSwitchLink">Sign up</a>
     </div>
+  </div>
+</div>
+
+<div class="auth-screen hidden" id="onboardingScreen">
+  <div class="console-panel auth-panel onboard-panel">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+
+    <div class="auth-brand">
+      <div class="brand-mark">◆</div>
+      <div class="brand-text">
+        <h1>LIFEOS</h1>
+        <span class="brand-sub" data-i18n>НАСТРОЙ ПРОФИЛА СИ</span>
+      </div>
+    </div>
+
+    <div class="settings-row onboard-row">
+      <span class="theme-label" data-i18n>ЕЗИК</span>
+      <div class="lang-chip-row" id="onboardLangChipRow">
+        <button type="button" class="chip category-chip category-chip-sm" data-lang="bg">BG</button>
+        <button type="button" class="chip category-chip category-chip-sm" data-lang="en">EN</button>
+        <button type="button" class="chip category-chip category-chip-sm" data-lang="de">DE</button>
+        <button type="button" class="chip category-chip category-chip-sm" data-lang="tr">TR</button>
+      </div>
+    </div>
+    <div class="settings-row onboard-row">
+      <span class="theme-label" data-i18n>ВАЛУТА</span>
+      <div class="lang-chip-row" id="onboardCurrencyChipRow">
+        <button type="button" class="chip category-chip category-chip-sm" data-currency="EUR">€</button>
+        <button type="button" class="chip category-chip category-chip-sm" data-currency="USD">$</button>
+        <button type="button" class="chip category-chip category-chip-sm" data-currency="GBP">£</button>
+        <button type="button" class="chip category-chip category-chip-sm" data-currency="TRY">₺</button>
+      </div>
+    </div>
+
+    <div class="settings-divider"></div>
+
+    <div class="auth-fields">
+      <div class="auth-field">
+        <label for="onboardFirstName" data-i18n>ИМЕ</label>
+        <input id="onboardFirstName" type="text" autocomplete="given-name" />
+      </div>
+      <div class="auth-field">
+        <label for="onboardLastName" data-i18n>ФАМИЛИЯ</label>
+        <input id="onboardLastName" type="text" autocomplete="family-name" />
+      </div>
+      <div class="auth-field">
+        <label for="onboardGender" data-i18n>ПОЛ</label>
+        <select id="onboardGender" class="onboard-select">
+          <option value="male" data-i18n>Мъж</option>
+          <option value="female" data-i18n>Жена</option>
+        </select>
+      </div>
+      <div class="auth-field">
+        <label for="onboardAge" data-i18n>ВЪЗРАСТ</label>
+        <input id="onboardAge" type="number" min="10" max="100" />
+      </div>
+      <button class="auth-submit" id="onboardSubmitBtn" data-i18n>ЗАПАЗИ И ПРОДЪЛЖИ</button>
+    </div>
+
+    <button class="settings-action onboard-skip" id="onboardSkipBtn" data-i18n>Пропусни за сега</button>
   </div>
 </div>
 
@@ -4940,6 +5022,8 @@
     'Известията са включени': 'Notifications turned on',
     'Грешка при включване на известията': 'Error turning on notifications',
     'Известията са изключени': 'Notifications turned off',
+    'НАСТРОЙ ПРОФИЛА СИ': 'SET UP YOUR PROFILE', 'ИМЕ': 'FIRST NAME', 'ФАМИЛИЯ': 'LAST NAME',
+    'ЗАПАЗИ И ПРОДЪЛЖИ': 'SAVE AND CONTINUE', 'Пропусни за сега': 'Skip for now',
     '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
 
     'НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
@@ -5142,6 +5226,8 @@
     'Известията са включени': 'Benachrichtigungen aktiviert',
     'Грешка при включване на известията': 'Fehler beim Aktivieren der Benachrichtigungen',
     'Известията са изключени': 'Benachrichtigungen deaktiviert',
+    'НАСТРОЙ ПРОФИЛА СИ': 'PROFIL EINRICHTEN', 'ИМЕ': 'VORNAME', 'ФАМИЛИЯ': 'NACHNAME',
+    'ЗАПАЗИ И ПРОДЪЛЖИ': 'SPEICHERN UND WEITER', 'Пропусни за сега': 'Vorerst überspringen',
     '⭳ Изтегли резервно копие': '⭳ Backup herunterladen', '⭱ Възстанови от файл': '⭱ Aus Datei wiederherstellen', '⏻ Изход': '⏻ Abmelden',
 
     'НОВА БЕЛЕЖКА': 'NEUE NOTIZ', 'Заглавие (по избор)': 'Titel (optional)', 'Текст': 'Text',
@@ -5344,6 +5430,8 @@
     'Известията са включени': 'Bildirimler açıldı',
     'Грешка при включване на известията': 'Bildirimler açılırken hata oluştu',
     'Известията са изключени': 'Bildirimler kapatıldı',
+    'НАСТРОЙ ПРОФИЛА СИ': 'PROFİLİNİ AYARLA', 'ИМЕ': 'AD', 'ФАМИЛИЯ': 'SOYAD',
+    'ЗАПАЗИ И ПРОДЪЛЖИ': 'KAYDET VE DEVAM ET', 'Пропусни за сега': 'Şimdilik atla',
     '⭳ Изтегли резервно копие': '⭳ Yedeği indir', '⭱ Възстанови от файл': '⭱ Dosyadan geri yükle', '⏻ Изход': '⏻ Çıkış yap',
 
     'НОВА БЕЛЕЖКА': 'YENİ NOT', 'Заглавие (по избор)': 'Başlık (isteğe bağlı)', 'Текст': 'Metin',
@@ -5814,13 +5902,13 @@
   }
 
   function updateLangChipRow() {
-    document.querySelectorAll('#langChipRow [data-lang]').forEach((btn) => {
+    document.querySelectorAll('.lang-chip-row [data-lang]').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.lang === currentLang);
     });
   }
 
   function updateCurrencyChipRow() {
-    document.querySelectorAll('#currencyChipRow [data-currency]').forEach((btn) => {
+    document.querySelectorAll('.lang-chip-row [data-currency]').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.currency === state.profile.currency);
     });
   }
@@ -5871,6 +5959,56 @@
     { selector: '#chatFabBtn', title: 'Chat', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' },
     { selector: '.tile[data-app="tdee"]', title: 'TDEE', text: 'Калкулатор, който изчислява колко калории са ти нужни на ден.' }
   ];
+
+  /* ============ First-login onboarding (name/gender/age/language/currency) ============ */
+
+  function onboardingStorageKey() {
+    return currentUser ? `lifeos_onboarded_${currentUser.id}` : null;
+  }
+
+  function hasCompletedOnboarding() {
+    const key = onboardingStorageKey();
+    if (!key) return true;
+    try { return localStorage.getItem(key) === '1'; } catch { return true; }
+  }
+
+  function markOnboardingComplete() {
+    const key = onboardingStorageKey();
+    if (!key) return;
+    try { localStorage.setItem(key, '1'); } catch {}
+  }
+
+  function showOnboardingScreen() {
+    updateLangChipRow();
+    updateCurrencyChipRow();
+    $('onboardFirstName').value = '';
+    $('onboardLastName').value = '';
+    $('onboardGender').value = state.vitals.calc.sex || 'male';
+    $('onboardAge').value = state.vitals.calc.age || '';
+    $('onboardingScreen').classList.remove('hidden');
+  }
+
+  function closeOnboardingScreen() {
+    $('onboardingScreen').classList.add('hidden');
+    markOnboardingComplete();
+    if (!hasSeenTour()) setTimeout(startTour, 400);
+  }
+
+  function completeOnboarding() {
+    const first = $('onboardFirstName').value.trim();
+    const last = $('onboardLastName').value.trim();
+    const fullName = [first, last].filter(Boolean).join(' ');
+    if (fullName) state.profile.name = fullName;
+    state.vitals.calc.sex = $('onboardGender').value === 'female' ? 'female' : 'male';
+    const age = parseInt($('onboardAge').value, 10);
+    if (!isNaN(age) && age > 0) state.vitals.calc.age = age;
+    saveState();
+    renderProfileIdentity();
+    $('calcSex').value = state.vitals.calc.sex;
+    $('calcAge').value = state.vitals.calc.age;
+    syncOwnProfile();
+    closeOnboardingScreen();
+  }
 
   let tourIndex = 0;
   let tourActive = false;
@@ -9684,17 +9822,11 @@
 
     $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
     $('pushToggle').addEventListener('click', (e) => { e.stopPropagation(); togglePushNotifications(); });
-    $('langChipRow').addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-lang]');
-      if (!btn) return;
-      e.stopPropagation();
-      selectLang(btn.dataset.lang);
-    });
-    $('currencyChipRow').addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-currency]');
-      if (!btn) return;
-      e.stopPropagation();
-      selectCurrency(btn.dataset.currency);
+    document.addEventListener('click', (e) => {
+      const langBtn = e.target.closest('.lang-chip-row [data-lang]');
+      if (langBtn) { e.stopPropagation(); selectLang(langBtn.dataset.lang); return; }
+      const curBtn = e.target.closest('.lang-chip-row [data-currency]');
+      if (curBtn) { e.stopPropagation(); selectCurrency(curBtn.dataset.currency); }
     });
     $('settingsToggleBtn').addEventListener('click', toggleSettingsCollapse);
     $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
@@ -9702,6 +9834,8 @@
     $('matrixNoBtn').addEventListener('click', closeMatrixModal);
 
     $('settingsTourBtn').addEventListener('click', startTour);
+    $('onboardSubmitBtn').addEventListener('click', completeOnboarding);
+    $('onboardSkipBtn').addEventListener('click', closeOnboardingScreen);
     $('tourNextBtn').addEventListener('click', tourNext);
     $('tourSkipBtn').addEventListener('click', tourSkip);
     window.addEventListener('resize', () => {
@@ -9894,7 +10028,11 @@
 
     showScreen('hub');
 
-    if (!hasSeenTour()) setTimeout(startTour, 500);
+    if (!hasCompletedOnboarding()) {
+      showOnboardingScreen();
+    } else if (!hasSeenTour()) {
+      setTimeout(startTour, 500);
+    }
 
     syncOwnProfile();
     wireChatRealtime();
