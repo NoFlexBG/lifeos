@@ -5573,7 +5573,7 @@
     },
     savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
     company: { advances: [], expenses: [] },
-    profile: { name: '', avatarPath: '', currency: 'EUR' },
+    profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true },
     notes: { entries: [] }
   };
 
@@ -5631,7 +5631,8 @@
           profile: {
             name: (parsed.profile && parsed.profile.name) || '',
             avatarPath: (parsed.profile && parsed.profile.avatarPath) || '',
-            currency: (parsed.profile && parsed.profile.currency) || 'EUR'
+            currency: (parsed.profile && parsed.profile.currency) || 'EUR',
+            onboarded: (parsed.profile && typeof parsed.profile.onboarded === 'boolean') ? parsed.profile.onboarded : true
           },
           notes: {
             entries: (parsed.notes && parsed.notes.entries) || []
@@ -5642,6 +5643,7 @@
         }
       } else {
         state = defaults;
+        state.profile.onboarded = false;
         await sb.from('app_state').insert({ user_id: currentUser.id, data: state });
       }
     } catch (err) {
@@ -5978,20 +5980,13 @@
 
   /* ============ First-login onboarding (name/gender/age/language/currency) ============ */
 
-  function onboardingStorageKey() {
-    return currentUser ? `lifeos_onboarded_${currentUser.id}` : null;
-  }
-
   function hasCompletedOnboarding() {
-    const key = onboardingStorageKey();
-    if (!key) return true;
-    try { return localStorage.getItem(key) === '1'; } catch { return true; }
+    return !state.profile || state.profile.onboarded !== false;
   }
 
   function markOnboardingComplete() {
-    const key = onboardingStorageKey();
-    if (!key) return;
-    try { localStorage.setItem(key, '1'); } catch {}
+    state.profile.onboarded = true;
+    saveState();
   }
 
   function showOnboardingScreen() {
