@@ -2962,6 +2962,25 @@
   }
 
   .chat-input-field-wrap { position: relative; flex: 1; }
+
+  .chat-typing-mascot {
+    position: absolute;
+    left: 6px;
+    bottom: 100%;
+    margin-bottom: 6px;
+    color: var(--text-dim);
+    pointer-events: none;
+  }
+
+  .chat-typing-mascot .mascot-eye {
+    transition: transform 0.15s ease;
+    transform: translateY(0);
+  }
+
+  .chat-typing-mascot.looking-down .mascot-eye {
+    transform: translateY(4px);
+  }
+
   .chat-input-field-wrap .mini-input {
     width: 100%;
     height: 42px;
@@ -4333,6 +4352,13 @@
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
             <input type="file" id="chatCameraInput" accept="image/*" capture="environment" class="hidden" />
             <div class="chat-input-field-wrap">
+              <div class="chat-typing-mascot" id="chatTypingMascot" aria-hidden="true">
+                <svg viewBox="0 0 40 40" width="26" height="26">
+                  <circle cx="20" cy="20" r="16" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                  <circle class="mascot-eye mascot-eye-l" cx="14" cy="18" r="2.2" fill="currentColor"></circle>
+                  <circle class="mascot-eye mascot-eye-r" cx="26" cy="18" r="2.2" fill="currentColor"></circle>
+                </svg>
+              </div>
               <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
               <div class="chat-attach-wrap chat-emoji-wrap">
                 <button class="chat-emoji-inline-btn" id="chatEmojiBtn" title="Емотикони" data-i18n-title>
@@ -9920,6 +9946,8 @@
     $('chatBackBtn').addEventListener('click', closeChatConversation);
     $('chatSendBtn').addEventListener('click', sendChatMessage);
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
+    $('chatMessageInput').addEventListener('focus', () => $('chatTypingMascot').classList.add('looking-down'));
+    $('chatMessageInput').addEventListener('blur', () => $('chatTypingMascot').classList.remove('looking-down'));
     $('chatAttachBtn').addEventListener('click', (e) => {
       e.stopPropagation();
       $('chatEmojiPicker').classList.add('hidden');
