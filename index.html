@@ -2494,21 +2494,11 @@
 
   .profile-modal-divider { margin-top: 18px; }
 
-  .settings-toggle-caret {
-    float: right;
-    color: var(--text-faint);
-    transition: transform 0.15s ease;
-  }
-
-  #settingsToggleBtn.open .settings-toggle-caret { transform: rotate(180deg); }
-
   .settings-collapse {
     display: flex;
     flex-direction: column;
     margin: 10px 0 2px;
   }
-
-  .settings-collapse.hidden { display: none; }
 
   #profileModal #logoutBtn { color: var(--danger); }
   #profileModal #logoutBtn:hover { border-color: var(--danger); }
@@ -3655,6 +3645,7 @@
       </div>
       <input type="file" id="importFile" accept="application/json" class="hidden" />
       <div class="user-box">
+        <button class="icon-btn" id="settingsBtn" title="Настройки" data-i18n-title>⚙</button>
         <button class="profile-avatar-btn" id="profileAvatarBtn" title="Профил">
           <img id="profileAvatarImg" class="hidden" alt="" />
           <span id="profileAvatarInitial">?</span>
@@ -4810,10 +4801,22 @@
     </div>
 
     <div class="settings-divider profile-modal-divider"></div>
+    <button class="settings-action" id="logoutBtn" data-i18n>⏻ Изход</button>
 
-    <button class="settings-action" id="settingsToggleBtn"><span data-i18n>⚙ Настройки</span> <span class="settings-toggle-caret" id="settingsToggleCaret">▾</span></button>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="profileCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="profileSaveBtn" data-i18n>Запази</button>
+    </div>
+  </div>
+</div>
 
-    <div class="settings-collapse hidden" id="settingsCollapse">
+<div class="product-edit-modal hidden" id="settingsModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>НАСТРОЙКИ</span>
+
+    <div class="settings-collapse">
       <div class="settings-row">
         <span id="themeLabel" class="theme-label" data-i18n>ТЕМА</span>
         <div class="lang-chip-row" id="themeChipRow">
@@ -4853,12 +4856,8 @@
       <button class="settings-action" id="settingsTourBtn" data-i18n>? Обиколка на приложението</button>
     </div>
 
-    <div class="settings-divider"></div>
-    <button class="settings-action" id="logoutBtn" data-i18n>⏻ Изход</button>
-
     <div class="matrix-modal-actions">
-      <button class="chip" id="profileCancelBtn" data-i18n>Отказ</button>
-      <button class="chip" id="profileSaveBtn" data-i18n>Запази</button>
+      <button class="chip" id="settingsCloseBtn" data-i18n>Затвори</button>
     </div>
   </div>
 </div>
@@ -7042,8 +7041,6 @@
     $('profileNameInput').value = state.profile.name || '';
     $('profileEmailDisplay').value = currentUser ? currentUser.email : '';
     renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), state.profile.avatarPath);
-    $('settingsCollapse').classList.add('hidden');
-    $('settingsToggleBtn').classList.remove('open');
     $('profileModal').classList.remove('hidden');
     pushNav(closeProfileModal);
   }
@@ -7053,11 +7050,14 @@
     popNav();
   }
 
-  function toggleSettingsCollapse() {
-    const el = $('settingsCollapse');
-    const isHidden = el.classList.contains('hidden');
-    el.classList.toggle('hidden', !isHidden);
-    $('settingsToggleBtn').classList.toggle('open', isHidden);
+  function openSettingsModal() {
+    $('settingsModal').classList.remove('hidden');
+    pushNav(closeSettingsModal);
+  }
+
+  function closeSettingsModal() {
+    $('settingsModal').classList.add('hidden');
+    popNav();
   }
 
   function saveProfileFromModal() {
@@ -9973,7 +9973,8 @@
       const curBtn = e.target.closest('.lang-chip-row [data-currency]');
       if (curBtn) { e.stopPropagation(); selectCurrency(curBtn.dataset.currency); }
     });
-    $('settingsToggleBtn').addEventListener('click', toggleSettingsCollapse);
+    $('settingsBtn').addEventListener('click', openSettingsModal);
+    $('settingsCloseBtn').addEventListener('click', closeSettingsModal);
     $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
     $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); });
     $('matrixNoBtn').addEventListener('click', closeMatrixModal);
