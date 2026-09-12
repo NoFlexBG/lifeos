@@ -3701,6 +3701,10 @@
         <label for="authPassword">PASSWORD</label>
         <input id="authPassword" type="password" autocomplete="current-password" />
       </div>
+      <div class="auth-field hidden" id="authConfirmPasswordField">
+        <label for="authConfirmPassword">CONFIRM PASSWORD</label>
+        <input id="authConfirmPassword" type="password" autocomplete="new-password" />
+      </div>
       <button class="auth-submit" id="authSubmitBtn">LOGIN</button>
     </div>
 
@@ -10309,6 +10313,8 @@
     $('authSubmitBtn').textContent = authMode === 'signin' ? 'LOGIN' : 'SIGN UP';
     $('authSwitchText').textContent = authMode === 'signin' ? "Don't have an account?" : 'Already have an account?';
     $('authSwitchLink').textContent = authMode === 'signin' ? 'Sign up' : 'Log in';
+    $('authConfirmPasswordField').classList.toggle('hidden', authMode === 'signin');
+    $('authConfirmPassword').value = '';
     $('authMessage').textContent = '';
     $('authMessage').className = 'auth-message';
   }
@@ -10321,6 +10327,12 @@
 
     if (!email || !password) {
       msg.textContent = 'Enter email and password';
+      msg.className = 'auth-message error';
+      return;
+    }
+
+    if (authMode === 'signup' && password !== $('authConfirmPassword').value) {
+      msg.textContent = 'Passwords do not match';
       msg.className = 'auth-message error';
       return;
     }
@@ -10379,6 +10391,7 @@
 
     $('authEmail').value = '';
     $('authPassword').value = '';
+    $('authConfirmPassword').value = '';
     $('authMessage').textContent = '';
     $('authMessage').className = 'auth-message';
 
