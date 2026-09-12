@@ -5880,7 +5880,7 @@
   function initTheme() {
     let saved = null;
     try { saved = localStorage.getItem('lifeos_theme'); } catch {}
-    applyTheme(saved === 'light' || saved === 'matrix' ? saved : 'dark');
+    applyTheme(saved === 'dark' || saved === 'matrix' ? saved : 'light');
   }
 
   /* ============ Language (BG/EN) ============ */
