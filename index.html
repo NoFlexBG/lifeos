@@ -2872,6 +2872,7 @@
   }
 
   .chat-leave-group-btn { margin-left: auto; color: var(--danger); }
+  .chat-delete-btn { color: var(--danger); }
 
   .group-member-picker {
     display: flex;
@@ -4466,6 +4467,7 @@
             <button class="nav-btn" id="chatBackBtn" aria-label="Назад" data-i18n-aria>‹</button>
             <div class="chat-friend-avatar chat-friend-avatar-sm has-presence" id="chatConversationAvatar"></div>
             <span class="chat-conversation-name" id="chatConversationName"></span>
+            <button class="icon-btn chat-delete-btn" id="deleteChatBtn" title="Изтрий чата" data-i18n-title>🗑</button>
             <button class="icon-btn chat-leave-group-btn hidden" id="leaveGroupBtn" title="Напусни групата" data-i18n-title>×</button>
           </div>
           <div class="chat-messages" id="chatMessages"></div>
@@ -5395,6 +5397,8 @@
     'Грешка при създаване на групата': 'Error creating the group', 'Грешка при добавяне на членове': 'Error adding members',
     'Групата е създадена': 'Group created', 'Напусни групата': 'Leave group', 'Напусна групата': 'You left the group',
     'Ново съобщение в група': 'New group message',
+    'Изтрий чата': 'Delete chat', 'Сигурни ли сте, че искате да изтриете съобщенията от този чат?': 'Are you sure you want to delete the messages in this chat?',
+    'Грешка при изтриване': 'Error deleting', 'Чатът е изтрит': 'Chat deleted',
     'Вече сте свързани': 'You are already connected',
     'Грешка при изпращане на заявката': 'Error sending the request',
     'Заявката е изпратена': 'Request sent',
@@ -5606,6 +5610,8 @@
     'Грешка при създаване на групата': 'Fehler beim Erstellen der Gruppe', 'Грешка при добавяне на членове': 'Fehler beim Hinzufügen von Mitgliedern',
     'Групата е създадена': 'Gruppe erstellt', 'Напусни групата': 'Gruppe verlassen', 'Напусна групата': 'Du hast die Gruppe verlassen',
     'Ново съобщение в група': 'Neue Gruppennachricht',
+    'Изтрий чата': 'Chat löschen', 'Сигурни ли сте, че искате да изтриете съобщенията от този чат?': 'Möchtest du die Nachrichten in diesem Chat wirklich löschen?',
+    'Грешка при изтриване': 'Fehler beim Löschen', 'Чатът е изтрит': 'Chat gelöscht',
     'Вече сте свързани': 'Ihr seid bereits verbunden',
     'Грешка при изпращане на заявката': 'Fehler beim Senden der Anfrage',
     'Заявката е изпратена': 'Anfrage gesendet',
@@ -5817,6 +5823,8 @@
     'Грешка при създаване на групата': 'Grup oluşturulurken hata oluştu', 'Грешка при добавяне на членове': 'Üye eklenirken hata oluştu',
     'Групата е създадена': 'Grup oluşturuldu', 'Напусни групата': 'Gruptan çık', 'Напусна групата': 'Gruptan ayrıldın',
     'Ново съобщение в група': 'Yeni grup mesajı',
+    'Изтрий чата': 'Sohbeti sil', 'Сигурни ли сте, че искате да изтриете съобщенията от този чат?': 'Bu sohbetteki mesajları silmek istediğinden emin misin?',
+    'Грешка при изтриване': 'Silme hatası', 'Чатът е изтрит': 'Sohbet silindi',
     'Вече сте свързани': 'Zaten bağlısınız',
     'Грешка при изпращане на заявката': 'İstek gönderilirken hata oluştu',
     'Заявката е изпратена': 'İstek gönderildi',
@@ -7699,6 +7707,30 @@
   let typingChannel = null;
   let typingBroadcastTimer = null;
   let friendTypingTimeout = null;
+  let chatPresenceHeartbeatTimer = null;
+
+  async function setActiveChatPresence(targetType, targetId) {
+    if (!currentUser) return;
+    try {
+      await sb.from('chat_presence').upsert({
+        user_id: currentUser.id,
+        target_type: targetType,
+        target_id: targetId,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'user_id' });
+    } catch {}
+  }
+
+  function startChatPresenceHeartbeat(targetType, targetId) {
+    stopChatPresenceHeartbeat();
+    setActiveChatPresence(targetType, targetId);
+    chatPresenceHeartbeatTimer = setInterval(() => setActiveChatPresence(targetType, targetId), 15000);
+  }
+
+  function stopChatPresenceHeartbeat() {
+    clearInterval(chatPresenceHeartbeatTimer);
+    chatPresenceHeartbeatTimer = null;
+  }
 
   function chatPairChannelName(a, b) {
     return 'chat-typing-' + [a, b].sort().join('-');
@@ -7985,6 +8017,7 @@
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
     wireTypingChannel(friendId);
+    startChatPresenceHeartbeat('dm', friendId);
     await loadChatMessages();
     await sb.from('messages').update({ read_at: new Date().toISOString() })
       .eq('receiver_id', currentUser.id).eq('sender_id', friendId).is('read_at', null);
@@ -8004,6 +8037,7 @@
     $('chatListPanel').classList.add('hidden');
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
+    startChatPresenceHeartbeat('group', groupId);
     await loadGroupMessages();
   }
 
@@ -8014,6 +8048,8 @@
     $('chatConversationPanel').classList.add('hidden');
     $('chatListPanel').classList.remove('hidden');
     if (wasOneToOne) teardownTypingChannel();
+    stopChatPresenceHeartbeat();
+    setActiveChatPresence(null, null);
     popNav();
   }
 
@@ -8131,6 +8167,24 @@
     showToast(tr('Напусна групата'));
     closeChatConversation();
     await loadChatGroups();
+  }
+
+  async function deleteChatHistory() {
+    if (!activeChatFriendId && !activeChatGroupId) return;
+    if (!confirm(tr('Сигурни ли сте, че искате да изтриете съобщенията от този чат?'))) return;
+
+    if (activeChatGroupId) {
+      const { error } = await sb.from('group_messages').delete().eq('group_id', activeChatGroupId);
+      if (error) { showToast(tr('Грешка при изтриване')); return; }
+      groupMessagesCache = [];
+    } else {
+      const { error } = await sb.from('messages').delete()
+        .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${activeChatFriendId}),and(sender_id.eq.${activeChatFriendId},receiver_id.eq.${currentUser.id})`);
+      if (error) { showToast(tr('Грешка при изтриване')); return; }
+      chatMessagesCache = [];
+    }
+    renderChatMessages();
+    showToast(tr('Чатът е изтрит'));
   }
 
   async function loadGroupMessages() {
@@ -10378,6 +10432,8 @@
     if (chatRealtimeChannel) { sb.removeChannel(chatRealtimeChannel); chatRealtimeChannel = null; }
     if (onlinePresenceChannel) { sb.removeChannel(onlinePresenceChannel); onlinePresenceChannel = null; }
     teardownTypingChannel();
+    stopChatPresenceHeartbeat();
+    setActiveChatPresence(null, null);
     onlineUserIds = new Set();
     currentUser = null;
     state = createDefaultState();
@@ -10418,6 +10474,18 @@
     $('groupCreateCancelBtn').addEventListener('click', closeCreateGroupModal);
     $('groupCreateSaveBtn').addEventListener('click', createGroupFromModal);
     $('leaveGroupBtn').addEventListener('click', leaveGroup);
+    $('deleteChatBtn').addEventListener('click', deleteChatHistory);
+    document.addEventListener('visibilitychange', () => {
+      if (!currentUser) return;
+      if (document.hidden) {
+        stopChatPresenceHeartbeat();
+        setActiveChatPresence(null, null);
+      } else if (activeChatFriendId) {
+        startChatPresenceHeartbeat('dm', activeChatFriendId);
+      } else if (activeChatGroupId) {
+        startChatPresenceHeartbeat('group', activeChatGroupId);
+      }
+    });
     $('chatBackBtn').addEventListener('click', closeChatConversation);
     $('chatSendBtn').addEventListener('click', sendChatMessage);
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
