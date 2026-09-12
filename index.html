@@ -10351,6 +10351,12 @@
     } else {
       const { data, error } = await sb.auth.signUp({ email, password });
       if (error) { btn.disabled = false; msg.textContent = error.message; msg.className = 'auth-message error'; return; }
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        btn.disabled = false;
+        msg.textContent = 'This email is already registered — please log in instead.';
+        msg.className = 'auth-message error';
+        return;
+      }
       if (data.session) {
         currentUser = data.user;
         msg.textContent = 'Loading...';
