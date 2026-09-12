@@ -124,6 +124,37 @@
     --font-sans: var(--font-mono);
   }
 
+  :root[data-theme="pink"] {
+    --bg: #fdf0f5;
+    --surface: #fff6fa;
+    --surface-2: #fbe4ee;
+    --line: rgba(214, 51, 108, 0.14);
+    --line-strong: rgba(214, 51, 108, 0.3);
+    --text: #4a1942;
+    --text-dim: #8a5570;
+    --text-faint: #c98aa8;
+    --violet: #d6336c;
+    --violet-rgb: 214, 51, 108;
+    --violet-dim: rgba(214, 51, 108, 0.12);
+    --pink: #9b5de5;
+    --pink-dim: rgba(155, 93, 229, 0.12);
+    --cyan: #12b3a8;
+    --cyan-dim: rgba(18, 179, 168, 0.12);
+    --amber: #d9a441;
+    --amber-rgb: 217, 164, 65;
+    --amber-dim: rgba(217, 164, 65, 0.14);
+    --danger: #dc2626;
+    --danger-dim: rgba(220, 38, 38, 0.12);
+    --panel-bg-top: rgba(255, 255, 255, 0.6);
+    --panel-bg-bottom: rgba(251, 228, 238, 0.5);
+    --gauge-bg: rgba(255, 255, 255, 0.45);
+    --menu-bg-top: rgba(255, 250, 253, 0.98);
+    --menu-bg-bottom: rgba(251, 228, 238, 0.98);
+    --day-empty-border: rgba(74, 25, 66, 0.08);
+    --day-empty-bg: rgba(74, 25, 66, 0.02);
+    --glow-opacity: 0.1;
+  }
+
   * { box-sizing: border-box; }
 
   html, body {
@@ -4517,7 +4548,8 @@
     <span class="corner bl"></span><span class="corner br"></span>
     <p class="matrix-modal-text" data-i18n>Искаш ли да видиш нещо яко?</p>
     <div class="matrix-modal-actions">
-      <button class="chip" id="matrixYesBtn" data-i18n>ДА</button>
+      <button class="chip" id="matrixYesBtn" data-i18n>МАТРИЦА</button>
+      <button class="chip" id="pinkThemeBtn" data-i18n>РОЗОВА</button>
       <button class="chip" id="matrixNoBtn" data-i18n>НЕ</button>
     </div>
   </div>
@@ -5018,7 +5050,7 @@
 
     'Затвори': 'Close', '⭳ Изтегли': '⭳ Download',
     'Предишна снимка': 'Previous photo', 'Следваща снимка': 'Next photo',
-    'Искаш ли да видиш нещо яко?': 'Want to see something cool?', 'ДА': 'YES', 'НЕ': 'NO',
+    'Искаш ли да видиш нещо яко?': 'Want to see something cool?', 'ДА': 'YES', 'НЕ': 'NO', 'МАТРИЦА': 'MATRIX', 'РОЗОВА': 'PINK',
 
     'Име': 'Name', 'Име на продукт': 'Product name', 'Категория': 'Category',
     'Ккал': 'Kcal', 'Б (г)': 'P (g)', 'В (г)': 'C (g)', 'М (г)': 'F (g)', 'стойностите са за': 'values are for',
@@ -5222,7 +5254,7 @@
 
     'Затвори': 'Schließen', '⭳ Изтегли': '⭳ Herunterladen',
     'Предишна снимка': 'Vorheriges Foto', 'Следваща снимка': 'Nächstes Foto',
-    'Искаш ли да видиш нещо яко?': 'Willst du etwas Cooles sehen?', 'ДА': 'JA', 'НЕ': 'NEIN',
+    'Искаш ли да видиш нещо яко?': 'Willst du etwas Cooles sehen?', 'ДА': 'JA', 'НЕ': 'NEIN', 'МАТРИЦА': 'MATRIX', 'РОЗОВА': 'ROSA',
 
     'Име': 'Name', 'Име на продукт': 'Produktname', 'Категория': 'Kategorie',
     'Ккал': 'Kcal', 'Б (г)': 'P (g)', 'В (г)': 'K (g)', 'М (г)': 'F (g)', 'стойностите са за': 'Werte gelten für',
@@ -5426,7 +5458,7 @@
 
     'Затвори': 'Kapat', '⭳ Изтегли': '⭳ İndir',
     'Предишна снимка': 'Önceki fotoğraf', 'Следваща снимка': 'Sonraki fotoğraf',
-    'Искаш ли да видиш нещо яко?': 'Havalı bir şey görmek ister misin?', 'ДА': 'EVET', 'НЕ': 'HAYIR',
+    'Искаш ли да видиш нещо яко?': 'Havalı bir şey görmek ister misin?', 'ДА': 'EVET', 'НЕ': 'HAYIR', 'МАТРИЦА': 'MATRİKS', 'РОЗОВА': 'PEMBE',
 
     'Име': 'İsim', 'Име на продукт': 'Ürün adı', 'Категория': 'Kategori',
     'Ккал': 'Kkal', 'Б (г)': 'P (g)', 'В (г)': 'K (g)', 'М (г)': 'Y (g)', 'стойностите са за': 'değerler şunun için',
@@ -5862,7 +5894,7 @@
   /* ============ Settings & theme ============ */
 
   function applyTheme(theme) {
-    if (theme === 'light' || theme === 'matrix') {
+    if (theme === 'light' || theme === 'matrix' || theme === 'pink') {
       document.documentElement.setAttribute('data-theme', theme);
     } else {
       document.documentElement.removeAttribute('data-theme');
@@ -5880,7 +5912,7 @@
   function initTheme() {
     let saved = null;
     try { saved = localStorage.getItem('lifeos_theme'); } catch {}
-    applyTheme(saved === 'dark' || saved === 'matrix' ? saved : 'light');
+    applyTheme(saved === 'dark' || saved === 'matrix' || saved === 'pink' ? saved : 'light');
   }
 
   /* ============ Language (BG/EN) ============ */
@@ -9868,6 +9900,7 @@
     $('settingsToggleBtn').addEventListener('click', toggleSettingsCollapse);
     $('themeLabel').addEventListener('click', (e) => { e.stopPropagation(); openMatrixModal(); });
     $('matrixYesBtn').addEventListener('click', () => { applyTheme('matrix'); closeMatrixModal(); });
+    $('pinkThemeBtn').addEventListener('click', () => { applyTheme('pink'); closeMatrixModal(); });
     $('matrixNoBtn').addEventListener('click', closeMatrixModal);
 
     $('settingsTourBtn').addEventListener('click', startTour);
