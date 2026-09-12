@@ -2682,8 +2682,8 @@
   /* ============ Chat ============ */
 
   .chat-requests {
-    display: flex;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 8px;
     margin-top: 16px;
   }
@@ -2703,9 +2703,14 @@
     font-family: var(--font-mono);
     font-size: 12.5px;
     color: var(--text);
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
-  .chat-request-actions { display: flex; gap: 8px; }
+  .chat-request-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
   .chat-sent-requests .chat-request-card { border-color: var(--line); }
   .chat-sent-requests .chat-request-name { color: var(--text-dim); }
