@@ -6052,6 +6052,7 @@
     const fullName = [first, last].filter(Boolean).join(' ');
     if (fullName) state.profile.name = fullName;
     state.vitals.calc.sex = $('onboardGender').value === 'female' ? 'female' : 'male';
+    if (state.vitals.calc.sex === 'female') applyTheme('pink');
     const age = parseInt($('onboardAge').value, 10);
     if (!isNaN(age) && age > 0) state.vitals.calc.age = age;
     saveState();
