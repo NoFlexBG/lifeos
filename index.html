@@ -9501,12 +9501,16 @@
       getSignedPhotoUrl(photo.path).then(({ data, error }) => {
         item.classList.remove('loading');
         item.textContent = '';
-        if (error || !data) return;
+        if (error || !data) {
+          if (index === 0) alert('PHOTO DEBUG\npath: ' + photo.path + '\n' + JSON.stringify(error, null, 1));
+          return;
+        }
 
         const img = document.createElement('img');
         img.src = data.signedUrl;
         img.loading = 'lazy';
         img.addEventListener('click', () => openPhotoLightbox(data.signedUrl, photo.path, index));
+        img.addEventListener('error', () => { if (index === 0) alert('IMG LOAD ERROR\nsrc: ' + img.src); });
         item.appendChild(img);
 
         const delBtn = document.createElement('button');
