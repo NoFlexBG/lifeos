@@ -5558,24 +5558,28 @@
   let saveTimer = null;
   let currentLang = 'en';
 
-  let state = {
-    workdays: { dailyRate: 100, workDays: {} },
-    vitals: {
-      goals: { calories: 2200, water: 2000, steps: 10000, weight: 75, protein: 150, carbs: 250, fat: 70 },
-      days: {},
-      calc: { sex: 'male', age: 30, height: 175, weight: 75, activity: 1.55 },
-      products: []
-    },
-    garage: {
-      vehicles: [{ id: 'v1', name: 'Моята кола', plate: '' }],
-      activeVehicleId: 'v1',
-      records: { v1: { repairs: [], fuel: [], documents: [], fines: [], photos: [] } }
-    },
-    savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
-    company: { advances: [], expenses: [] },
-    profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true },
-    notes: { entries: [] }
-  };
+  function createDefaultState() {
+    return {
+      workdays: { dailyRate: 100, workDays: {} },
+      vitals: {
+        goals: { calories: 2200, water: 2000, steps: 10000, weight: 75, protein: 150, carbs: 250, fat: 70 },
+        days: {},
+        calc: { sex: 'male', age: 30, height: 175, weight: 75, activity: 1.55 },
+        products: []
+      },
+      garage: {
+        vehicles: [{ id: 'v1', name: 'Моята кола', plate: '' }],
+        activeVehicleId: 'v1',
+        records: { v1: { repairs: [], fuel: [], documents: [], fines: [], photos: [] } }
+      },
+      savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
+      company: { advances: [], expenses: [] },
+      profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true },
+      notes: { entries: [] }
+    };
+  }
+
+  let state = createDefaultState();
 
   let viewDate = new Date();
   viewDate.setDate(1);
@@ -5598,7 +5602,7 @@
   }
 
   async function loadState() {
-    const defaults = JSON.parse(JSON.stringify(state));
+    const defaults = createDefaultState();
     try {
       const { data, error } = await sb
         .from('app_state')
@@ -9772,6 +9776,14 @@
     sb.auth.signOut({ scope: 'local' });
     if (chatRealtimeChannel) { sb.removeChannel(chatRealtimeChannel); chatRealtimeChannel = null; }
     currentUser = null;
+    state = createDefaultState();
+    chatFriendRequests = [];
+    chatSentRequests = [];
+    chatFriends = [];
+    chatProfilesById = {};
+    activeChatFriendId = '';
+    chatMessagesCache = [];
+    Object.keys(signedUrlCache).forEach((k) => delete signedUrlCache[k]);
     closeProfileModal();
     updateChatFabVisibility();
 
