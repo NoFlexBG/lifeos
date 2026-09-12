@@ -7378,6 +7378,23 @@
     renderHubIfVisible();
   }
 
+  let savedNoteRange = null;
+
+  function saveNoteSelection() {
+    const editor = $('noteBodyInput');
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0 && editor.contains(sel.getRangeAt(0).commonAncestorContainer)) {
+      savedNoteRange = sel.getRangeAt(0).cloneRange();
+    }
+  }
+
+  function restoreNoteSelection() {
+    if (!savedNoteRange) return;
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedNoteRange);
+  }
+
   function applyNoteCommand(cmd) {
     $('noteBodyInput').focus();
     document.execCommand(cmd, false, null);
@@ -7391,6 +7408,7 @@
 
     const editor = $('noteBodyInput');
     editor.focus();
+    restoreNoteSelection();
     document.execCommand('fontSize', false, '7');
     editor.querySelectorAll('font[size="7"]').forEach((el) => {
       el.removeAttribute('size');
@@ -7401,11 +7419,13 @@
   function onNoteFontFamilyChange() {
     const val = $('noteFontFamilySelect').value;
     $('noteBodyInput').focus();
+    restoreNoteSelection();
     if (val) document.execCommand('fontName', false, val);
   }
 
   function onNoteColorChange() {
     $('noteBodyInput').focus();
+    restoreNoteSelection();
     document.execCommand('foreColor', false, $('noteColorInput').value);
   }
 
@@ -10009,8 +10029,11 @@
     document.querySelectorAll('.note-tool-btn[data-cmd]').forEach((btn) => {
       btn.addEventListener('click', () => applyNoteCommand(btn.dataset.cmd));
     });
+    $('noteFontSizeInput').addEventListener('mousedown', saveNoteSelection);
     $('noteFontSizeInput').addEventListener('change', onNoteFontSizeChange);
+    $('noteFontFamilySelect').addEventListener('mousedown', saveNoteSelection);
     $('noteFontFamilySelect').addEventListener('change', onNoteFontFamilyChange);
+    $('noteColorInput').addEventListener('mousedown', saveNoteSelection);
     $('noteColorInput').addEventListener('input', onNoteColorChange);
     $('noteClearFormatBtn').addEventListener('click', clearNoteFormatting);
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
