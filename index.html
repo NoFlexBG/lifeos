@@ -10366,6 +10366,9 @@
         btn.disabled = false;
         msg.textContent = 'Check your email to confirm your account.';
         msg.className = 'auth-message ok';
+        setTimeout(() => {
+          if (authMode === 'signup') toggleAuthMode();
+        }, 12000);
       }
     }
   }
