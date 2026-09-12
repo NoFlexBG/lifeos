@@ -2721,14 +2721,16 @@
 
   .chat-request-card {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
     background: var(--surface-2);
     border: 1px solid var(--violet);
     border-radius: 8px;
     padding: 10px 14px;
   }
+
+  .chat-request-top { display: flex; align-items: center; gap: 10px; }
 
   .chat-request-name {
     font-family: var(--font-mono);
@@ -2741,7 +2743,7 @@
     white-space: nowrap;
   }
 
-  .chat-request-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .chat-request-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 
   .chat-sent-requests .chat-request-card { border-color: var(--line); }
   .chat-sent-requests .chat-request-name { color: var(--text-dim); }
@@ -7529,12 +7531,15 @@
       const profile = chatProfilesById[r.from_user_id];
       const card = document.createElement('div');
       card.className = 'chat-request-card';
+      const top = document.createElement('div');
+      top.className = 'chat-request-top';
       const avatar = document.createElement('div');
       avatar.className = 'chat-friend-avatar chat-friend-avatar-sm';
       renderChatAvatarInto(avatar, profile);
       const name = document.createElement('span');
       name.className = 'chat-request-name';
       name.textContent = chatFriendDisplayName(profile, r.from_user_id);
+      top.append(avatar, name);
       const actions = document.createElement('div');
       actions.className = 'chat-request-actions';
       const acceptBtn = document.createElement('button');
@@ -7546,7 +7551,7 @@
       declineBtn.textContent = tr('Откажи');
       declineBtn.addEventListener('click', () => respondFriendRequest(r.id, 'declined'));
       actions.append(acceptBtn, declineBtn);
-      card.append(avatar, name, actions);
+      card.append(top, actions);
       reqEl.appendChild(card);
     });
 
@@ -7556,12 +7561,15 @@
       const profile = chatProfilesById[r.to_user_id];
       const card = document.createElement('div');
       card.className = 'chat-request-card';
+      const top = document.createElement('div');
+      top.className = 'chat-request-top';
       const avatar = document.createElement('div');
       avatar.className = 'chat-friend-avatar chat-friend-avatar-sm';
       renderChatAvatarInto(avatar, profile);
       const name = document.createElement('span');
       name.className = 'chat-request-name';
       name.textContent = chatFriendDisplayName(profile, r.to_user_id);
+      top.append(avatar, name);
       const pendingLabel = document.createElement('span');
       pendingLabel.className = 'chat-request-pending-label';
       pendingLabel.textContent = tr('ИЗЧАКВА ОТГОВОР');
@@ -7572,7 +7580,7 @@
       const right = document.createElement('div');
       right.className = 'chat-request-actions';
       right.append(pendingLabel, cancelBtn);
-      card.append(avatar, name, right);
+      card.append(top, right);
       sentEl.appendChild(card);
     });
 
