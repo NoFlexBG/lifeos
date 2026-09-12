@@ -2799,6 +2799,7 @@
   .chat-friend-del:hover { border-color: var(--danger); color: var(--danger); }
 
   .chat-friend-avatar {
+    position: relative;
     width: 34px;
     height: 34px;
     border-radius: 50%;
@@ -2813,7 +2814,22 @@
     flex-shrink: 0;
   }
 
+  .chat-friend-avatar.has-presence::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    bottom: -1px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-faint);
+    border: 2px solid var(--surface-2);
+  }
+
+  .chat-friend-avatar.has-presence.is-online::after { background: #2ecc71; }
+
   .chat-friend-avatar-sm { width: 26px; height: 26px; font-size: 11px; }
+  .chat-friend-avatar-sm.has-presence::after { width: 8px; height: 8px; border-width: 1.5px; }
 
   .chat-friend-name {
     font-family: var(--font-mono);
@@ -4287,7 +4303,7 @@
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chat-conversation-head">
             <button class="nav-btn" id="chatBackBtn" aria-label="Назад" data-i18n-aria>‹</button>
-            <div class="chat-friend-avatar chat-friend-avatar-sm" id="chatConversationAvatar"></div>
+            <div class="chat-friend-avatar chat-friend-avatar-sm has-presence" id="chatConversationAvatar"></div>
             <span class="chat-conversation-name" id="chatConversationName"></span>
           </div>
           <div class="chat-messages" id="chatMessages"></div>
@@ -7443,6 +7459,8 @@
   let activeChatFriendId = '';
   let chatMessagesCache = [];
   let chatRealtimeChannel = null;
+  let onlinePresenceChannel = null;
+  let onlineUserIds = new Set();
 
   async function syncOwnProfile() {
     if (!currentUser) return;
@@ -7612,8 +7630,9 @@
       const card = document.createElement('div');
       card.className = 'chat-friend-card';
       const avatar = document.createElement('div');
-      avatar.className = 'chat-friend-avatar';
+      avatar.className = 'chat-friend-avatar has-presence';
       renderChatAvatarInto(avatar, profile);
+      avatar.classList.toggle('is-online', onlineUserIds.has(otherId));
       const info = document.createElement('div');
       const name = document.createElement('div');
       name.className = 'chat-friend-name';
@@ -7715,6 +7734,7 @@
     activeChatFriendId = friendId;
     $('chatConversationName').textContent = friendName;
     renderChatAvatarInto($('chatConversationAvatar'), chatProfilesById[friendId]);
+    updateChatConversationOnlineStatus();
     $('chatListPanel').classList.add('hidden');
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
@@ -7906,6 +7926,25 @@
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `to_user_id=eq.${currentUser.id}` }, () => loadChatData())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `from_user_id=eq.${currentUser.id}` }, () => loadChatData())
       .subscribe();
+  }
+
+  function wireOnlinePresence() {
+    if (!currentUser || onlinePresenceChannel) return;
+    onlinePresenceChannel = sb.channel('online-users', { config: { presence: { key: currentUser.id } } });
+    onlinePresenceChannel
+      .on('presence', { event: 'sync' }, () => {
+        onlineUserIds = new Set(Object.keys(onlinePresenceChannel.presenceState()));
+        renderChatList();
+        updateChatConversationOnlineStatus();
+      })
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') onlinePresenceChannel.track({ online_at: new Date().toISOString() });
+      });
+  }
+
+  function updateChatConversationOnlineStatus() {
+    if (!activeChatFriendId) return;
+    $('chatConversationAvatar').classList.toggle('is-online', onlineUserIds.has(activeChatFriendId));
   }
 
   /* ============ Push notifications ============ */
@@ -9846,6 +9885,8 @@
   function handleLogout() {
     sb.auth.signOut({ scope: 'local' });
     if (chatRealtimeChannel) { sb.removeChannel(chatRealtimeChannel); chatRealtimeChannel = null; }
+    if (onlinePresenceChannel) { sb.removeChannel(onlinePresenceChannel); onlinePresenceChannel = null; }
+    onlineUserIds = new Set();
     currentUser = null;
     state = createDefaultState();
     chatFriendRequests = [];
@@ -10143,6 +10184,7 @@
 
     syncOwnProfile();
     wireChatRealtime();
+    wireOnlinePresence();
     loadChatData();
     refreshUnreadCount();
     updatePushToggleUI();
