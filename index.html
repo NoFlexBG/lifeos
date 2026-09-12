@@ -1948,6 +1948,20 @@
     font-size: 10px;
   }
 
+  .photo-item.photo-item-missing {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: repeating-linear-gradient(45deg, var(--surface-2), var(--surface-2) 8px, var(--surface) 8px, var(--surface) 16px);
+  }
+
+  .photo-missing-label {
+    color: var(--text-faint);
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+
   .photo-del {
     position: absolute;
     top: 6px;
@@ -5024,7 +5038,7 @@
     'Известията са включени': 'Notifications turned on',
     'Грешка при включване на известията': 'Error turning on notifications',
     'Известията са изключени': 'Notifications turned off',
-    'НАСТРОЙ ПРОФИЛА СИ': 'SET UP YOUR PROFILE', 'ИМЕ': 'FIRST NAME', 'ФАМИЛИЯ': 'LAST NAME',
+    'НАСТРОЙ ПРОФИЛА СИ': 'SET UP YOUR PROFILE', 'ИМЕ': 'FIRST NAME', 'ФАМИЛИЯ': 'LAST NAME', 'Липсва': 'Missing',
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'SAVE AND CONTINUE', 'Пропусни за сега': 'Skip for now',
     '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
 
@@ -5228,7 +5242,7 @@
     'Известията са включени': 'Benachrichtigungen aktiviert',
     'Грешка при включване на известията': 'Fehler beim Aktivieren der Benachrichtigungen',
     'Известията са изключени': 'Benachrichtigungen deaktiviert',
-    'НАСТРОЙ ПРОФИЛА СИ': 'PROFIL EINRICHTEN', 'ИМЕ': 'VORNAME', 'ФАМИЛИЯ': 'NACHNAME',
+    'НАСТРОЙ ПРОФИЛА СИ': 'PROFIL EINRICHTEN', 'ИМЕ': 'VORNAME', 'ФАМИЛИЯ': 'NACHNAME', 'Липсва': 'Fehlt',
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'SPEICHERN UND WEITER', 'Пропусни за сега': 'Vorerst überspringen',
     '⭳ Изтегли резервно копие': '⭳ Backup herunterladen', '⭱ Възстанови от файл': '⭱ Aus Datei wiederherstellen', '⏻ Изход': '⏻ Abmelden',
 
@@ -5432,7 +5446,7 @@
     'Известията са включени': 'Bildirimler açıldı',
     'Грешка при включване на известията': 'Bildirimler açılırken hata oluştu',
     'Известията са изключени': 'Bildirimler kapatıldı',
-    'НАСТРОЙ ПРОФИЛА СИ': 'PROFİLİNİ AYARLA', 'ИМЕ': 'AD', 'ФАМИЛИЯ': 'SOYAD',
+    'НАСТРОЙ ПРОФИЛА СИ': 'PROFİLİNİ AYARLA', 'ИМЕ': 'AD', 'ФАМИЛИЯ': 'SOYAD', 'Липсва': 'Eksik',
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'KAYDET VE DEVAM ET', 'Пропусни за сега': 'Şimdilik atla',
     '⭳ Изтегли резервно копие': '⭳ Yedeği indir', '⭱ Възстанови от файл': '⭱ Dosyadan geri yükle', '⏻ Изход': '⏻ Çıkış yap',
 
@@ -9501,8 +9515,19 @@
       getSignedPhotoUrl(photo.path).then(({ data, error }) => {
         item.classList.remove('loading');
         item.textContent = '';
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'photo-del';
+        delBtn.textContent = '×';
+        delBtn.addEventListener('click', () => deletePhoto(photo.id));
+
         if (error || !data) {
-          if (index === 0) alert('PHOTO DEBUG\npath: ' + photo.path + '\n' + JSON.stringify(error, null, 1));
+          item.classList.add('photo-item-missing');
+          const missing = document.createElement('span');
+          missing.className = 'photo-missing-label';
+          missing.textContent = tr('Липсва');
+          item.appendChild(missing);
+          item.appendChild(delBtn);
           return;
         }
 
@@ -9510,13 +9535,7 @@
         img.src = data.signedUrl;
         img.loading = 'lazy';
         img.addEventListener('click', () => openPhotoLightbox(data.signedUrl, photo.path, index));
-        img.addEventListener('error', () => { if (index === 0) alert('IMG LOAD ERROR\nsrc: ' + img.src); });
         item.appendChild(img);
-
-        const delBtn = document.createElement('button');
-        delBtn.className = 'photo-del';
-        delBtn.textContent = '×';
-        delBtn.addEventListener('click', () => deletePhoto(photo.id));
         item.appendChild(delBtn);
       });
     });
