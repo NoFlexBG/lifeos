@@ -3110,44 +3110,6 @@
   .settings-action:last-child { margin-bottom: 0; }
   .settings-action:hover { border-color: var(--line-strong); }
 
-  .theme-toggle {
-    position: relative;
-    width: 52px;
-    height: 26px;
-    border-radius: 20px;
-    border: 1px solid var(--line-strong);
-    background: var(--surface-2);
-    cursor: pointer;
-    padding: 0;
-    display: flex;
-    align-items: center;
-  }
-
-  .theme-toggle-icon {
-    flex: 1;
-    text-align: center;
-    font-size: 11px;
-    color: var(--text-faint);
-  }
-
-  .theme-toggle-thumb {
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--violet);
-    box-shadow: 0 0 8px var(--violet-dim);
-    transition: transform 0.2s ease, background 0.2s ease;
-  }
-
-  .theme-toggle[aria-checked="true"] .theme-toggle-thumb {
-    transform: translateX(26px);
-    background: var(--amber);
-    box-shadow: 0 0 8px var(--amber-dim);
-  }
-
   .theme-label { cursor: pointer; user-select: none; }
   .theme-label:hover { color: var(--text); }
 
@@ -4548,8 +4510,7 @@
     <span class="corner bl"></span><span class="corner br"></span>
     <p class="matrix-modal-text" data-i18n>Искаш ли да видиш нещо яко?</p>
     <div class="matrix-modal-actions">
-      <button class="chip" id="matrixYesBtn" data-i18n>МАТРИЦА</button>
-      <button class="chip" id="pinkThemeBtn" data-i18n>РОЗОВА</button>
+      <button class="chip" id="matrixYesBtn" data-i18n>ДА</button>
       <button class="chip" id="matrixNoBtn" data-i18n>НЕ</button>
     </div>
   </div>
@@ -4799,11 +4760,11 @@
     <div class="settings-collapse hidden" id="settingsCollapse">
       <div class="settings-row">
         <span id="themeLabel" class="theme-label" data-i18n>ТЕМА</span>
-        <button class="theme-toggle" id="themeToggle" type="button" role="switch" aria-checked="false" title="Смени темата" data-i18n-title>
-          <span class="theme-toggle-icon">☀</span>
-          <span class="theme-toggle-icon">☾</span>
-          <span class="theme-toggle-thumb"></span>
-        </button>
+        <div class="lang-chip-row" id="themeChipRow">
+          <button type="button" class="chip category-chip category-chip-sm" data-theme-opt="light">☀</button>
+          <button type="button" class="chip category-chip category-chip-sm" data-theme-opt="dark">☾</button>
+          <button type="button" class="chip category-chip category-chip-sm" data-theme-opt="pink">✿</button>
+        </div>
       </div>
       <div class="settings-row">
         <span id="langLabel" class="theme-label" data-i18n>ЕЗИК</span>
@@ -5050,7 +5011,7 @@
 
     'Затвори': 'Close', '⭳ Изтегли': '⭳ Download',
     'Предишна снимка': 'Previous photo', 'Следваща снимка': 'Next photo',
-    'Искаш ли да видиш нещо яко?': 'Want to see something cool?', 'ДА': 'YES', 'НЕ': 'NO', 'МАТРИЦА': 'MATRIX', 'РОЗОВА': 'PINK',
+    'Искаш ли да видиш нещо яко?': 'Want to see something cool?', 'ДА': 'YES', 'НЕ': 'NO',
 
     'Име': 'Name', 'Име на продукт': 'Product name', 'Категория': 'Category',
     'Ккал': 'Kcal', 'Б (г)': 'P (g)', 'В (г)': 'C (g)', 'М (г)': 'F (g)', 'стойностите са за': 'values are for',
@@ -5254,7 +5215,7 @@
 
     'Затвори': 'Schließen', '⭳ Изтегли': '⭳ Herunterladen',
     'Предишна снимка': 'Vorheriges Foto', 'Следваща снимка': 'Nächstes Foto',
-    'Искаш ли да видиш нещо яко?': 'Willst du etwas Cooles sehen?', 'ДА': 'JA', 'НЕ': 'NEIN', 'МАТРИЦА': 'MATRIX', 'РОЗОВА': 'ROSA',
+    'Искаш ли да видиш нещо яко?': 'Willst du etwas Cooles sehen?', 'ДА': 'JA', 'НЕ': 'NEIN',
 
     'Име': 'Name', 'Име на продукт': 'Produktname', 'Категория': 'Kategorie',
     'Ккал': 'Kcal', 'Б (г)': 'P (g)', 'В (г)': 'K (g)', 'М (г)': 'F (g)', 'стойностите са за': 'Werte gelten für',
@@ -5458,7 +5419,7 @@
 
     'Затвори': 'Kapat', '⭳ Изтегли': '⭳ İndir',
     'Предишна снимка': 'Önceki fotoğraf', 'Следваща снимка': 'Sonraki fotoğraf',
-    'Искаш ли да видиш нещо яко?': 'Havalı bir şey görmek ister misin?', 'ДА': 'EVET', 'НЕ': 'HAYIR', 'МАТРИЦА': 'MATRİKS', 'РОЗОВА': 'PEMBE',
+    'Искаш ли да видиш нещо яко?': 'Havalı bir şey görmek ister misin?', 'ДА': 'EVET', 'НЕ': 'HAYIR',
 
     'Име': 'İsim', 'Име на продукт': 'Ürün adı', 'Категория': 'Kategori',
     'Ккал': 'Kkal', 'Б (г)': 'P (g)', 'В (г)': 'K (g)', 'М (г)': 'Y (g)', 'стойностите са за': 'değerler şunun için',
@@ -5899,14 +5860,20 @@
     } else {
       document.documentElement.removeAttribute('data-theme');
     }
-    $('themeToggle').setAttribute('aria-checked', theme === 'light' ? 'true' : 'false');
     try { localStorage.setItem('lifeos_theme', theme); } catch {}
     if (theme === 'matrix') startMatrixRain(); else stopMatrixRain();
+    updateThemeChipRow();
   }
 
-  function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
-    applyTheme(current === 'light' ? 'dark' : 'light');
+  function selectTheme(theme) {
+    applyTheme(theme);
+  }
+
+  function updateThemeChipRow() {
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    document.querySelectorAll('#themeChipRow [data-theme-opt]').forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.themeOpt === current);
+    });
   }
 
   function initTheme() {
@@ -9890,9 +9857,10 @@
     $('homeBtn').addEventListener('click', () => goHome());
     $('brandMark').addEventListener('click', onBrandMarkClick);
 
-    $('themeToggle').addEventListener('click', (e) => { e.stopPropagation(); toggleTheme(); });
     $('pushToggle').addEventListener('click', (e) => { e.stopPropagation(); togglePushNotifications(); });
     document.addEventListener('click', (e) => {
+      const themeBtn = e.target.closest('#themeChipRow [data-theme-opt]');
+      if (themeBtn) { e.stopPropagation(); selectTheme(themeBtn.dataset.themeOpt); return; }
       const langBtn = e.target.closest('.lang-chip-row [data-lang]');
       if (langBtn) { e.stopPropagation(); selectLang(langBtn.dataset.lang); return; }
       const curBtn = e.target.closest('.lang-chip-row [data-currency]');
