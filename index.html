@@ -2868,6 +2868,44 @@
     font-size: 13px;
     letter-spacing: 0.5px;
     color: var(--text);
+    flex: 1;
+  }
+
+  .chat-leave-group-btn { margin-left: auto; color: var(--danger); }
+
+  .group-member-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-height: 220px;
+    overflow-y: auto;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px;
+  }
+
+  .group-member-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 4px;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+
+  .group-member-option:hover { background: var(--surface-2); }
+
+  .group-member-option span {
+    font-family: var(--font-mono);
+    font-size: 12.5px;
+    color: var(--text);
+  }
+
+  .group-member-empty {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-faint);
+    padding: 8px 4px;
   }
 
   .chat-messages {
@@ -2909,6 +2947,14 @@
     margin-top: 3px;
     font-size: 9px;
     color: var(--text-faint);
+  }
+
+  .chat-message-sender {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--violet);
+    margin-bottom: 3px;
   }
 
   .chat-message-image {
@@ -4397,6 +4443,16 @@
           <div class="chat-requests chat-sent-requests" id="chatSentRequestsList"></div>
           <div class="chat-friends-grid" id="chatFriendsGrid"></div>
           <div class="chat-empty hidden" id="chatEmptyState" data-i18n>Все още нямаш приятели — добави някой по имейл.</div>
+
+          <div class="settings-divider chat-groups-divider"></div>
+          <div class="chart-head">
+            <span class="gauge-label" data-i18n>ГРУПИ</span>
+            <div class="chart-head-actions">
+              <button class="chip" id="createGroupBtn" data-i18n>+ Нова група</button>
+            </div>
+          </div>
+          <div class="chat-friends-grid" id="chatGroupsGrid"></div>
+          <div class="chat-empty hidden" id="chatGroupsEmptyState" data-i18n>Все още нямаш групи.</div>
         </div>
 
         <div class="console-panel chat-conversation hidden" id="chatConversationPanel">
@@ -4406,6 +4462,7 @@
             <button class="nav-btn" id="chatBackBtn" aria-label="Назад" data-i18n-aria>‹</button>
             <div class="chat-friend-avatar chat-friend-avatar-sm has-presence" id="chatConversationAvatar"></div>
             <span class="chat-conversation-name" id="chatConversationName"></span>
+            <button class="icon-btn chat-leave-group-btn hidden" id="leaveGroupBtn" title="Напусни групата" data-i18n-title>×</button>
           </div>
           <div class="chat-messages" id="chatMessages"></div>
           <div class="chat-input-row">
@@ -4987,6 +5044,30 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="groupCreateModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>НОВА ГРУПА</span>
+
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="groupNameInput" data-i18n>Име на групата</label>
+        <input type="text" id="groupNameInput" class="mini-input" placeholder="напр. Приятели" maxlength="60" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label data-i18n>Членове</label>
+        <div class="group-member-picker" id="groupMemberPicker"></div>
+      </div>
+    </div>
+
+    <div class="matrix-modal-actions">
+      <button class="chip" id="groupCreateCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="groupCreateSaveBtn" data-i18n>Създай</button>
+    </div>
+  </div>
+</div>
+
 <div class="product-edit-modal hidden" id="avatarCropModal">
   <div class="console-panel product-edit-modal-inner avatar-crop-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
@@ -5303,6 +5384,13 @@
     'Приеми': 'Accept', 'Откажи': 'Decline',
     'Не можеш да добавиш себе си': "You can't add yourself",
     'Няма потребител с този имейл': 'No user with this email',
+    'ГРУПИ': 'GROUPS', '+ Нова група': '+ New group', 'Все още нямаш групи.': "You don't have any groups yet.",
+    'НОВА ГРУПА': 'NEW GROUP', 'Име на групата': 'Group name', 'Членове': 'Members', 'Създай': 'Create',
+    'Нямаш приятели за добавяне.': "You don't have any friends to add.", 'членове': 'members',
+    'Въведи име на групата': 'Enter a group name', 'Избери поне един член': 'Select at least one member',
+    'Грешка при създаване на групата': 'Error creating the group', 'Грешка при добавяне на членове': 'Error adding members',
+    'Групата е създадена': 'Group created', 'Напусни групата': 'Leave group', 'Напусна групата': 'You left the group',
+    'Ново съобщение в група': 'New group message',
     'Вече сте свързани': 'You are already connected',
     'Грешка при изпращане на заявката': 'Error sending the request',
     'Заявката е изпратена': 'Request sent',
@@ -5507,6 +5595,13 @@
     'Приеми': 'Annehmen', 'Откажи': 'Ablehnen',
     'Не можеш да добавиш себе си': 'Du kannst dich nicht selbst hinzufügen',
     'Няма потребител с този имейл': 'Kein Nutzer mit dieser E-Mail',
+    'ГРУПИ': 'GRUPPEN', '+ Нова група': '+ Neue Gruppe', 'Все още нямаш групи.': 'Du hast noch keine Gruppen.',
+    'НОВА ГРУПА': 'NEUE GRUPPE', 'Име на групата': 'Gruppenname', 'Членове': 'Mitglieder', 'Създай': 'Erstellen',
+    'Нямаш приятели за добавяне.': 'Du hast keine Freunde zum Hinzufügen.', 'членове': 'Mitglieder',
+    'Въведи име на групата': 'Gib einen Gruppennamen ein', 'Избери поне един член': 'Wähle mindestens ein Mitglied',
+    'Грешка при създаване на групата': 'Fehler beim Erstellen der Gruppe', 'Грешка при добавяне на членове': 'Fehler beim Hinzufügen von Mitgliedern',
+    'Групата е създадена': 'Gruppe erstellt', 'Напусни групата': 'Gruppe verlassen', 'Напусна групата': 'Du hast die Gruppe verlassen',
+    'Ново съобщение в група': 'Neue Gruppennachricht',
     'Вече сте свързани': 'Ihr seid bereits verbunden',
     'Грешка при изпращане на заявката': 'Fehler beim Senden der Anfrage',
     'Заявката е изпратена': 'Anfrage gesendet',
@@ -5711,6 +5806,13 @@
     'Приеми': 'Kabul et', 'Откажи': 'Reddet',
     'Не можеш да добавиш себе си': 'Kendini ekleyemezsin',
     'Няма потребител с този имейл': 'Bu e-postaya sahip kullanıcı yok',
+    'ГРУПИ': 'GRUPLAR', '+ Нова група': '+ Yeni grup', 'Все още нямаш групи.': 'Henüz grubun yok.',
+    'НОВА ГРУПА': 'YENİ GRUP', 'Име на групата': 'Grup adı', 'Членове': 'Üyeler', 'Създай': 'Oluştur',
+    'Нямаш приятели за добавяне.': 'Eklenecek arkadaşın yok.', 'членове': 'üye',
+    'Въведи име на групата': 'Bir grup adı gir', 'Избери поне един член': 'En az bir üye seç',
+    'Грешка при създаване на групата': 'Grup oluşturulurken hata oluştu', 'Грешка при добавяне на членове': 'Üye eklenirken hata oluştu',
+    'Групата е създадена': 'Grup oluşturuldu', 'Напусни групата': 'Gruptan çık', 'Напусна групата': 'Gruptan ayrıldın',
+    'Ново съобщение в група': 'Yeni grup mesajı',
     'Вече сте свързани': 'Zaten bağlısınız',
     'Грешка при изпращане на заявката': 'İstek gönderilirken hata oluştu',
     'Заявката е изпратена': 'İstek gönderildi',
@@ -5981,7 +6083,7 @@
     if (name === 'savings') renderSavingsAll();
     if (name === 'company') { renderCompanyAll(); switchCompanyTab('overview'); }
     if (name === 'notes') renderNotes();
-    if (name === 'chat') { activeChatFriendId = ''; $('chatConversationPanel').classList.add('hidden'); $('chatListPanel').classList.remove('hidden'); loadChatData(); }
+    if (name === 'chat') { activeChatFriendId = ''; activeChatGroupId = ''; $('chatConversationPanel').classList.add('hidden'); $('chatListPanel').classList.remove('hidden'); loadChatData().then(loadChatGroups); }
     if (name === 'admin') renderAdmin();
   }
 
@@ -7583,6 +7685,10 @@
   let chatProfilesById = {};
   let activeChatFriendId = '';
   let chatMessagesCache = [];
+  let activeChatGroupId = '';
+  let chatGroups = [];
+  let groupMembersById = {};
+  let groupMessagesCache = [];
   let chatRealtimeChannel = null;
   let onlinePresenceChannel = null;
   let onlineUserIds = new Set();
@@ -7656,10 +7762,9 @@
     });
     if (otherIds.size) {
       const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path').in('id', [...otherIds]);
-      chatProfilesById = {};
       (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
     } else {
-      chatProfilesById = {};
+      // keep entries added by loadChatGroups() for people who are only group co-members
     }
 
     renderChatList();
@@ -7863,10 +7968,15 @@
   }
 
   async function openChatConversation(friendId, friendName) {
+    activeChatGroupId = '';
     activeChatFriendId = friendId;
     $('chatConversationName').textContent = friendName;
-    renderChatAvatarInto($('chatConversationAvatar'), chatProfilesById[friendId]);
+    const avatarEl = $('chatConversationAvatar');
+    avatarEl.classList.add('has-presence');
+    renderChatAvatarInto(avatarEl, chatProfilesById[friendId]);
     updateChatConversationOnlineStatus();
+    $('chatAttachBtn').closest('.chat-attach-wrap').classList.remove('hidden');
+    $('leaveGroupBtn').classList.add('hidden');
     $('chatListPanel').classList.add('hidden');
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
@@ -7877,12 +7987,157 @@
     refreshUnreadCount();
   }
 
-  function closeChatConversation() {
+  async function openGroupConversation(groupId, groupName) {
     activeChatFriendId = '';
+    activeChatGroupId = groupId;
+    $('chatConversationName').textContent = groupName;
+    const avatarEl = $('chatConversationAvatar');
+    avatarEl.classList.remove('has-presence', 'is-online');
+    avatarEl.style.backgroundImage = '';
+    avatarEl.textContent = (groupName || '?').trim().charAt(0).toUpperCase() || '?';
+    $('chatAttachBtn').closest('.chat-attach-wrap').classList.add('hidden');
+    $('leaveGroupBtn').classList.remove('hidden');
+    $('chatListPanel').classList.add('hidden');
+    $('chatConversationPanel').classList.remove('hidden');
+    pushNav(closeChatConversation);
+    await loadGroupMessages();
+  }
+
+  function closeChatConversation() {
+    const wasOneToOne = !!activeChatFriendId;
+    activeChatFriendId = '';
+    activeChatGroupId = '';
     $('chatConversationPanel').classList.add('hidden');
     $('chatListPanel').classList.remove('hidden');
-    teardownTypingChannel();
+    if (wasOneToOne) teardownTypingChannel();
     popNav();
+  }
+
+  async function loadChatGroups() {
+    if (!currentUser) return;
+    const { data: memberRows } = await sb.from('group_members').select('group_id').eq('user_id', currentUser.id);
+    if (!memberRows || !memberRows.length) {
+      chatGroups = [];
+      groupMembersById = {};
+      renderChatGroupsGrid();
+      return;
+    }
+    const groupIds = memberRows.map((r) => r.group_id);
+    const { data: groups } = await sb.from('groups').select('*').in('id', groupIds);
+    chatGroups = groups || [];
+
+    const { data: allMembers } = await sb.from('group_members').select('group_id, user_id').in('group_id', groupIds);
+    groupMembersById = {};
+    (allMembers || []).forEach((r) => {
+      (groupMembersById[r.group_id] = groupMembersById[r.group_id] || []).push(r.user_id);
+    });
+
+    const memberIds = new Set();
+    (allMembers || []).forEach((r) => { if (r.user_id !== currentUser.id) memberIds.add(r.user_id); });
+    if (memberIds.size) {
+      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path').in('id', [...memberIds]);
+      (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
+    }
+
+    renderChatGroupsGrid();
+  }
+
+  function renderChatGroupsGrid() {
+    const gridEl = $('chatGroupsGrid');
+    gridEl.innerHTML = '';
+    chatGroups.forEach((g) => {
+      const card = document.createElement('div');
+      card.className = 'chat-friend-card';
+      const avatar = document.createElement('div');
+      avatar.className = 'chat-friend-avatar';
+      avatar.textContent = (g.name || '?').trim().charAt(0).toUpperCase() || '?';
+      const info = document.createElement('div');
+      const name = document.createElement('div');
+      name.className = 'chat-friend-name';
+      name.textContent = g.name;
+      const memberCount = document.createElement('div');
+      memberCount.className = 'chat-friend-last';
+      memberCount.textContent = (groupMembersById[g.id] || []).length + ' ' + tr('членове');
+      info.append(name, memberCount);
+      card.append(avatar, info);
+      card.addEventListener('click', () => openGroupConversation(g.id, g.name));
+      gridEl.appendChild(card);
+    });
+    $('chatGroupsEmptyState').classList.toggle('hidden', chatGroups.length > 0);
+  }
+
+  function openCreateGroupModal() {
+    $('groupNameInput').value = '';
+    renderGroupMemberPicker();
+    $('groupCreateModal').classList.remove('hidden');
+    pushNav(closeCreateGroupModal);
+  }
+
+  function closeCreateGroupModal() {
+    $('groupCreateModal').classList.add('hidden');
+    popNav();
+  }
+
+  function renderGroupMemberPicker() {
+    const el = $('groupMemberPicker');
+    el.innerHTML = '';
+    if (!chatFriends.length) {
+      const empty = document.createElement('div');
+      empty.className = 'group-member-empty';
+      empty.textContent = tr('Нямаш приятели за добавяне.');
+      el.appendChild(empty);
+      return;
+    }
+    chatFriends.forEach((r) => {
+      const otherId = chatOtherUserId(r);
+      const profile = chatProfilesById[otherId];
+      const label = document.createElement('label');
+      label.className = 'group-member-option';
+      const checkbox = document.createElement('input');
+      checkbox.type = 'checkbox';
+      checkbox.value = otherId;
+      const span = document.createElement('span');
+      span.textContent = chatFriendDisplayName(profile, otherId);
+      label.append(checkbox, span);
+      el.appendChild(label);
+    });
+  }
+
+  async function createGroupFromModal() {
+    const name = $('groupNameInput').value.trim();
+    if (!name) { showToast(tr('Въведи име на групата')); return; }
+    const selected = Array.from($('groupMemberPicker').querySelectorAll('input[type="checkbox"]:checked')).map((c) => c.value);
+    if (!selected.length) { showToast(tr('Избери поне един член')); return; }
+
+    const { data: group, error } = await sb.from('groups').insert({ name, created_by: currentUser.id }).select().single();
+    if (error || !group) { showToast(tr('Грешка при създаване на групата')); return; }
+
+    const memberRows = [currentUser.id, ...selected].map((uid) => ({ group_id: group.id, user_id: uid }));
+    const { error: memErr } = await sb.from('group_members').insert(memberRows);
+    if (memErr) { showToast(tr('Грешка при добавяне на членове')); return; }
+
+    showToast(tr('Групата е създадена'));
+    closeCreateGroupModal();
+    await loadChatGroups();
+  }
+
+  async function leaveGroup() {
+    if (!activeChatGroupId) return;
+    await sb.from('group_members').delete().eq('group_id', activeChatGroupId).eq('user_id', currentUser.id);
+    showToast(tr('Напусна групата'));
+    closeChatConversation();
+    await loadChatGroups();
+  }
+
+  async function loadGroupMessages() {
+    if (!activeChatGroupId) return;
+    const { data, error } = await sb
+      .from('group_messages')
+      .select('*')
+      .eq('group_id', activeChatGroupId)
+      .order('created_at', { ascending: true });
+    groupMessagesCache = error ? [] : (data || []);
+    renderChatMessages();
   }
 
   function wireTypingChannel(friendId) {
@@ -7947,9 +8202,17 @@
   function renderChatMessages() {
     const el = $('chatMessages');
     el.innerHTML = '';
-    chatMessagesCache.forEach((m) => {
+    const isGroup = !!activeChatGroupId;
+    const source = isGroup ? groupMessagesCache : chatMessagesCache;
+    source.forEach((m) => {
       const bubble = document.createElement('div');
       bubble.className = 'chat-message ' + (m.sender_id === currentUser.id ? 'chat-message-own' : 'chat-message-other');
+      if (isGroup && m.sender_id !== currentUser.id) {
+        const senderLabel = document.createElement('div');
+        senderLabel.className = 'chat-message-sender';
+        senderLabel.textContent = chatFriendDisplayName(chatProfilesById[m.sender_id], m.sender_id);
+        bubble.appendChild(senderLabel);
+      }
       if (m.image_path) {
         const img = document.createElement('img');
         img.className = 'chat-message-image';
@@ -8079,8 +8342,21 @@
   async function sendChatMessage() {
     const input = $('chatMessageInput');
     const body = (input.value || '').trim();
-    if (!body || !activeChatFriendId) return;
+    if (!body || (!activeChatFriendId && !activeChatGroupId)) return;
     input.value = '';
+
+    if (activeChatGroupId) {
+      const { data, error } = await sb.from('group_messages').insert({
+        sender_id: currentUser.id,
+        group_id: activeChatGroupId,
+        body
+      }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      groupMessagesCache.push(data);
+      renderChatMessages();
+      return;
+    }
+
     clearTimeout(typingBroadcastTimer);
     if (typingChannel) typingChannel.send({ type: 'broadcast', event: 'stopped-typing', payload: { from: currentUser.id } });
     const { data, error } = await sb.from('messages').insert({
@@ -8109,6 +8385,16 @@
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `to_user_id=eq.${currentUser.id}` }, () => loadChatData())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `from_user_id=eq.${currentUser.id}` }, () => loadChatData())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'group_messages' }, (payload) => {
+        const m = payload.new;
+        if (!chatGroups.some((g) => g.id === m.group_id)) return;
+        if (activeChatGroupId === m.group_id) {
+          groupMessagesCache.push(m);
+          renderChatMessages();
+        } else if (m.sender_id !== currentUser.id) {
+          showToast(tr('Ново съобщение в група'));
+        }
+      })
       .subscribe();
   }
 
@@ -10080,6 +10366,10 @@
     chatProfilesById = {};
     activeChatFriendId = '';
     chatMessagesCache = [];
+    activeChatGroupId = '';
+    chatGroups = [];
+    groupMembersById = {};
+    groupMessagesCache = [];
     Object.keys(signedUrlCache).forEach((k) => delete signedUrlCache[k]);
     closeProfileModal();
     updateChatFabVisibility();
@@ -10102,6 +10392,10 @@
     $('chatFabBtn').addEventListener('click', () => enterScreen('chat'));
     $('addFriendBtn').addEventListener('click', addFriendByEmail);
     $('addFriendEmailInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFriendByEmail(); });
+    $('createGroupBtn').addEventListener('click', openCreateGroupModal);
+    $('groupCreateCancelBtn').addEventListener('click', closeCreateGroupModal);
+    $('groupCreateSaveBtn').addEventListener('click', createGroupFromModal);
+    $('leaveGroupBtn').addEventListener('click', leaveGroup);
     $('chatBackBtn').addEventListener('click', closeChatConversation);
     $('chatSendBtn').addEventListener('click', sendChatMessage);
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
@@ -10372,7 +10666,7 @@
     syncOwnProfile();
     wireChatRealtime();
     wireOnlinePresence();
-    loadChatData();
+    loadChatData().then(loadChatGroups);
     refreshUnreadCount();
     updatePushToggleUI();
   }
