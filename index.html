@@ -2970,6 +2970,18 @@
     margin-bottom: -2px;
     color: var(--text-dim);
     pointer-events: none;
+    transition: transform 0.4s cubic-bezier(.34, 1.56, .64, 1), opacity 0.25s ease;
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .chat-typing-mascot.mascot-gone {
+    transform: translateY(26px);
+    opacity: 0;
+    transition: transform 0.3s ease-in, opacity 0.3s ease-in;
+  }
+
+  .mascot-inner {
     animation: mascotIdleBob 2.6s ease-in-out infinite;
   }
 
@@ -3003,6 +3015,61 @@
   @keyframes mascotBlink {
     0%, 92%, 100% { transform: scaleY(1); }
     95% { transform: scaleY(0.15); }
+  }
+
+  .mascot-typing-bubble {
+    position: absolute;
+    left: 100%;
+    top: 2px;
+    margin-left: 8px;
+    display: none;
+    align-items: center;
+    gap: 3px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 5px 8px;
+    white-space: nowrap;
+  }
+
+  .mascot-typing-bubble::before {
+    content: '';
+    position: absolute;
+    left: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 4px 5px 4px 0;
+    border-style: solid;
+    border-color: transparent var(--line) transparent transparent;
+  }
+
+  .mascot-typing-bubble::after {
+    content: '';
+    position: absolute;
+    left: -3.5px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-width: 3.5px 4px 3.5px 0;
+    border-style: solid;
+    border-color: transparent var(--surface-2) transparent transparent;
+  }
+
+  .chat-typing-mascot.looking-down .mascot-typing-bubble { display: flex; }
+
+  .mascot-typing-bubble span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--text-faint);
+    animation: typingDotBounce 1.2s ease-in-out infinite;
+  }
+
+  .mascot-typing-bubble span:nth-child(2) { animation-delay: 0.15s; }
+  .mascot-typing-bubble span:nth-child(3) { animation-delay: 0.3s; }
+
+  @keyframes typingDotBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-3px); opacity: 1; }
   }
 
   .chat-input-field-wrap .mini-input {
@@ -4376,15 +4443,20 @@
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
             <input type="file" id="chatCameraInput" accept="image/*" capture="environment" class="hidden" />
             <div class="chat-input-field-wrap">
-              <div class="chat-typing-mascot" id="chatTypingMascot" aria-hidden="true">
-                <svg viewBox="0 0 40 50" width="28" height="35">
-                  <path class="mascot-body" d="M8 48 C8 33 12 27 20 27 C28 27 32 33 32 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                  <g class="mascot-head">
-                    <circle cx="20" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2"></circle>
-                    <g class="mascot-eye-pos mascot-eye-pos-l"><circle class="mascot-eye" cx="15" cy="15" r="1.8" fill="currentColor"></circle></g>
-                    <g class="mascot-eye-pos mascot-eye-pos-r"><circle class="mascot-eye" cx="25" cy="15" r="1.8" fill="currentColor"></circle></g>
-                  </g>
-                </svg>
+              <div class="chat-typing-mascot mascot-gone" id="chatTypingMascot" aria-hidden="true">
+                <div class="mascot-inner">
+                  <svg viewBox="0 0 40 50" width="28" height="35">
+                    <path class="mascot-body" d="M8 48 C8 33 12 27 20 27 C28 27 32 33 32 48" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                    <g class="mascot-head">
+                      <circle cx="20" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                      <g class="mascot-eye-pos mascot-eye-pos-l"><circle class="mascot-eye" cx="15" cy="15" r="1.8" fill="currentColor"></circle></g>
+                      <g class="mascot-eye-pos mascot-eye-pos-r"><circle class="mascot-eye" cx="25" cy="15" r="1.8" fill="currentColor"></circle></g>
+                    </g>
+                  </svg>
+                  <div class="mascot-typing-bubble">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
               </div>
               <input type="text" id="chatMessageInput" class="mini-input" placeholder="Съобщение..." autocomplete="off" data-i18n-ph maxlength="2000" />
               <div class="chat-attach-wrap chat-emoji-wrap">
@@ -7815,8 +7887,19 @@
 
   function wireTypingChannel(friendId) {
     teardownTypingChannel();
-    typingChannel = sb.channel(chatPairChannelName(currentUser.id, friendId));
+    $('chatTypingMascot').classList.add('mascot-gone');
+    typingChannel = sb.channel(chatPairChannelName(currentUser.id, friendId), {
+      config: { presence: { key: currentUser.id } }
+    });
     typingChannel
+      .on('presence', { event: 'sync' }, () => {
+        const friendPresent = Object.keys(typingChannel.presenceState()).includes(friendId);
+        $('chatTypingMascot').classList.toggle('mascot-gone', !friendPresent);
+        if (!friendPresent) {
+          clearTimeout(friendTypingTimeout);
+          $('chatTypingMascot').classList.remove('looking-down');
+        }
+      })
       .on('broadcast', { event: 'typing' }, ({ payload }) => {
         if (payload.from !== friendId) return;
         clearTimeout(friendTypingTimeout);
@@ -7828,7 +7911,9 @@
         clearTimeout(friendTypingTimeout);
         $('chatTypingMascot').classList.remove('looking-down');
       })
-      .subscribe();
+      .subscribe((status) => {
+        if (status === 'SUBSCRIBED') typingChannel.track({ in_chat: true });
+      });
   }
 
   function teardownTypingChannel() {
@@ -7836,6 +7921,7 @@
     clearTimeout(friendTypingTimeout);
     clearTimeout(typingBroadcastTimer);
     $('chatTypingMascot').classList.remove('looking-down');
+    $('chatTypingMascot').classList.add('mascot-gone');
   }
 
   function onChatInputTyping() {
