@@ -821,7 +821,10 @@
           <div class="chat-conversation-head">
             <button class="nav-btn" id="chatBackBtn" aria-label="Назад" data-i18n-aria>‹</button>
             <div class="chat-friend-avatar chat-friend-avatar-sm has-presence" id="chatConversationAvatar"></div>
-            <span class="chat-conversation-name" id="chatConversationName"></span>
+            <div class="chat-conversation-title">
+              <span class="chat-conversation-name" id="chatConversationName"></span>
+              <span class="chat-conversation-status" id="chatConversationStatus"></span>
+            </div>
             <button class="icon-btn chat-delete-btn" id="deleteChatBtn" title="Изтрий чата" data-i18n-title>🗑</button>
             <button class="icon-btn chat-leave-group-btn hidden" id="leaveGroupBtn" title="Напусни групата" data-i18n-title>×</button>
           </div>
@@ -1668,6 +1671,7 @@
     '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
     'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
     'Обща цена €': 'Total price €',
+    'На линия': 'Online', 'последно видян': 'last seen', 'преди малко': 'just now', 'мин.': 'min', 'ч.': 'h', 'д.': 'd',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -1884,6 +1888,7 @@
     '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
     'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
     'Обща цена €': 'Gesamtpreis €',
+    'На линия': 'Online', 'последно видян': 'zuletzt online', 'преди малко': 'gerade eben', 'мин.': 'Min', 'ч.': 'Std', 'д.': 'Tg',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2100,6 +2105,7 @@
     '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
     'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
     'Обща цена €': 'Toplam fiyat €',
+    'На линия': 'Çevrimiçi', 'последно видян': 'son görülme', 'преди малко': 'az önce', 'мин.': 'dk', 'ч.': 'sa', 'д.': 'g',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -4258,7 +4264,7 @@
       otherIds.add(r.from_user_id === currentUser.id ? r.to_user_id : r.from_user_id);
     });
     if (otherIds.size) {
-      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path').in('id', [...otherIds]);
+      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path, last_seen_at').in('id', [...otherIds]);
       (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
     } else {
       // keep entries added by loadChatGroups() for people who are only group co-members
@@ -4489,6 +4495,7 @@
     activeChatFriendId = '';
     activeChatGroupId = groupId;
     $('chatConversationName').textContent = groupName;
+    $('chatConversationStatus').textContent = '';
     const avatarEl = $('chatConversationAvatar');
     avatarEl.classList.remove('has-presence', 'is-online');
     avatarEl.style.backgroundImage = '';
@@ -4536,7 +4543,7 @@
     const memberIds = new Set();
     (allMembers || []).forEach((r) => { if (r.user_id !== currentUser.id) memberIds.add(r.user_id); });
     if (memberIds.size) {
-      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path').in('id', [...memberIds]);
+      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path, last_seen_at').in('id', [...memberIds]);
       (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
     }
 
@@ -4940,13 +4947,56 @@
         updateChatConversationOnlineStatus();
       })
       .subscribe((status) => {
-        if (status === 'SUBSCRIBED') onlinePresenceChannel.track({ online_at: new Date().toISOString() });
+        if (status === 'SUBSCRIBED') {
+          onlinePresenceChannel.track({ online_at: new Date().toISOString() });
+          startLastSeenHeartbeat();
+        }
       });
+  }
+
+  let lastSeenHeartbeatTimer = null;
+
+  function updateLastSeen() {
+    if (!currentUser) return;
+    sb.from('profiles').update({ last_seen_at: new Date().toISOString() }).eq('id', currentUser.id).then(() => {});
+  }
+
+  function startLastSeenHeartbeat() {
+    updateLastSeen();
+    stopLastSeenHeartbeat();
+    lastSeenHeartbeatTimer = setInterval(updateLastSeen, 45000);
+  }
+
+  function stopLastSeenHeartbeat() {
+    clearInterval(lastSeenHeartbeatTimer);
+    lastSeenHeartbeatTimer = null;
+  }
+
+  function formatLastSeen(iso) {
+    if (!iso) return '';
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const mins = Math.floor(diffMs / 60000);
+    if (mins < 1) return tr('преди малко');
+    if (mins < 60) return `${tr('последно видян')} ${mins} ${tr('мин.')}`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${tr('последно видян')} ${hours} ${tr('ч.')}`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${tr('последно видян')} ${days} ${tr('д.')}`;
+    const d = new Date(iso);
+    return `${tr('последно видян')} ${formatDateDisplay(dateKey(d.getFullYear(), d.getMonth(), d.getDate()))}`;
   }
 
   function updateChatConversationOnlineStatus() {
     if (!activeChatFriendId) return;
-    $('chatConversationAvatar').classList.toggle('is-online', onlineUserIds.has(activeChatFriendId));
+    const isOnline = onlineUserIds.has(activeChatFriendId);
+    $('chatConversationAvatar').classList.toggle('is-online', isOnline);
+    const statusEl = $('chatConversationStatus');
+    if (isOnline) {
+      statusEl.textContent = tr('На линия');
+    } else {
+      const profile = chatProfilesById[activeChatFriendId];
+      statusEl.textContent = profile && profile.last_seen_at ? formatLastSeen(profile.last_seen_at) : '';
+    }
   }
 
   /* ============ Push notifications ============ */
@@ -6967,6 +7017,8 @@
     teardownTypingChannel();
     stopChatPresenceHeartbeat();
     setActiveChatPresence(null, null);
+    updateLastSeen();
+    stopLastSeenHeartbeat();
     onlineUserIds = new Set();
     currentUser = null;
     state = createDefaultState();
@@ -7013,6 +7065,7 @@
       if (document.hidden) {
         stopChatPresenceHeartbeat();
         setActiveChatPresence(null, null);
+        updateLastSeen();
       } else if (activeChatFriendId) {
         startChatPresenceHeartbeat('dm', activeChatFriendId);
       } else if (activeChatGroupId) {
