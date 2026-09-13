@@ -2106,18 +2106,6 @@
 
   .photo-lightbox-actions { display: flex; gap: 10px; }
 
-  .record-form {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-top: 12px;
-  }
-
-  .record-form .mini-input { width: 108px; }
-  .record-form .mini-input.narrow { width: 76px; }
-  .record-form .mini-input.wide { width: 170px; }
-
   .product-ref-field {
     display: flex;
     align-items: center;
@@ -4599,13 +4587,9 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label" data-i18n>РЕМОНТИ</span></div>
-            <div class="record-form">
-              <input type="date" id="repairDate" class="mini-input" />
-              <input type="text" id="repairDesc" class="mini-input wide" placeholder="Описание" data-i18n-ph />
-              <input type="number" id="repairKm" class="mini-input narrow" placeholder="Km" min="0" />
-              <input type="number" id="repairCost" class="mini-input narrow" placeholder="Цена €" min="0" data-i18n-ph />
-              <button class="chip" id="repairAddBtn" data-i18n>Добави</button>
+            <div class="chart-head">
+              <span class="gauge-label" data-i18n>РЕМОНТИ</span>
+              <button class="chip" id="repairOpenModalBtn" data-i18n>+ Добави</button>
             </div>
             <div class="record-list" id="repairsList"></div>
           </div>
@@ -4618,13 +4602,7 @@
             <div class="chart-head">
               <span class="gauge-label" data-i18n>ГОРИВО</span>
               <span class="weight-chart-stats" id="fuelStats"></span>
-            </div>
-            <div class="record-form">
-              <input type="date" id="fuelDate" class="mini-input" />
-              <input type="number" id="fuelLiters" class="mini-input narrow" placeholder="Литри" min="0" step="0.01" data-i18n-ph />
-              <input type="number" id="fuelCost" class="mini-input narrow" placeholder="Цена €" min="0" data-i18n-ph />
-              <input type="number" id="fuelKm" class="mini-input narrow" placeholder="Km" min="0" />
-              <button class="chip" id="fuelAddBtn" data-i18n>Добави</button>
+              <button class="chip" id="fuelOpenModalBtn" data-i18n>+ Добави</button>
             </div>
             <div class="record-list" id="fuelList"></div>
           </div>
@@ -4634,17 +4612,9 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label" data-i18n>ДОКУМЕНТИ</span></div>
-            <div class="record-form">
-              <select id="docType" class="mini-input wide">
-                <option data-i18n>Гражданска отговорност</option>
-                <option data-i18n>Автокаско</option>
-                <option data-i18n>Технически преглед</option>
-                <option data-i18n>Винетка</option>
-                <option data-i18n>Друго</option>
-              </select>
-              <input type="date" id="docExpiry" class="mini-input" />
-              <button class="chip" id="docAddBtn" data-i18n>Добави</button>
+            <div class="chart-head">
+              <span class="gauge-label" data-i18n>ДОКУМЕНТИ</span>
+              <button class="chip" id="docOpenModalBtn" data-i18n>+ Добави</button>
             </div>
             <div class="record-list" id="documentsList"></div>
           </div>
@@ -4654,12 +4624,9 @@
           <div class="console-panel chart-panel">
             <span class="corner tl"></span><span class="corner tr"></span>
             <span class="corner bl"></span><span class="corner br"></span>
-            <div class="chart-head"><span class="gauge-label" data-i18n>ФИШОВЕ</span></div>
-            <div class="record-form">
-              <input type="date" id="fineDate" class="mini-input" />
-              <input type="text" id="fineDesc" class="mini-input wide" placeholder="Описание" data-i18n-ph />
-              <input type="number" id="fineAmount" class="mini-input narrow" placeholder="Сума €" min="0" data-i18n-ph />
-              <button class="chip" id="fineAddBtn" data-i18n>Добави</button>
+            <div class="chart-head">
+              <span class="gauge-label" data-i18n>ФИШОВЕ</span>
+              <button class="chip" id="fineOpenModalBtn" data-i18n>+ Добави</button>
             </div>
             <div class="record-list" id="finesList"></div>
           </div>
@@ -4860,6 +4827,124 @@
     <div class="matrix-modal-actions">
       <button class="chip" id="mealAddCancelBtn" data-i18n>Отказ</button>
       <button class="chip" id="mealAddSaveBtn" data-i18n>Добави</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="repairModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>ДОБАВИ РЕМОНТ</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="repairDate" data-i18n>Дата</label>
+        <input type="date" id="repairDate" class="mini-input" />
+      </div>
+      <div class="product-edit-field">
+        <label for="repairDesc" data-i18n>Описание</label>
+        <input type="text" id="repairDesc" class="mini-input" placeholder="Описание" data-i18n-ph />
+      </div>
+      <div class="product-edit-row">
+        <div class="product-edit-field">
+          <label for="repairKm">Km</label>
+          <input type="number" id="repairKm" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="repairCost" data-i18n>Цена €</label>
+          <input type="number" id="repairCost" class="mini-input" min="0" />
+        </div>
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="repairModalCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="repairModalSaveBtn" data-i18n>Добави</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="fuelModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>ДОБАВИ ГОРИВО</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="fuelDate" data-i18n>Дата</label>
+        <input type="date" id="fuelDate" class="mini-input" />
+      </div>
+      <div class="product-edit-row">
+        <div class="product-edit-field">
+          <label for="fuelLiters" data-i18n>Литри</label>
+          <input type="number" id="fuelLiters" class="mini-input" min="0" step="0.01" />
+        </div>
+        <div class="product-edit-field">
+          <label for="fuelCost" data-i18n>Цена €</label>
+          <input type="number" id="fuelCost" class="mini-input" min="0" />
+        </div>
+        <div class="product-edit-field">
+          <label for="fuelKm">Km</label>
+          <input type="number" id="fuelKm" class="mini-input" min="0" />
+        </div>
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="fuelModalCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="fuelModalSaveBtn" data-i18n>Добави</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="docModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>ДОБАВИ ДОКУМЕНТ</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="docType" data-i18n>Тип</label>
+        <select id="docType" class="mini-input">
+          <option data-i18n>Гражданска отговорност</option>
+          <option data-i18n>Автокаско</option>
+          <option data-i18n>Технически преглед</option>
+          <option data-i18n>Винетка</option>
+          <option data-i18n>Друго</option>
+        </select>
+      </div>
+      <div class="product-edit-field">
+        <label for="docExpiry" data-i18n>Валиден до</label>
+        <input type="date" id="docExpiry" class="mini-input" />
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="docModalCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="docModalSaveBtn" data-i18n>Добави</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="fineModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>ДОБАВИ ФИШ</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="fineDate" data-i18n>Дата</label>
+        <input type="date" id="fineDate" class="mini-input" />
+      </div>
+      <div class="product-edit-field">
+        <label for="fineDesc" data-i18n>Описание</label>
+        <input type="text" id="fineDesc" class="mini-input" placeholder="Описание" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label for="fineAmount" data-i18n>Сума €</label>
+        <input type="number" id="fineAmount" class="mini-input" min="0" />
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="fineModalCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="fineModalSaveBtn" data-i18n>Добави</button>
     </div>
   </div>
 </div>
@@ -5214,6 +5299,8 @@
     'ИЗБЕРИ МОДУЛ': 'SELECT MODULE',
     'Калории, вода, крачки': 'Calories, water, steps', 'ККАЛ ДНЕС': 'KCAL TODAY', 'МЛ ДНЕС': 'ML TODAY', 'КРАЧКИ ДНЕС': 'STEPS TODAY',
     'Ремонти, гориво, документи, фишове': 'Repairs, fuel, documents, tickets', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNPAID TICKETS', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOCUMENTS EXPIRING',
+    '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
+    'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -5427,6 +5514,8 @@
     'ИЗБЕРИ МОДУЛ': 'MODUL WÄHLEN',
     'Калории, вода, крачки': 'Kalorien, Wasser, Schritte', 'ККАЛ ДНЕС': 'KCAL HEUTE', 'МЛ ДНЕС': 'ML HEUTE', 'КРАЧКИ ДНЕС': 'SCHRITTE HEUTE',
     'Ремонти, гориво, документи, фишове': 'Reparaturen, Kraftstoff, Dokumente, Bußgelder', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNBEZAHLTE BUSSGELDER', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOKUMENTE LAUFEN AB',
+    '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
+    'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -5640,6 +5729,8 @@
     'ИЗБЕРИ МОДУЛ': 'MODÜL SEÇ',
     'Калории, вода, крачки': 'Kalori, su, adım', 'ККАЛ ДНЕС': 'BUGÜN KKAL', 'МЛ ДНЕС': 'BUGÜN ML', 'КРАЧКИ ДНЕС': 'BUGÜN ADIM',
     'Ремонти, гориво, документи, фишове': 'Tamirler, yakıt, belgeler, cezalar', 'НЕПЛАТЕНИ ФИШОВЕ': 'ÖDENMEMİŞ CEZALAR', 'ДОКУМЕНТИ ИЗТИЧАТ': 'BELGELER SONA ERİYOR',
+    '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
+    'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -9753,15 +9844,31 @@
     });
   }
 
+  function openRepairModal() {
+    $('repairDate').value = todayKey();
+    $('repairDesc').value = '';
+    $('repairKm').value = '';
+    $('repairCost').value = '';
+    $('repairModal').classList.remove('hidden');
+    $('repairDesc').focus();
+    pushNav(closeRepairModal);
+  }
+
+  function closeRepairModal() {
+    $('repairModal').classList.add('hidden');
+    popNav();
+  }
+
   function addRepair() {
     const date = $('repairDate').value;
     const desc = $('repairDesc').value.trim();
     const km = parseFloat($('repairKm').value) || 0;
     const cost = parseFloat($('repairCost').value) || 0;
-    if (!date || !desc) return;
+    if (!date) { showToast(tr('Избери дата')); return; }
+    if (!desc) { showToast(tr('Въведи описание')); return; }
     getActiveRecords().repairs.push({ id: genId('r'), date, desc, km, cost });
     saveState();
-    ['repairDate','repairDesc','repairKm','repairCost'].forEach((id) => $(id).value = '');
+    closeRepairModal();
     renderRepairs();
     renderGarageOverview();
   }
@@ -9808,15 +9915,31 @@
     $('fuelStats').textContent = `${tr('ОБЩО')} ${formatNumber(totalCost)} ${curSym()} · ${tr('СР. ЦЕНА')} ${avgPrice.toFixed(2)} ${curSym()}/${tr('Л')}`;
   }
 
+  function openFuelModal() {
+    $('fuelDate').value = todayKey();
+    $('fuelLiters').value = '';
+    $('fuelCost').value = '';
+    $('fuelKm').value = '';
+    $('fuelModal').classList.remove('hidden');
+    $('fuelLiters').focus();
+    pushNav(closeFuelModal);
+  }
+
+  function closeFuelModal() {
+    $('fuelModal').classList.add('hidden');
+    popNav();
+  }
+
   function addFuel() {
     const date = $('fuelDate').value;
     const liters = parseFloat($('fuelLiters').value) || 0;
     const cost = parseFloat($('fuelCost').value) || 0;
     const km = parseFloat($('fuelKm').value) || 0;
-    if (!date || (!liters && !cost)) return;
+    if (!date) { showToast(tr('Избери дата')); return; }
+    if (!liters && !cost) { showToast(tr('Въведи литри или цена')); return; }
     getActiveRecords().fuel.push({ id: genId('f'), date, liters, cost, km });
     saveState();
-    ['fuelDate','fuelLiters','fuelCost','fuelKm'].forEach((id) => $(id).value = '');
+    closeFuelModal();
     renderFuel();
     renderGarageOverview();
   }
@@ -9849,13 +9972,25 @@
     });
   }
 
+  function openDocModal() {
+    $('docType').selectedIndex = 0;
+    $('docExpiry').value = todayKey();
+    $('docModal').classList.remove('hidden');
+    pushNav(closeDocModal);
+  }
+
+  function closeDocModal() {
+    $('docModal').classList.add('hidden');
+    popNav();
+  }
+
   function addDocument() {
     const type = $('docType').value;
     const expiry = $('docExpiry').value;
-    if (!expiry) return;
+    if (!expiry) { showToast(tr('Избери дата')); return; }
     getActiveRecords().documents.push({ id: genId('d'), type, expiry });
     saveState();
-    $('docExpiry').value = '';
+    closeDocModal();
     renderDocuments();
     renderGarageOverview();
   }
@@ -9889,14 +10024,29 @@
     });
   }
 
+  function openFineModal() {
+    $('fineDate').value = todayKey();
+    $('fineDesc').value = '';
+    $('fineAmount').value = '';
+    $('fineModal').classList.remove('hidden');
+    $('fineDesc').focus();
+    pushNav(closeFineModal);
+  }
+
+  function closeFineModal() {
+    $('fineModal').classList.add('hidden');
+    popNav();
+  }
+
   function addFine() {
     const date = $('fineDate').value;
     const desc = $('fineDesc').value.trim();
     const amount = parseFloat($('fineAmount').value) || 0;
-    if (!date || !amount) return;
+    if (!date) { showToast(tr('Избери дата')); return; }
+    if (!amount) { showToast(tr('Въведи сума')); return; }
     getActiveRecords().fines.push({ id: genId('x'), date, desc, amount, paid: false });
     saveState();
-    ['fineDate','fineDesc','fineAmount'].forEach((id) => $(id).value = '');
+    closeFineModal();
     renderFines();
     renderGarageOverview();
   }
@@ -10707,12 +10857,30 @@
     $('confirmAddVehicleBtn').addEventListener('click', confirmAddVehicle);
     $('cancelAddVehicleBtn').addEventListener('click', cancelAddVehicle);
 
-    $('repairAddBtn').addEventListener('click', addRepair);
-    $('repairDesc').addEventListener('keydown', (e) => { if (e.key === 'Enter') addRepair(); });
-    $('fuelAddBtn').addEventListener('click', addFuel);
-    $('docAddBtn').addEventListener('click', addDocument);
-    $('fineAddBtn').addEventListener('click', addFine);
-    $('fineDesc').addEventListener('keydown', (e) => { if (e.key === 'Enter') addFine(); });
+    $('repairOpenModalBtn').addEventListener('click', openRepairModal);
+    $('repairModalCancelBtn').addEventListener('click', closeRepairModal);
+    $('repairModalSaveBtn').addEventListener('click', addRepair);
+    ['repairDesc','repairKm','repairCost'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addRepair(); });
+    });
+
+    $('fuelOpenModalBtn').addEventListener('click', openFuelModal);
+    $('fuelModalCancelBtn').addEventListener('click', closeFuelModal);
+    $('fuelModalSaveBtn').addEventListener('click', addFuel);
+    ['fuelLiters','fuelCost','fuelKm'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addFuel(); });
+    });
+
+    $('docOpenModalBtn').addEventListener('click', openDocModal);
+    $('docModalCancelBtn').addEventListener('click', closeDocModal);
+    $('docModalSaveBtn').addEventListener('click', addDocument);
+
+    $('fineOpenModalBtn').addEventListener('click', openFineModal);
+    $('fineModalCancelBtn').addEventListener('click', closeFineModal);
+    $('fineModalSaveBtn').addEventListener('click', addFine);
+    ['fineDesc','fineAmount'].forEach((id) => {
+      $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addFine(); });
+    });
 
     $('photoUploadInput').addEventListener('change', (e) => {
       uploadPhotos(e.target.files);
