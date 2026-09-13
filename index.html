@@ -4617,8 +4617,13 @@
     const selected = Array.from($('groupMemberPicker').querySelectorAll('input[type="checkbox"]:checked')).map((c) => c.value);
     if (!selected.length) { showToast(tr('Избери поне един член')); return; }
 
+    const { data: authCheck } = await sb.auth.getUser();
     const { data: group, error } = await sb.from('groups').insert({ name, created_by: currentUser.id }).select().single();
-    if (error || !group) { alert('GROUP CREATE DEBUG: ' + JSON.stringify(error)); showToast(tr('Грешка при създаване на групата')); return; }
+    if (error || !group) {
+      alert('GROUP CREATE DEBUG: currentUser.id=' + currentUser.id + ' authUser.id=' + (authCheck && authCheck.user && authCheck.user.id) + ' error=' + JSON.stringify(error));
+      showToast(tr('Грешка при създаване на групата'));
+      return;
+    }
 
     const memberRows = [currentUser.id, ...selected].map((uid) => ({ group_id: group.id, user_id: uid }));
     const { error: memErr } = await sb.from('group_members').insert(memberRows);
