@@ -826,6 +826,7 @@
               <span class="chat-conversation-status" id="chatConversationStatus"></span>
             </div>
             <button class="icon-btn chat-delete-btn" id="deleteChatBtn" title="Изтрий чата" data-i18n-title>🗑</button>
+            <button class="icon-btn chat-members-btn hidden" id="groupMembersBtn" title="Членове" data-i18n-title>👥</button>
             <button class="icon-btn chat-leave-group-btn hidden" id="leaveGroupBtn" title="Напусни групата" data-i18n-title>×</button>
           </div>
           <div class="chat-messages" id="chatMessages"></div>
@@ -1529,6 +1530,21 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="groupMembersModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>ЧЛЕНОВЕ НА ГРУПАТА</span>
+
+    <div class="group-member-list" id="groupMembersList"></div>
+
+    <div class="matrix-modal-actions">
+      <button class="chip chip-danger hidden" id="deleteGroupBtn" data-i18n>Изтрий групата</button>
+      <button class="chip" id="groupMembersCloseBtn" data-i18n>Затвори</button>
+    </div>
+  </div>
+</div>
+
 <div class="product-edit-modal hidden" id="avatarCropModal">
   <div class="console-panel product-edit-modal-inner avatar-crop-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
@@ -1672,6 +1688,12 @@
     'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
     'Обща цена €': 'Total price €',
     'На линия': 'Online', 'последно видян': 'last seen', 'преди малко': 'just now', 'мин.': 'min', 'ч.': 'h', 'д.': 'd',
+    'ЧЛЕНОВЕ НА ГРУПАТА': 'GROUP MEMBERS', 'Изтрий групата': 'Delete group', 'Собственик': 'Owner', 'Админ': 'Admin', 'Член': 'Member',
+    'Ти': 'You', 'Свали от admin': 'Remove admin', 'Направи admin': 'Make admin', 'Премахни': 'Remove',
+    'Премахни този човек от групата?': 'Remove this person from the group?', 'Грешка при промяна на ролята': 'Error changing role',
+    'Ролята е променена': 'Role changed', 'Грешка при премахване': 'Error removing', 'Премахнат от групата': 'Removed from the group',
+    'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Are you sure you want to permanently delete the group?',
+    'Грешка при изтриване на групата': 'Error deleting the group', 'Групата е изтрита': 'Group deleted',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -1889,6 +1911,12 @@
     'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
     'Обща цена €': 'Gesamtpreis €',
     'На линия': 'Online', 'последно видян': 'zuletzt online', 'преди малко': 'gerade eben', 'мин.': 'Min', 'ч.': 'Std', 'д.': 'Tg',
+    'ЧЛЕНОВЕ НА ГРУПАТА': 'GRUPPENMITGLIEDER', 'Изтрий групата': 'Gruppe löschen', 'Собственик': 'Besitzer', 'Админ': 'Admin', 'Член': 'Mitglied',
+    'Ти': 'Du', 'Свали от admin': 'Admin entfernen', 'Направи admin': 'Zum Admin machen', 'Премахни': 'Entfernen',
+    'Премахни този човек от групата?': 'Diese Person aus der Gruppe entfernen?', 'Грешка при промяна на ролята': 'Fehler beim Ändern der Rolle',
+    'Ролята е променена': 'Rolle geändert', 'Грешка при премахване': 'Fehler beim Entfernen', 'Премахнат от групата': 'Aus der Gruppe entfernt',
+    'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Möchtest du die Gruppe wirklich endgültig löschen?',
+    'Грешка при изтриване на групата': 'Fehler beim Löschen der Gruppe', 'Групата е изтрита': 'Gruppe gelöscht',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2106,6 +2134,12 @@
     'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
     'Обща цена €': 'Toplam fiyat €',
     'На линия': 'Çevrimiçi', 'последно видян': 'son görülme', 'преди малко': 'az önce', 'мин.': 'dk', 'ч.': 'sa', 'д.': 'g',
+    'ЧЛЕНОВЕ НА ГРУПАТА': 'GRUP ÜYELERİ', 'Изтрий групата': 'Grubu sil', 'Собственик': 'Sahip', 'Админ': 'Admin', 'Член': 'Üye',
+    'Ти': 'Sen', 'Свали от admin': 'Adminlikten çıkar', 'Направи admin': 'Admin yap', 'Премахни': 'Kaldır',
+    'Премахни този човек от групата?': 'Bu kişi gruptan çıkarılsın mı?', 'Грешка при промяна на ролята': 'Rol değiştirilirken hata oluştu',
+    'Ролята е променена': 'Rol değiştirildi', 'Грешка при премахване': 'Kaldırma hatası', 'Премахнат от групата': 'Gruptan çıkarıldı',
+    'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Grubu kalıcı olarak silmek istediğinden emin misin?',
+    'Грешка при изтриване на групата': 'Grup silinirken hata oluştu', 'Групата е изтрита': 'Grup silindi',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -4480,6 +4514,7 @@
     updateChatConversationOnlineStatus();
     $('chatAttachBtn').closest('.chat-attach-wrap').classList.remove('hidden');
     $('leaveGroupBtn').classList.add('hidden');
+    $('groupMembersBtn').classList.add('hidden');
     $('chatListPanel').classList.add('hidden');
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
@@ -4501,7 +4536,8 @@
     avatarEl.style.backgroundImage = '';
     avatarEl.textContent = (groupName || '?').trim().charAt(0).toUpperCase() || '?';
     $('chatAttachBtn').closest('.chat-attach-wrap').classList.add('hidden');
-    $('leaveGroupBtn').classList.remove('hidden');
+    $('groupMembersBtn').classList.remove('hidden');
+    $('leaveGroupBtn').classList.toggle('hidden', isGroupOwner(groupId));
     $('chatListPanel').classList.add('hidden');
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
@@ -4534,10 +4570,10 @@
     const { data: groups } = await sb.from('groups').select('*').in('id', groupIds);
     chatGroups = groups || [];
 
-    const { data: allMembers } = await sb.from('group_members').select('group_id, user_id').in('group_id', groupIds);
+    const { data: allMembers } = await sb.from('group_members').select('group_id, user_id, role').in('group_id', groupIds);
     groupMembersById = {};
     (allMembers || []).forEach((r) => {
-      (groupMembersById[r.group_id] = groupMembersById[r.group_id] || []).push(r.user_id);
+      (groupMembersById[r.group_id] = groupMembersById[r.group_id] || []).push({ user_id: r.user_id, role: r.role || 'member' });
     });
 
     const memberIds = new Set();
@@ -4620,7 +4656,10 @@
     const { data: group, error } = await sb.from('groups').insert({ name, created_by: currentUser.id }).select().single();
     if (error || !group) { showToast(tr('Грешка при създаване на групата')); return; }
 
-    const memberRows = [currentUser.id, ...selected].map((uid) => ({ group_id: group.id, user_id: uid }));
+    const memberRows = [
+      { group_id: group.id, user_id: currentUser.id, role: 'owner' },
+      ...selected.map((uid) => ({ group_id: group.id, user_id: uid, role: 'member' }))
+    ];
     const { error: memErr } = await sb.from('group_members').insert(memberRows);
     if (memErr) { showToast(tr('Грешка при добавяне на членове')); return; }
 
@@ -4633,6 +4672,132 @@
     if (!activeChatGroupId) return;
     await sb.from('group_members').delete().eq('group_id', activeChatGroupId).eq('user_id', currentUser.id);
     showToast(tr('Напусна групата'));
+    closeChatConversation();
+    await loadChatGroups();
+  }
+
+  function isGroupOwner(groupId) {
+    const g = chatGroups.find((x) => x.id === groupId);
+    return !!g && !!currentUser && g.created_by === currentUser.id;
+  }
+
+  function myGroupRole(groupId) {
+    if (isGroupOwner(groupId)) return 'owner';
+    const members = groupMembersById[groupId] || [];
+    const me = members.find((m) => m.user_id === currentUser.id);
+    return me ? (me.role || 'member') : 'member';
+  }
+
+  function groupRoleLabel(role) {
+    if (role === 'owner') return tr('Собственик');
+    if (role === 'admin') return tr('Админ');
+    return tr('Член');
+  }
+
+  function openGroupMembersModal() {
+    if (!activeChatGroupId) return;
+    renderGroupMembersList();
+    $('groupMembersModal').classList.remove('hidden');
+    pushNav(closeGroupMembersModal);
+  }
+
+  function closeGroupMembersModal() {
+    $('groupMembersModal').classList.add('hidden');
+    popNav();
+  }
+
+  function renderGroupMembersList() {
+    const groupId = activeChatGroupId;
+    const listEl = $('groupMembersList');
+    listEl.innerHTML = '';
+    const members = groupMembersById[groupId] || [];
+    const myRole = myGroupRole(groupId);
+
+    members.forEach((m) => {
+      const isMe = m.user_id === currentUser.id;
+      const profile = isMe
+        ? { name: state.profile.name, avatar_path: state.profile.avatarPath }
+        : chatProfilesById[m.user_id];
+
+      const row = document.createElement('div');
+      row.className = 'group-member-row';
+
+      const avatar = document.createElement('div');
+      avatar.className = 'chat-friend-avatar chat-friend-avatar-sm';
+      renderChatAvatarInto(avatar, profile);
+
+      const info = document.createElement('div');
+      info.className = 'group-member-info';
+      const name = document.createElement('span');
+      name.className = 'group-member-name';
+      name.textContent = isMe ? tr('Ти') : chatFriendDisplayName(profile, m.user_id);
+      const roleBadge = document.createElement('span');
+      roleBadge.className = 'group-member-role-badge role-' + m.role;
+      roleBadge.textContent = groupRoleLabel(m.role);
+      info.append(name, roleBadge);
+
+      const actions = document.createElement('div');
+      actions.className = 'group-member-actions';
+
+      const canToggleAdmin = myRole === 'owner' && m.role !== 'owner';
+      const canKick = (myRole === 'owner' && m.role !== 'owner') || (myRole === 'admin' && m.role === 'member' && !isMe);
+
+      if (canToggleAdmin) {
+        const toggleBtn = document.createElement('button');
+        toggleBtn.className = 'chip';
+        toggleBtn.textContent = m.role === 'admin' ? tr('Свали от admin') : tr('Направи admin');
+        toggleBtn.addEventListener('click', () => toggleMemberAdmin(m.user_id, m.role));
+        actions.appendChild(toggleBtn);
+      }
+      if (canKick) {
+        const kickBtn = document.createElement('button');
+        kickBtn.className = 'chip';
+        kickBtn.textContent = tr('Премахни');
+        kickBtn.addEventListener('click', () => kickGroupMember(m.user_id));
+        actions.appendChild(kickBtn);
+      }
+
+      row.append(avatar, info, actions);
+      listEl.appendChild(row);
+    });
+
+    $('deleteGroupBtn').classList.toggle('hidden', myRole !== 'owner');
+  }
+
+  async function toggleMemberAdmin(userId, currentRole) {
+    const groupId = activeChatGroupId;
+    if (!groupId) return;
+    const newRole = currentRole === 'admin' ? 'member' : 'admin';
+    const { error } = await sb.from('group_members').update({ role: newRole }).eq('group_id', groupId).eq('user_id', userId);
+    if (error) { showToast(tr('Грешка при промяна на ролята')); return; }
+    const m = (groupMembersById[groupId] || []).find((x) => x.user_id === userId);
+    if (m) m.role = newRole;
+    renderGroupMembersList();
+    showToast(tr('Ролята е променена'));
+  }
+
+  async function kickGroupMember(userId) {
+    const groupId = activeChatGroupId;
+    if (!groupId) return;
+    if (!confirm(tr('Премахни този човек от групата?'))) return;
+    const { error } = await sb.from('group_members').delete().eq('group_id', groupId).eq('user_id', userId);
+    if (error) { showToast(tr('Грешка при премахване')); return; }
+    groupMembersById[groupId] = (groupMembersById[groupId] || []).filter((m) => m.user_id !== userId);
+    renderGroupMembersList();
+    renderChatGroupsGrid();
+    showToast(tr('Премахнат от групата'));
+  }
+
+  async function deleteGroup() {
+    const groupId = activeChatGroupId;
+    if (!groupId) return;
+    if (!confirm(tr('Сигурни ли сте, че искате да изтриете групата завинаги?'))) return;
+    await sb.from('group_messages').delete().eq('group_id', groupId);
+    await sb.from('group_members').delete().eq('group_id', groupId);
+    const { error } = await sb.from('groups').delete().eq('id', groupId);
+    if (error) { showToast(tr('Грешка при изтриване на групата')); return; }
+    showToast(tr('Групата е изтрита'));
+    closeGroupMembersModal();
     closeChatConversation();
     await loadChatGroups();
   }
@@ -7059,6 +7224,9 @@
     $('groupCreateCancelBtn').addEventListener('click', closeCreateGroupModal);
     $('groupCreateSaveBtn').addEventListener('click', createGroupFromModal);
     $('leaveGroupBtn').addEventListener('click', leaveGroup);
+    $('groupMembersBtn').addEventListener('click', openGroupMembersModal);
+    $('groupMembersCloseBtn').addEventListener('click', closeGroupMembersModal);
+    $('deleteGroupBtn').addEventListener('click', deleteGroup);
     $('deleteChatBtn').addEventListener('click', deleteChatHistory);
     document.addEventListener('visibilitychange', () => {
       if (!currentUser) return;
