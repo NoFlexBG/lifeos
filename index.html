@@ -4617,23 +4617,12 @@
     const selected = Array.from($('groupMemberPicker').querySelectorAll('input[type="checkbox"]:checked')).map((c) => c.value);
     if (!selected.length) { showToast(tr('Избери поне един член')); return; }
 
-    const { data: sessionData } = await sb.auth.getSession();
-    let jwtInfo = 'no-session';
-    try {
-      const token = sessionData.session.access_token;
-      const payload = JSON.parse(atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-      jwtInfo = 'sub=' + payload.sub + ' role=' + payload.role + ' exp=' + payload.exp + ' now=' + Math.floor(Date.now() / 1000);
-    } catch (e) { jwtInfo = 'decode error: ' + e.message; }
     const { data: group, error } = await sb.from('groups').insert({ name, created_by: currentUser.id }).select().single();
-    if (error || !group) {
-      alert('GROUP CREATE DEBUG: currentUser.id=' + currentUser.id + ' jwt: ' + jwtInfo + ' error=' + JSON.stringify(error));
-      showToast(tr('Грешка при създаване на групата'));
-      return;
-    }
+    if (error || !group) { showToast(tr('Грешка при създаване на групата')); return; }
 
     const memberRows = [currentUser.id, ...selected].map((uid) => ({ group_id: group.id, user_id: uid }));
     const { error: memErr } = await sb.from('group_members').insert(memberRows);
-    if (memErr) { alert('GROUP MEMBERS DEBUG: ' + JSON.stringify(memErr)); showToast(tr('Грешка при добавяне на членове')); return; }
+    if (memErr) { showToast(tr('Грешка при добавяне на членове')); return; }
 
     showToast(tr('Групата е създадена'));
     closeCreateGroupModal();
