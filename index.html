@@ -158,6 +158,7 @@
       <div class="vehicle-box hidden" id="vehicleBox">
         <select id="vehicleSelect" class="mini-input"></select>
         <button class="icon-btn" id="addVehicleBtn" title="Нова кола" data-i18n-title>+</button>
+        <button class="icon-btn icon-btn-danger" id="deleteVehicleBtn" title="Изтрий колата" data-i18n-title>🗑</button>
       </div>
       <input type="file" id="importFile" accept="application/json" class="hidden" />
       <div class="user-box">
@@ -1694,6 +1695,7 @@
     'Ролята е променена': 'Role changed', 'Грешка при премахване': 'Error removing', 'Премахнат от групата': 'Removed from the group',
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Are you sure you want to permanently delete the group?',
     'Грешка при изтриване на групата': 'Error deleting the group', 'Групата е изтрита': 'Group deleted',
+    'Трябва да имаш поне една кола': 'You need to keep at least one car', 'Сигурни ли сте, че искате да изтриете': 'Are you sure you want to delete', 'Колата е изтрита': 'Car deleted',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -1917,6 +1919,7 @@
     'Ролята е променена': 'Rolle geändert', 'Грешка при премахване': 'Fehler beim Entfernen', 'Премахнат от групата': 'Aus der Gruppe entfernt',
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Möchtest du die Gruppe wirklich endgültig löschen?',
     'Грешка при изтриване на групата': 'Fehler beim Löschen der Gruppe', 'Групата е изтрита': 'Gruppe gelöscht',
+    'Трябва да имаш поне една кола': 'Du brauchst mindestens ein Auto', 'Сигурни ли сте, че искате да изтриете': 'Möchtest du wirklich löschen', 'Колата е изтрита': 'Auto gelöscht',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2140,6 +2143,7 @@
     'Ролята е променена': 'Rol değiştirildi', 'Грешка при премахване': 'Kaldırma hatası', 'Премахнат от групата': 'Gruptan çıkarıldı',
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Grubu kalıcı olarak silmek istediğinden emin misin?',
     'Грешка при изтриване на групата': 'Grup silinirken hata oluştu', 'Групата е изтрита': 'Grup silindi',
+    'Трябва да имаш поне една кола': 'En az bir araban olmalı', 'Сигурни ли сте, че искате да изтриете': 'Silmek istediğinden emin misin', 'Колата е изтрита': 'Araba silindi',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -6770,6 +6774,29 @@
     $('vehicleAddRow').classList.add('hidden');
   }
 
+  async function deleteVehicle() {
+    if (state.garage.vehicles.length < 2) { showToast(tr('Трябва да имаш поне една кола')); return; }
+    const vehicleId = state.garage.activeVehicleId;
+    const vehicle = state.garage.vehicles.find((v) => v.id === vehicleId);
+    if (!vehicle) return;
+    if (!confirm(`${tr('Сигурни ли сте, че искате да изтриете')} "${vehicle.name}"?`)) return;
+
+    const rec = state.garage.records[vehicleId];
+    const photoPaths = (rec && rec.photos ? rec.photos : []).map((p) => p.path);
+    if (photoPaths.length) {
+      await sb.storage.from(PHOTO_BUCKET).remove(photoPaths);
+      photoPaths.forEach((p) => delete signedUrlCache[p]);
+    }
+
+    state.garage.vehicles = state.garage.vehicles.filter((v) => v.id !== vehicleId);
+    delete state.garage.records[vehicleId];
+    state.garage.activeVehicleId = state.garage.vehicles[0].id;
+    saveState();
+    renderVehicleSelect();
+    renderGarageAll();
+    showToast(tr('Колата е изтрита'));
+  }
+
   function switchGarageTab(tab) {
     document.querySelectorAll('.vitals-tab[data-garage-tab]').forEach((btn) => {
       btn.classList.toggle('active', btn.dataset.garageTab === tab);
@@ -7444,6 +7471,7 @@
 
     $('vehicleSelect').addEventListener('change', onVehicleChange);
     $('addVehicleBtn').addEventListener('click', toggleVehicleAddRow);
+    $('deleteVehicleBtn').addEventListener('click', deleteVehicle);
     $('confirmAddVehicleBtn').addEventListener('click', confirmAddVehicle);
     $('cancelAddVehicleBtn').addEventListener('click', cancelAddVehicle);
 
