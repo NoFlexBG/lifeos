@@ -1849,15 +1849,6 @@
     min-height: 0;
   }
 
-  .vehicle-add-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-  }
-
-  .vehicle-add-row .mini-input { width: 140px; }
-
   .garage-stats-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -3401,6 +3392,7 @@
     display: flex;
     gap: 10px;
     justify-content: center;
+    flex-wrap: wrap;
   }
 
   .matrix-modal-actions .chip {

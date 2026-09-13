@@ -157,9 +157,7 @@
       </div>
       <div class="vehicle-box hidden" id="vehicleBox">
         <select id="vehicleSelect" class="mini-input"></select>
-        <button class="icon-btn" id="editVehicleBtn" title="Редактирай колата" data-i18n-title>✎</button>
-        <button class="icon-btn" id="addVehicleBtn" title="Нова кола" data-i18n-title>+</button>
-        <button class="icon-btn icon-btn-danger" id="deleteVehicleBtn" title="Изтрий колата" data-i18n-title>🗑</button>
+        <button class="icon-btn" id="vehicleSettingsBtn" title="Настройки на колата" data-i18n-title>⚙</button>
       </div>
       <input type="file" id="importFile" accept="application/json" class="hidden" />
       <div class="user-box">
@@ -904,13 +902,6 @@
     <!-- ============ GARAGE ============ -->
     <section id="screen-garage" class="screen hidden">
       <div class="garage-body">
-        <div class="vehicle-add-row hidden" id="vehicleAddRow">
-          <input id="newVehicleName" class="mini-input" placeholder="Име (напр. Астра)" data-i18n-ph />
-          <input id="newVehiclePlate" class="mini-input" placeholder="Рег. номер" data-i18n-ph />
-          <button class="chip" id="confirmAddVehicleBtn" data-i18n>Добави кола</button>
-          <button class="chip" id="cancelAddVehicleBtn" data-i18n>Отказ</button>
-        </div>
-
         <div class="vitals-tabs">
           <button class="vitals-tab active" data-garage-tab="overview" data-i18n>ОБЗОР</button>
           <button class="vitals-tab" data-garage-tab="repairs" data-i18n>РЕМОНТИ</button>
@@ -1547,6 +1538,33 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="vehicleSettingsModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" id="vehicleSettingsModalTitle">НАСТРОЙКИ НА КОЛАТА</span>
+
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="vehicleNameInput" data-i18n>Име</label>
+        <input type="text" id="vehicleNameInput" class="mini-input" placeholder="напр. Астра" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label for="vehiclePlateInput" data-i18n>Рег. номер</label>
+        <input type="text" id="vehiclePlateInput" class="mini-input" placeholder="Рег. номер" data-i18n-ph />
+      </div>
+    </div>
+
+    <button class="settings-action" id="vehicleAddNewBtn" data-i18n>+ Добави нова кола</button>
+
+    <div class="matrix-modal-actions">
+      <button class="chip chip-danger hidden" id="vehicleDeleteBtn" data-i18n>Изтрий колата</button>
+      <button class="chip" id="vehicleSettingsCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="vehicleSettingsSaveBtn" data-i18n>Запиши</button>
+    </div>
+  </div>
+</div>
+
 <div class="product-edit-modal hidden" id="avatarCropModal">
   <div class="console-panel product-edit-modal-inner avatar-crop-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
@@ -1697,6 +1715,8 @@
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Are you sure you want to permanently delete the group?',
     'Грешка при изтриване на групата': 'Error deleting the group', 'Групата е изтрита': 'Group deleted',
     'Трябва да имаш поне една кола': 'You need to keep at least one car', 'Сигурни ли сте, че искате да изтриете': 'Are you sure you want to delete', 'Колата е изтрита': 'Car deleted',
+    'НАСТРОЙКИ НА КОЛАТА': 'CAR SETTINGS', 'НОВА КОЛА': 'NEW CAR', '+ Добави нова кола': '+ Add a new car',
+    'напр. Астра': 'e.g. Astra', 'Изтрий колата': 'Delete car', 'Въведи име на колата': 'Enter a car name',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -1921,6 +1941,8 @@
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Möchtest du die Gruppe wirklich endgültig löschen?',
     'Грешка при изтриване на групата': 'Fehler beim Löschen der Gruppe', 'Групата е изтрита': 'Gruppe gelöscht',
     'Трябва да имаш поне една кола': 'Du brauchst mindestens ein Auto', 'Сигурни ли сте, че искате да изтриете': 'Möchtest du wirklich löschen', 'Колата е изтрита': 'Auto gelöscht',
+    'НАСТРОЙКИ НА КОЛАТА': 'AUTOEINSTELLUNGEN', 'НОВА КОЛА': 'NEUES AUTO', '+ Добави нова кола': '+ Neues Auto hinzufügen',
+    'напр. Астра': 'z.B. Astra', 'Изтрий колата': 'Auto löschen', 'Въведи име на колата': 'Gib einen Autonamen ein',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2145,6 +2167,8 @@
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Grubu kalıcı olarak silmek istediğinden emin misin?',
     'Грешка при изтриване на групата': 'Grup silinirken hata oluştu', 'Групата е изтрита': 'Grup silindi',
     'Трябва да имаш поне една кола': 'En az bir araban olmalı', 'Сигурни ли сте, че искате да изтриете': 'Silmek istediğinden emin misin', 'Колата е изтрита': 'Araba silindi',
+    'НАСТРОЙКИ НА КОЛАТА': 'ARAÇ AYARLARI', 'НОВА КОЛА': 'YENİ ARAÇ', '+ Добави нова кола': '+ Yeni araç ekle',
+    'напр. Астра': 'örn. Astra', 'Изтрий колата': 'Aracı sil', 'Въведи име на колата': 'Bir araç adı gir',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -6751,29 +6775,37 @@
 
   let editingVehicleId = '';
 
-  function toggleVehicleAddRow() {
-    editingVehicleId = '';
-    $('newVehicleName').value = '';
-    $('newVehiclePlate').value = '';
-    $('confirmAddVehicleBtn').textContent = tr('Добави кола');
-    $('vehicleAddRow').classList.toggle('hidden');
-  }
-
-  function openEditVehicleRow() {
+  function openVehicleSettingsModal() {
     const vehicle = state.garage.vehicles.find((v) => v.id === state.garage.activeVehicleId);
     if (!vehicle) return;
     editingVehicleId = vehicle.id;
-    $('newVehicleName').value = vehicle.name;
-    $('newVehiclePlate').value = vehicle.plate || '';
-    $('confirmAddVehicleBtn').textContent = tr('Запиши');
-    $('vehicleAddRow').classList.remove('hidden');
-    $('newVehicleName').focus();
+    $('vehicleSettingsModalTitle').textContent = tr('НАСТРОЙКИ НА КОЛАТА');
+    $('vehicleNameInput').value = vehicle.name;
+    $('vehiclePlateInput').value = vehicle.plate || '';
+    $('vehicleDeleteBtn').classList.toggle('hidden', state.garage.vehicles.length < 2);
+    $('vehicleSettingsModal').classList.remove('hidden');
+    pushNav(closeVehicleSettingsModal);
   }
 
-  function confirmAddVehicle() {
-    const name = $('newVehicleName').value.trim();
-    const plate = $('newVehiclePlate').value.trim();
-    if (!name) return;
+  function switchToAddNewVehicle() {
+    editingVehicleId = '';
+    $('vehicleSettingsModalTitle').textContent = tr('НОВА КОЛА');
+    $('vehicleNameInput').value = '';
+    $('vehiclePlateInput').value = '';
+    $('vehicleDeleteBtn').classList.add('hidden');
+    $('vehicleNameInput').focus();
+  }
+
+  function closeVehicleSettingsModal() {
+    $('vehicleSettingsModal').classList.add('hidden');
+    editingVehicleId = '';
+    popNav();
+  }
+
+  function saveVehicleSettings() {
+    const name = $('vehicleNameInput').value.trim();
+    const plate = $('vehiclePlateInput').value.trim();
+    if (!name) { showToast(tr('Въведи име на колата')); return; }
 
     if (editingVehicleId) {
       const vehicle = state.garage.vehicles.find((v) => v.id === editingVehicleId);
@@ -6786,24 +6818,14 @@
     }
 
     saveState();
-    editingVehicleId = '';
-    $('newVehicleName').value = '';
-    $('newVehiclePlate').value = '';
-    $('vehicleAddRow').classList.add('hidden');
     renderVehicleSelect();
     renderGarageAll();
+    closeVehicleSettingsModal();
   }
 
-  function cancelAddVehicle() {
-    editingVehicleId = '';
-    $('newVehicleName').value = '';
-    $('newVehiclePlate').value = '';
-    $('vehicleAddRow').classList.add('hidden');
-  }
-
-  async function deleteVehicle() {
+  async function deleteVehicleFromSettings() {
     if (state.garage.vehicles.length < 2) { showToast(tr('Трябва да имаш поне една кола')); return; }
-    const vehicleId = state.garage.activeVehicleId;
+    const vehicleId = editingVehicleId;
     const vehicle = state.garage.vehicles.find((v) => v.id === vehicleId);
     if (!vehicle) return;
     if (!confirm(`${tr('Сигурни ли сте, че искате да изтриете')} "${vehicle.name}"?`)) return;
@@ -6821,6 +6843,7 @@
     saveState();
     renderVehicleSelect();
     renderGarageAll();
+    closeVehicleSettingsModal();
     showToast(tr('Колата е изтрита'));
   }
 
@@ -7497,11 +7520,11 @@
     });
 
     $('vehicleSelect').addEventListener('change', onVehicleChange);
-    $('addVehicleBtn').addEventListener('click', toggleVehicleAddRow);
-    $('editVehicleBtn').addEventListener('click', openEditVehicleRow);
-    $('deleteVehicleBtn').addEventListener('click', deleteVehicle);
-    $('confirmAddVehicleBtn').addEventListener('click', confirmAddVehicle);
-    $('cancelAddVehicleBtn').addEventListener('click', cancelAddVehicle);
+    $('vehicleSettingsBtn').addEventListener('click', openVehicleSettingsModal);
+    $('vehicleAddNewBtn').addEventListener('click', switchToAddNewVehicle);
+    $('vehicleSettingsCancelBtn').addEventListener('click', closeVehicleSettingsModal);
+    $('vehicleSettingsSaveBtn').addEventListener('click', saveVehicleSettings);
+    $('vehicleDeleteBtn').addEventListener('click', deleteVehicleFromSettings);
 
     $('repairOpenModalBtn').addEventListener('click', openRepairModal);
     $('repairModalCancelBtn').addEventListener('click', closeRepairModal);
