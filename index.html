@@ -157,6 +157,7 @@
       </div>
       <div class="vehicle-box hidden" id="vehicleBox">
         <select id="vehicleSelect" class="mini-input"></select>
+        <button class="icon-btn" id="editVehicleBtn" title="Редактирай колата" data-i18n-title>✎</button>
         <button class="icon-btn" id="addVehicleBtn" title="Нова кола" data-i18n-title>+</button>
         <button class="icon-btn icon-btn-danger" id="deleteVehicleBtn" title="Изтрий колата" data-i18n-title>🗑</button>
       </div>
@@ -6748,19 +6749,44 @@
     renderGarageAll();
   }
 
+  let editingVehicleId = '';
+
   function toggleVehicleAddRow() {
+    editingVehicleId = '';
+    $('newVehicleName').value = '';
+    $('newVehiclePlate').value = '';
+    $('confirmAddVehicleBtn').textContent = tr('Добави кола');
     $('vehicleAddRow').classList.toggle('hidden');
+  }
+
+  function openEditVehicleRow() {
+    const vehicle = state.garage.vehicles.find((v) => v.id === state.garage.activeVehicleId);
+    if (!vehicle) return;
+    editingVehicleId = vehicle.id;
+    $('newVehicleName').value = vehicle.name;
+    $('newVehiclePlate').value = vehicle.plate || '';
+    $('confirmAddVehicleBtn').textContent = tr('Запиши');
+    $('vehicleAddRow').classList.remove('hidden');
+    $('newVehicleName').focus();
   }
 
   function confirmAddVehicle() {
     const name = $('newVehicleName').value.trim();
     const plate = $('newVehiclePlate').value.trim();
     if (!name) return;
-    const id = genId('v');
-    state.garage.vehicles.push({ id, name, plate });
-    state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [], photos: [] };
-    state.garage.activeVehicleId = id;
+
+    if (editingVehicleId) {
+      const vehicle = state.garage.vehicles.find((v) => v.id === editingVehicleId);
+      if (vehicle) { vehicle.name = name; vehicle.plate = plate; }
+    } else {
+      const id = genId('v');
+      state.garage.vehicles.push({ id, name, plate });
+      state.garage.records[id] = { repairs: [], fuel: [], documents: [], fines: [], photos: [] };
+      state.garage.activeVehicleId = id;
+    }
+
     saveState();
+    editingVehicleId = '';
     $('newVehicleName').value = '';
     $('newVehiclePlate').value = '';
     $('vehicleAddRow').classList.add('hidden');
@@ -6769,6 +6795,7 @@
   }
 
   function cancelAddVehicle() {
+    editingVehicleId = '';
     $('newVehicleName').value = '';
     $('newVehiclePlate').value = '';
     $('vehicleAddRow').classList.add('hidden');
@@ -7471,6 +7498,7 @@
 
     $('vehicleSelect').addEventListener('change', onVehicleChange);
     $('addVehicleBtn').addEventListener('click', toggleVehicleAddRow);
+    $('editVehicleBtn').addEventListener('click', openEditVehicleRow);
     $('deleteVehicleBtn').addEventListener('click', deleteVehicle);
     $('confirmAddVehicleBtn').addEventListener('click', confirmAddVehicle);
     $('cancelAddVehicleBtn').addEventListener('click', cancelAddVehicle);
