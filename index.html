@@ -4618,11 +4618,11 @@
     if (!selected.length) { showToast(tr('Избери поне един член')); return; }
 
     const { data: group, error } = await sb.from('groups').insert({ name, created_by: currentUser.id }).select().single();
-    if (error || !group) { showToast(tr('Грешка при създаване на групата')); return; }
+    if (error || !group) { alert('GROUP CREATE DEBUG: ' + JSON.stringify(error)); showToast(tr('Грешка при създаване на групата')); return; }
 
     const memberRows = [currentUser.id, ...selected].map((uid) => ({ group_id: group.id, user_id: uid }));
     const { error: memErr } = await sb.from('group_members').insert(memberRows);
-    if (memErr) { showToast(tr('Грешка при добавяне на членове')); return; }
+    if (memErr) { alert('GROUP MEMBERS DEBUG: ' + JSON.stringify(memErr)); showToast(tr('Грешка при добавяне на членове')); return; }
 
     showToast(tr('Групата е създадена'));
     closeCreateGroupModal();
