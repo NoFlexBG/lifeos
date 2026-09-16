@@ -2964,32 +2964,13 @@
     background: var(--violet-dim);
     color: var(--text);
     border-bottom-right-radius: 4px;
-    user-select: none;
-    -webkit-user-select: none;
-    -webkit-touch-callout: none;
   }
 
   .chat-message-actions {
-    position: absolute;
-    top: -28px;
-    right: 0;
     display: flex;
+    justify-content: flex-end;
     gap: 4px;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.15s ease;
-  }
-
-  .chat-message-own.show-actions .chat-message-actions {
-    opacity: 1;
-    pointer-events: auto;
-  }
-
-  @media (hover: hover) and (pointer: fine) {
-    .chat-message-own:hover .chat-message-actions {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    margin-top: 4px;
   }
 
   .chat-message-action-btn {
