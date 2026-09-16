@@ -2960,34 +2960,41 @@
   }
 
   .chat-message-own {
-    align-self: flex-end;
     background: var(--violet-dim);
     color: var(--text);
     border-bottom-right-radius: 4px;
   }
 
+  .chat-message-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    align-self: flex-end;
+    max-width: 100%;
+  }
+
   .chat-message-actions {
     display: flex;
-    justify-content: flex-end;
-    gap: 4px;
-    margin-top: 4px;
+    gap: 2px;
+    flex-shrink: 0;
   }
 
   .chat-message-action-btn {
-    width: 24px;
-    height: 24px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
-    border: 1px solid var(--line);
-    background: var(--surface-2);
-    color: var(--text-dim);
-    font-size: 11px;
+    border: none;
+    background: transparent;
+    color: var(--text-faint);
+    font-size: 9.5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
+    opacity: 0.55;
   }
 
-  .chat-message-action-btn:hover { border-color: var(--violet); color: var(--text); }
+  .chat-message-action-btn:hover { opacity: 1; color: var(--text); }
 
   .chat-message-edited-tag {
     font-size: 9px;
