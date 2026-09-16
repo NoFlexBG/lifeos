@@ -373,6 +373,8 @@
 
   .icon-btn-danger { color: var(--danger); }
 
+  #vehicleAddNewBtn { margin-top: 16px; }
+
   .icon-btn:hover {
     border-color: var(--violet);
     color: var(--violet);
@@ -2975,10 +2977,16 @@
     transition: opacity 0.15s ease;
   }
 
-  .chat-message-own:hover .chat-message-actions,
   .chat-message-own.show-actions .chat-message-actions {
     opacity: 1;
     pointer-events: auto;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .chat-message-own:hover .chat-message-actions {
+      opacity: 1;
+      pointer-events: auto;
+    }
   }
 
   .chat-message-action-btn {
