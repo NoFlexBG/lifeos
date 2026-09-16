@@ -5025,17 +5025,31 @@
 
   function wireMessageLongPress(bubble) {
     let pressTimer = null;
+    let startX = 0;
+    let startY = 0;
+    let longPressed = false;
     const show = () => {
       document.querySelectorAll('.chat-message.show-actions').forEach((b) => { if (b !== bubble) b.classList.remove('show-actions'); });
       bubble.classList.add('show-actions');
+      longPressed = true;
     };
-    bubble.addEventListener('touchstart', () => {
+    bubble.addEventListener('touchstart', (e) => {
+      const t = e.touches[0];
+      startX = t.clientX;
+      startY = t.clientY;
+      longPressed = false;
       clearTimeout(pressTimer);
       pressTimer = setTimeout(show, 500);
     }, { passive: true });
-    ['touchend', 'touchmove', 'touchcancel'].forEach((evt) => {
-      bubble.addEventListener(evt, () => clearTimeout(pressTimer), { passive: true });
+    bubble.addEventListener('touchmove', (e) => {
+      const t = e.touches[0];
+      if (Math.abs(t.clientX - startX) > 10 || Math.abs(t.clientY - startY) > 10) clearTimeout(pressTimer);
+    }, { passive: true });
+    bubble.addEventListener('touchend', (e) => {
+      clearTimeout(pressTimer);
+      if (longPressed) e.preventDefault();
     });
+    bubble.addEventListener('touchcancel', () => clearTimeout(pressTimer), { passive: true });
   }
 
   document.addEventListener('click', () => {
