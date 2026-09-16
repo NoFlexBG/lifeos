@@ -2964,6 +2964,9 @@
     background: var(--violet-dim);
     color: var(--text);
     border-bottom-right-radius: 4px;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
   }
 
   .chat-message-actions {
