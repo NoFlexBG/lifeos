@@ -1717,6 +1717,7 @@
     'Трябва да имаш поне една кола': 'You need to keep at least one car', 'Сигурни ли сте, че искате да изтриете': 'Are you sure you want to delete', 'Колата е изтрита': 'Car deleted',
     'НАСТРОЙКИ НА КОЛАТА': 'CAR SETTINGS', 'НОВА КОЛА': 'NEW CAR', '+ Добави нова кола': '+ Add a new car',
     'напр. Астра': 'e.g. Astra', 'Изтрий колата': 'Delete car', 'Въведи име на колата': 'Enter a car name',
+    '(редактирано)': '(edited)', 'Редактирай съобщението:': 'Edit the message:', 'Грешка при редактиране': 'Error editing', 'Изтрий това съобщение?': 'Delete this message?',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -1943,6 +1944,7 @@
     'Трябва да имаш поне една кола': 'Du brauchst mindestens ein Auto', 'Сигурни ли сте, че искате да изтриете': 'Möchtest du wirklich löschen', 'Колата е изтрита': 'Auto gelöscht',
     'НАСТРОЙКИ НА КОЛАТА': 'AUTOEINSTELLUNGEN', 'НОВА КОЛА': 'NEUES AUTO', '+ Добави нова кола': '+ Neues Auto hinzufügen',
     'напр. Астра': 'z.B. Astra', 'Изтрий колата': 'Auto löschen', 'Въведи име на колата': 'Gib einen Autonamen ein',
+    '(редактирано)': '(bearbeitet)', 'Редактирай съобщението:': 'Nachricht bearbeiten:', 'Грешка при редактиране': 'Fehler beim Bearbeiten', 'Изтрий това съобщение?': 'Diese Nachricht löschen?',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2169,6 +2171,7 @@
     'Трябва да имаш поне една кола': 'En az bir araban olmalı', 'Сигурни ли сте, че искате да изтриете': 'Silmek istediğinden emin misin', 'Колата е изтрита': 'Araba silindi',
     'НАСТРОЙКИ НА КОЛАТА': 'ARAÇ AYARLARI', 'НОВА КОЛА': 'YENİ ARAÇ', '+ Добави нова кола': '+ Yeni araç ekle',
     'напр. Астра': 'örn. Astra', 'Изтрий колата': 'Aracı sil', 'Въведи име на колата': 'Bir araç adı gir',
+    '(редактирано)': '(düzenlendi)', 'Редактирай съобщението:': 'Mesajı düzenle:', 'Грешка при редактиране': 'Düzenleme hatası', 'Изтрий това съобщение?': 'Bu mesaj silinsin mi?',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -4984,10 +4987,88 @@
       time.className = 'chat-message-time';
       const d = new Date(m.created_at);
       time.textContent = d.toLocaleTimeString('bg-BG', { hour: '2-digit', minute: '2-digit' });
+      if (m.edited_at) {
+        const editedTag = document.createElement('span');
+        editedTag.className = 'chat-message-edited-tag';
+        editedTag.textContent = tr('(редактирано)');
+        time.appendChild(editedTag);
+      }
       bubble.appendChild(time);
+
+      const isOwn = m.sender_id === currentUser.id;
+      const isPlainText = !m.image_path && m.lat == null && m.lng == null;
+      if (isOwn) {
+        const actions = document.createElement('div');
+        actions.className = 'chat-message-actions';
+        if (isPlainText) {
+          const editBtn = document.createElement('button');
+          editBtn.className = 'chat-message-action-btn';
+          editBtn.textContent = '✎';
+          editBtn.title = tr('Редактирай');
+          editBtn.addEventListener('click', (e) => { e.stopPropagation(); editChatMessage(m, isGroup); });
+          actions.appendChild(editBtn);
+        }
+        const delBtn = document.createElement('button');
+        delBtn.className = 'chat-message-action-btn';
+        delBtn.textContent = '🗑';
+        delBtn.title = tr('Изтрий');
+        delBtn.addEventListener('click', (e) => { e.stopPropagation(); deleteChatMessage(m, isGroup); });
+        actions.appendChild(delBtn);
+        bubble.appendChild(actions);
+        wireMessageLongPress(bubble);
+      }
+
       el.appendChild(bubble);
     });
     scrollChatToBottom();
+  }
+
+  function wireMessageLongPress(bubble) {
+    let pressTimer = null;
+    const show = () => {
+      document.querySelectorAll('.chat-message.show-actions').forEach((b) => { if (b !== bubble) b.classList.remove('show-actions'); });
+      bubble.classList.add('show-actions');
+    };
+    bubble.addEventListener('touchstart', () => {
+      clearTimeout(pressTimer);
+      pressTimer = setTimeout(show, 500);
+    }, { passive: true });
+    ['touchend', 'touchmove', 'touchcancel'].forEach((evt) => {
+      bubble.addEventListener(evt, () => clearTimeout(pressTimer), { passive: true });
+    });
+  }
+
+  document.addEventListener('click', () => {
+    document.querySelectorAll('.chat-message.show-actions').forEach((b) => b.classList.remove('show-actions'));
+  });
+
+  async function editChatMessage(m, isGroup) {
+    const newBody = prompt(tr('Редактирай съобщението:'), m.body || '');
+    if (newBody === null) return;
+    const trimmed = newBody.trim();
+    if (!trimmed || trimmed === m.body) return;
+
+    const table = isGroup ? 'group_messages' : 'messages';
+    const editedAt = new Date().toISOString();
+    const { error } = await sb.from(table).update({ body: trimmed, edited_at: editedAt }).eq('id', m.id);
+    if (error) { showToast(tr('Грешка при редактиране')); return; }
+    m.body = trimmed;
+    m.edited_at = editedAt;
+    renderChatMessages();
+  }
+
+  async function deleteChatMessage(m, isGroup) {
+    if (!confirm(tr('Изтрий това съобщение?'))) return;
+    const table = isGroup ? 'group_messages' : 'messages';
+    const { error } = await sb.from(table).delete().eq('id', m.id);
+    if (error) { showToast(tr('Грешка при изтриване')); return; }
+    if (m.image_path) await sb.storage.from(PHOTO_BUCKET).remove([m.image_path]);
+    if (isGroup) {
+      groupMessagesCache = groupMessagesCache.filter((x) => x.id !== m.id);
+    } else {
+      chatMessagesCache = chatMessagesCache.filter((x) => x.id !== m.id);
+    }
+    renderChatMessages();
   }
 
   function scrollChatToBottom() {
@@ -5116,6 +5197,18 @@
           showToast(tr('Ново съобщение'));
         }
       })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `receiver_id=eq.${currentUser.id}` }, (payload) => {
+        const m = payload.new;
+        const idx = chatMessagesCache.findIndex((x) => x.id === m.id);
+        if (idx !== -1) { chatMessagesCache[idx] = m; if (activeChatFriendId === m.sender_id) renderChatMessages(); }
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'messages', filter: `receiver_id=eq.${currentUser.id}` }, (payload) => {
+        const oldId = payload.old.id;
+        if (chatMessagesCache.some((x) => x.id === oldId)) {
+          chatMessagesCache = chatMessagesCache.filter((x) => x.id !== oldId);
+          renderChatMessages();
+        }
+      })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `to_user_id=eq.${currentUser.id}` }, () => loadChatData())
       .on('postgres_changes', { event: '*', schema: 'public', table: 'friend_requests', filter: `from_user_id=eq.${currentUser.id}` }, () => loadChatData())
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'group_messages' }, (payload) => {
@@ -5126,6 +5219,19 @@
           renderChatMessages();
         } else if (m.sender_id !== currentUser.id) {
           showToast(tr('Ново съобщение в група'));
+        }
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'group_messages' }, (payload) => {
+        const m = payload.new;
+        if (!chatGroups.some((g) => g.id === m.group_id)) return;
+        const idx = groupMessagesCache.findIndex((x) => x.id === m.id);
+        if (idx !== -1) { groupMessagesCache[idx] = m; if (activeChatGroupId === m.group_id) renderChatMessages(); }
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'group_messages' }, (payload) => {
+        const oldId = payload.old.id;
+        if (groupMessagesCache.some((x) => x.id === oldId)) {
+          groupMessagesCache = groupMessagesCache.filter((x) => x.id !== oldId);
+          renderChatMessages();
         }
       })
       .subscribe();

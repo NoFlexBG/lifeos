@@ -2947,6 +2947,7 @@
   }
 
   .chat-message {
+    position: relative;
     max-width: 78%;
     padding: 8px 12px;
     border-radius: 14px;
@@ -2961,6 +2962,45 @@
     background: var(--violet-dim);
     color: var(--text);
     border-bottom-right-radius: 4px;
+  }
+
+  .chat-message-actions {
+    position: absolute;
+    top: -28px;
+    right: 0;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .chat-message-own:hover .chat-message-actions,
+  .chat-message-own.show-actions .chat-message-actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .chat-message-action-btn {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text-dim);
+    font-size: 11px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .chat-message-action-btn:hover { border-color: var(--violet); color: var(--text); }
+
+  .chat-message-edited-tag {
+    font-size: 9px;
+    color: var(--text-faint);
+    margin-left: 4px;
   }
 
   .chat-message-other {
