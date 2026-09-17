@@ -682,6 +682,7 @@
           <div class="chart-head">
             <span class="gauge-label" data-i18n>МОНЕТИ</span>
             <span class="weight-chart-stats" id="coinGroupTotal"></span>
+            <button class="chip chip-danger" id="resetCoinsBtn" data-i18n>Нулирай</button>
           </div>
           <div class="coin-grid" id="coinGrid"></div>
         </div>
@@ -1718,6 +1719,7 @@
     'НАСТРОЙКИ НА КОЛАТА': 'CAR SETTINGS', 'НОВА КОЛА': 'NEW CAR', '+ Добави нова кола': '+ Add a new car',
     'напр. Астра': 'e.g. Astra', 'Изтрий колата': 'Delete car', 'Въведи име на колата': 'Enter a car name',
     '(редактирано)': '(edited)', 'Редактирай съобщението:': 'Edit the message:', 'Грешка при редактиране': 'Error editing', 'Изтрий това съобщение?': 'Delete this message?',
+    'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Are you sure you want to reset the coin counts?',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -1945,6 +1947,7 @@
     'НАСТРОЙКИ НА КОЛАТА': 'AUTOEINSTELLUNGEN', 'НОВА КОЛА': 'NEUES AUTO', '+ Добави нова кола': '+ Neues Auto hinzufügen',
     'напр. Астра': 'z.B. Astra', 'Изтрий колата': 'Auto löschen', 'Въведи име на колата': 'Gib einen Autonamen ein',
     '(редактирано)': '(bearbeitet)', 'Редактирай съобщението:': 'Nachricht bearbeiten:', 'Грешка при редактиране': 'Fehler beim Bearbeiten', 'Изтрий това съобщение?': 'Diese Nachricht löschen?',
+    'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Möchtest du die Münzanzahl wirklich zurücksetzen?',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2172,6 +2175,7 @@
     'НАСТРОЙКИ НА КОЛАТА': 'ARAÇ AYARLARI', 'НОВА КОЛА': 'YENİ ARAÇ', '+ Добави нова кола': '+ Yeni araç ekle',
     'напр. Астра': 'örn. Astra', 'Изтрий колата': 'Aracı sil', 'Въведи име на колата': 'Bir araç adı gir',
     '(редактирано)': '(düzenlendi)', 'Редактирай съобщението:': 'Mesajı düzenle:', 'Грешка при редактиране': 'Düzenleme hatası', 'Изтрий това съобщение?': 'Bu mesaj silinsin mi?',
+    'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Madeni para sayılarını sıfırlamak istediğinden emin misin?',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -3354,6 +3358,17 @@
     });
 
     updateGroupTotalDisplay(denominations, totalElId);
+  }
+
+  function resetCoins() {
+    if (!confirm(tr('Сигурни ли сте, че искате да нулирате бройката на монетите?'))) return;
+    const denoms = curDenoms();
+    const wallet = currentWallet();
+    denoms.coins.forEach((d) => { wallet[d] = 0; });
+    saveState();
+    renderCoinGroup(denoms.coins, 'coinGrid');
+    renderSavingsOverview();
+    renderHubIfVisible();
   }
 
   function renderBanknoteGrid() {
@@ -7569,6 +7584,7 @@
     $('noteColorInput').addEventListener('input', onNoteColorChange);
     $('noteClearFormatBtn').addEventListener('click', clearNoteFormatting);
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
+    $('resetCoinsBtn').addEventListener('click', resetCoins);
     document.querySelectorAll('.vitals-tab[data-company-tab]').forEach((btn) => {
       btn.addEventListener('click', () => switchCompanyTab(btn.dataset.companyTab));
     });
