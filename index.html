@@ -5415,16 +5415,16 @@
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const path = `${currentUser.id}/chat/files/${genId('file')}-${safeName}`;
     const { error: uploadError } = await sb.storage.from(PHOTO_BUCKET).upload(path, file, { contentType: file.type || 'application/octet-stream' });
-    if (uploadError) { showToast(tr('Грешка при качване на файл')); return; }
+    if (uploadError) { alert('FILE UPLOAD DEBUG: ' + JSON.stringify(uploadError)); showToast(tr('Грешка при качване на файл')); return; }
 
     const payload = { sender_id: currentUser.id, file_path: path, file_name: file.name, file_size: file.size };
     if (activeChatGroupId) {
       const { data, error } = await sb.from('group_messages').insert({ ...payload, group_id: activeChatGroupId }).select().single();
-      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      if (error) { alert('FILE INSERT DEBUG: ' + JSON.stringify(error)); showToast(tr('Грешка при изпращане')); return; }
       groupMessagesCache.push(data);
     } else {
       const { data, error } = await sb.from('messages').insert({ ...payload, receiver_id: activeChatFriendId }).select().single();
-      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      if (error) { alert('FILE INSERT DEBUG: ' + JSON.stringify(error)); showToast(tr('Грешка при изпращане')); return; }
       chatMessagesCache.push(data);
     }
     renderChatMessages();
