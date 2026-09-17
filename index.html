@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=8">
+<link rel="stylesheet" href="styles.css?v=9">
 </head>
 <body>
 
@@ -1779,7 +1779,7 @@
     'Грешка': 'Error', 'Сигурни ли сте, че искате да блокирате този потребител?': 'Are you sure you want to block this user?',
     'Грешка при блокиране': 'Error blocking', 'Потребителят е блокиран': 'User blocked',
     'Грешка при отблокиране': 'Error unblocking', 'Потребителят е отблокиран': 'User unblocked',
-    'Грешка при качване на файл': 'Error uploading the file',
+    'Грешка при качване на файл': 'Error uploading the file', 'Изтегли': 'Download',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -2015,7 +2015,7 @@
     'Грешка': 'Fehler', 'Сигурни ли сте, че искате да блокирате този потребител?': 'Möchtest du diesen Nutzer wirklich blockieren?',
     'Грешка при блокиране': 'Fehler beim Blockieren', 'Потребителят е блокиран': 'Nutzer blockiert',
     'Грешка при отблокиране': 'Fehler beim Entsperren', 'Потребителят е отблокиран': 'Nutzer entsperrt',
-    'Грешка при качване на файл': 'Fehler beim Hochladen der Datei',
+    'Грешка при качване на файл': 'Fehler beim Hochladen der Datei', 'Изтегли': 'Herunterladen',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2251,7 +2251,7 @@
     'Грешка': 'Hata', 'Сигурни ли сте, че искате да блокирате този потребител?': 'Bu kullanıcıyı engellemek istediğinden emin misin?',
     'Грешка при блокиране': 'Engelleme hatası', 'Потребителят е блокиран': 'Kullanıcı engellendi',
     'Грешка при отблокиране': 'Engel kaldırma hatası', 'Потребителят е отблокиран': 'Kullanıcının engeli kaldırıldı',
-    'Грешка при качване на файл': 'Dosya yüklenirken hata oluştu',
+    'Грешка при качване на файл': 'Dosya yüklenirken hata oluştu', 'Изтегли': 'İndir',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -4877,6 +4877,30 @@
 
   const CHAT_URL_REGEX = /https?:\/\/[^\s]+/gi;
 
+  function renderTextWithLinks(container, text) {
+    if (!text) return;
+    CHAT_URL_REGEX.lastIndex = 0;
+    let lastIndex = 0;
+    let match;
+    while ((match = CHAT_URL_REGEX.exec(text)) !== null) {
+      if (match.index > lastIndex) {
+        container.appendChild(document.createTextNode(text.slice(lastIndex, match.index)));
+      }
+      const a = document.createElement('a');
+      a.href = match[0];
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.className = 'chat-message-link';
+      a.textContent = match[0];
+      a.addEventListener('click', (e) => e.stopPropagation());
+      container.appendChild(a);
+      lastIndex = match.index + match[0].length;
+    }
+    if (lastIndex < text.length) {
+      container.appendChild(document.createTextNode(text.slice(lastIndex)));
+    }
+  }
+
   function renderChatInfoLinks() {
     const list = $('chatInfoLinksList');
     list.innerHTML = '';
@@ -5265,6 +5289,8 @@
         bubble.appendChild(senderLabel);
       }
       if (m.image_path) {
+        const imgWrap = document.createElement('div');
+        imgWrap.className = 'chat-message-image-wrap';
         const img = document.createElement('img');
         img.className = 'chat-message-image';
         img.alt = '';
@@ -5273,11 +5299,21 @@
         getSignedPhotoUrl(m.image_path).then(({ data, error }) => {
           if (!error && data) img.src = data.signedUrl;
         });
-        bubble.appendChild(img);
+        const downloadBtn = document.createElement('button');
+        downloadBtn.className = 'chat-message-image-download';
+        downloadBtn.type = 'button';
+        downloadBtn.title = tr('Изтегли');
+        downloadBtn.textContent = '⭳';
+        downloadBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          downloadChatFile(m.image_path, m.image_path.split('/').pop() || 'photo.jpg');
+        });
+        imgWrap.append(img, downloadBtn);
+        bubble.appendChild(imgWrap);
         if (m.body) {
           const caption = document.createElement('div');
           caption.className = 'chat-message-caption';
-          caption.textContent = m.body;
+          renderTextWithLinks(caption, m.body);
           bubble.appendChild(caption);
         }
       } else if (m.file_path) {
@@ -5318,7 +5354,7 @@
         mapBox.appendChild(label);
         bubble.appendChild(mapBox);
       } else {
-        bubble.appendChild(document.createTextNode(m.body || ''));
+        renderTextWithLinks(bubble, m.body || '');
       }
       const time = document.createElement('span');
       time.className = 'chat-message-time';
