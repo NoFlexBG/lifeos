@@ -2987,21 +2987,21 @@
   }
 
   .chat-message-action-btn {
-    width: 18px;
-    height: 18px;
+    width: 21px;
+    height: 21px;
     border-radius: 50%;
-    border: none;
-    background: transparent;
-    color: var(--text-faint);
-    font-size: 9.5px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--text-dim);
+    font-size: 10.5px;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    opacity: 0.55;
+    opacity: 0.85;
   }
 
-  .chat-message-action-btn:hover { opacity: 1; color: var(--text); }
+  .chat-message-action-btn:hover { opacity: 1; border-color: var(--violet); color: var(--text); }
 
   .chat-message-edited-tag {
     font-size: 9px;
