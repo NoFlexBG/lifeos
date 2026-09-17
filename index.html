@@ -4754,6 +4754,7 @@
     iBlockedFriendIds.add(activeChatFriendId);
     $('chatBlockBtn').classList.add('hidden');
     $('chatUnblockBtn').classList.remove('hidden');
+    updateChatBlockedBannerAndInput();
     showToast(tr('Потребителят е блокиран'));
   }
 
@@ -4765,6 +4766,7 @@
     iBlockedFriendIds.delete(activeChatFriendId);
     $('chatBlockBtn').classList.remove('hidden');
     $('chatUnblockBtn').classList.add('hidden');
+    updateChatBlockedBannerAndInput();
     showToast(tr('Потребителят е отблокиран'));
   }
 
