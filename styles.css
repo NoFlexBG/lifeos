@@ -3009,6 +3009,105 @@
     margin-left: 4px;
   }
 
+  .chat-message-file {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    max-width: 220px;
+  }
+
+  .chat-message-file-icon { font-size: 20px; flex-shrink: 0; }
+
+  .chat-message-file-info { min-width: 0; }
+
+  .chat-message-file-name {
+    font-size: 12px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chat-message-file-size { font-size: 10px; color: var(--text-faint); }
+
+  .chat-blocked-banner {
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    color: var(--danger);
+    background: var(--danger-dim);
+    border: 1px solid var(--danger);
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-top: 10px;
+  }
+
+  .chat-info-modal-inner { max-width: min(94vw, 440px); }
+
+  .chat-block-action { color: var(--danger); }
+
+  .chat-info-tabs { display: flex; gap: 6px; margin-top: 16px; }
+
+  .chat-info-panel {
+    margin-top: 12px;
+    max-height: 260px;
+    overflow-y: auto;
+  }
+
+  .chat-info-media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .chat-info-media-thumb {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 8px;
+    background: var(--surface-2);
+    background-size: cover;
+    background-position: center;
+    cursor: pointer;
+  }
+
+  .chat-info-list { display: flex; flex-direction: column; gap: 8px; }
+
+  .chat-info-list-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .chat-info-list-item-icon { font-size: 16px; flex-shrink: 0; }
+
+  .chat-info-list-item-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 12px;
+  }
+
+  .chat-info-empty {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text-faint);
+    padding: 10px 4px;
+    text-align: center;
+  }
+
   .chat-message-other {
     align-self: flex-start;
     background: var(--surface-2);

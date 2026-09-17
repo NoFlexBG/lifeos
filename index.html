@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=6">
+<link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 
@@ -826,12 +826,14 @@
               <span class="chat-conversation-name" id="chatConversationName"></span>
               <span class="chat-conversation-status" id="chatConversationStatus"></span>
             </div>
+            <button class="icon-btn" id="chatInfoBtn" title="Инфо и настройки" data-i18n-title>ⓘ</button>
             <button class="icon-btn chat-delete-btn" id="deleteChatBtn" title="Изтрий чата" data-i18n-title>🗑</button>
             <button class="icon-btn chat-members-btn hidden" id="groupMembersBtn" title="Членове" data-i18n-title>👥</button>
             <button class="icon-btn chat-leave-group-btn hidden" id="leaveGroupBtn" title="Напусни групата" data-i18n-title>×</button>
           </div>
           <div class="chat-messages" id="chatMessages"></div>
-          <div class="chat-input-row">
+          <div class="chat-blocked-banner hidden" id="chatBlockedBanner" data-i18n>Вие бяхте блокирани</div>
+          <div class="chat-input-row" id="chatInputRow">
             <div class="chat-attach-wrap">
               <button class="chip chat-photo-btn" id="chatAttachBtn" title="Прикачи" data-i18n-title>
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -854,6 +856,12 @@
                   </svg>
                   <span data-i18n>Галерия</span>
                 </button>
+                <button type="button" id="chatAttachFileBtn">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3 3 0 0 1 4.24 4.24l-9.2 9.19a1 1 0 0 1-1.41-1.41l8.49-8.48"></path>
+                  </svg>
+                  <span data-i18n>Файл</span>
+                </button>
                 <button type="button" id="chatAttachLocationBtn">
                   <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M12 22s8-4.5 8-11a8 8 0 1 0-16 0c0 6.5 8 11 8 11z"></path>
@@ -865,6 +873,7 @@
             </div>
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
             <input type="file" id="chatCameraInput" accept="image/*" capture="environment" class="hidden" />
+            <input type="file" id="chatFileInput" class="hidden" />
             <div class="chat-input-field-wrap">
               <div class="chat-typing-mascot mascot-gone" id="chatTypingMascot" aria-hidden="true">
                 <div class="mascot-inner">
@@ -1524,6 +1533,49 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="chatInfoModal">
+  <div class="console-panel product-edit-modal-inner chat-info-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" id="chatInfoModalTitle">ИНФО</span>
+
+    <div class="settings-row">
+      <span class="theme-label" data-i18n>Заглуши известията</span>
+      <button class="switch-toggle" id="chatMuteToggle" type="button" role="switch" aria-checked="false">
+        <span class="switch-toggle-icon">✕</span>
+        <span class="switch-toggle-icon">✓</span>
+        <span class="switch-toggle-thumb"></span>
+      </button>
+    </div>
+
+    <button class="settings-action chat-block-action hidden" id="chatBlockBtn" data-i18n>Блокирай потребителя</button>
+    <button class="settings-action hidden" id="chatUnblockBtn" data-i18n>Отблокирай потребителя</button>
+
+    <div class="chat-info-tabs">
+      <button type="button" class="vitals-tab active" data-info-tab="media" data-i18n>МЕДИЯ</button>
+      <button type="button" class="vitals-tab" data-info-tab="files" data-i18n>ФАЙЛОВЕ</button>
+      <button type="button" class="vitals-tab" data-info-tab="links" data-i18n>ЛИНКОВЕ</button>
+    </div>
+
+    <div class="chat-info-panel" id="chatInfoMediaPanel">
+      <div class="chat-info-media-grid" id="chatInfoMediaGrid"></div>
+      <div class="chat-info-empty hidden" id="chatInfoMediaEmpty" data-i18n>Няма споделени снимки</div>
+    </div>
+    <div class="chat-info-panel hidden" id="chatInfoFilesPanel">
+      <div class="chat-info-list" id="chatInfoFilesList"></div>
+      <div class="chat-info-empty hidden" id="chatInfoFilesEmpty" data-i18n>Няма споделени файлове</div>
+    </div>
+    <div class="chat-info-panel hidden" id="chatInfoLinksPanel">
+      <div class="chat-info-list" id="chatInfoLinksList"></div>
+      <div class="chat-info-empty hidden" id="chatInfoLinksEmpty" data-i18n>Няма споделени линкове</div>
+    </div>
+
+    <div class="matrix-modal-actions">
+      <button class="chip" id="chatInfoCloseBtn" data-i18n>Затвори</button>
+    </div>
+  </div>
+</div>
+
 <div class="product-edit-modal hidden" id="groupMembersModal">
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
@@ -1720,6 +1772,14 @@
     'напр. Астра': 'e.g. Astra', 'Изтрий колата': 'Delete car', 'Въведи име на колата': 'Enter a car name',
     '(редактирано)': '(edited)', 'Редактирай съобщението:': 'Edit the message:', 'Грешка при редактиране': 'Error editing', 'Изтрий това съобщение?': 'Delete this message?',
     'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Are you sure you want to reset the coin counts?',
+    'Вие бяхте блокирани': 'You have been blocked', 'Файл': 'File', 'Инфо и настройки': 'Info and settings',
+    'Заглуши известията': 'Mute notifications', 'Блокирай потребителя': 'Block user', 'Отблокирай потребителя': 'Unblock user',
+    'МЕДИЯ': 'MEDIA', 'ФАЙЛОВЕ': 'FILES', 'ЛИНКОВЕ': 'LINKS',
+    'Няма споделени снимки': 'No shared photos', 'Няма споделени файлове': 'No shared files', 'Няма споделени линкове': 'No shared links',
+    'Грешка': 'Error', 'Сигурни ли сте, че искате да блокирате този потребител?': 'Are you sure you want to block this user?',
+    'Грешка при блокиране': 'Error blocking', 'Потребителят е блокиран': 'User blocked',
+    'Грешка при отблокиране': 'Error unblocking', 'Потребителят е отблокиран': 'User unblocked',
+    'Грешка при качване на файл': 'Error uploading the file',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -1948,6 +2008,14 @@
     'напр. Астра': 'z.B. Astra', 'Изтрий колата': 'Auto löschen', 'Въведи име на колата': 'Gib einen Autonamen ein',
     '(редактирано)': '(bearbeitet)', 'Редактирай съобщението:': 'Nachricht bearbeiten:', 'Грешка при редактиране': 'Fehler beim Bearbeiten', 'Изтрий това съобщение?': 'Diese Nachricht löschen?',
     'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Möchtest du die Münzanzahl wirklich zurücksetzen?',
+    'Вие бяхте блокирани': 'Du wurdest blockiert', 'Файл': 'Datei', 'Инфо и настройки': 'Info und Einstellungen',
+    'Заглуши известията': 'Benachrichtigungen stummschalten', 'Блокирай потребителя': 'Nutzer blockieren', 'Отблокирай потребителя': 'Nutzer entsperren',
+    'МЕДИЯ': 'MEDIEN', 'ФАЙЛОВЕ': 'DATEIEN', 'ЛИНКОВЕ': 'LINKS',
+    'Няма споделени снимки': 'Keine geteilten Fotos', 'Няма споделени файлове': 'Keine geteilten Dateien', 'Няма споделени линкове': 'Keine geteilten Links',
+    'Грешка': 'Fehler', 'Сигурни ли сте, че искате да блокирате този потребител?': 'Möchtest du diesen Nutzer wirklich blockieren?',
+    'Грешка при блокиране': 'Fehler beim Blockieren', 'Потребителят е блокиран': 'Nutzer blockiert',
+    'Грешка при отблокиране': 'Fehler beim Entsperren', 'Потребителят е отблокиран': 'Nutzer entsperrt',
+    'Грешка при качване на файл': 'Fehler beim Hochladen der Datei',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2176,6 +2244,14 @@
     'напр. Астра': 'örn. Astra', 'Изтрий колата': 'Aracı sil', 'Въведи име на колата': 'Bir araç adı gir',
     '(редактирано)': '(düzenlendi)', 'Редактирай съобщението:': 'Mesajı düzenle:', 'Грешка при редактиране': 'Düzenleme hatası', 'Изтрий това съобщение?': 'Bu mesaj silinsin mi?',
     'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Madeni para sayılarını sıfırlamak istediğinden emin misin?',
+    'Вие бяхте блокирани': 'Engellendiniz', 'Файл': 'Dosya', 'Инфо и настройки': 'Bilgi ve ayarlar',
+    'Заглуши известията': 'Bildirimleri sessize al', 'Блокирай потребителя': 'Kullanıcıyı engelle', 'Отблокирай потребителя': 'Kullanıcının engelini kaldır',
+    'МЕДИЯ': 'MEDYA', 'ФАЙЛОВЕ': 'DOSYALAR', 'ЛИНКОВЕ': 'BAĞLANTILAR',
+    'Няма споделени снимки': 'Paylaşılan fotoğraf yok', 'Няма споделени файлове': 'Paylaşılan dosya yok', 'Няма споделени линкове': 'Paylaşılan bağlantı yok',
+    'Грешка': 'Hata', 'Сигурни ли сте, че искате да блокирате този потребител?': 'Bu kullanıcıyı engellemek istediğinden emin misin?',
+    'Грешка при блокиране': 'Engelleme hatası', 'Потребителят е блокиран': 'Kullanıcı engellendi',
+    'Грешка при отблокиране': 'Engel kaldırma hatası', 'Потребителят е отблокиран': 'Kullanıcının engeli kaldırıldı',
+    'Грешка при качване на файл': 'Dosya yüklenirken hata oluştu',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -4259,6 +4335,9 @@
   let typingBroadcastTimer = null;
   let friendTypingTimeout = null;
   let chatPresenceHeartbeatTimer = null;
+  let chatMutes = new Set();
+  let blockedByFriendIds = new Set();
+  let iBlockedFriendIds = new Set();
 
   async function setActiveChatPresence(targetType, targetId) {
     if (!currentUser) return;
@@ -4575,6 +4654,7 @@
     pushNav(closeChatConversation);
     wireTypingChannel(friendId);
     startChatPresenceHeartbeat('dm', friendId);
+    updateChatBlockedBannerAndInput();
     await loadChatMessages();
     await sb.from('messages').update({ read_at: new Date().toISOString() })
       .eq('receiver_id', currentUser.id).eq('sender_id', friendId).is('read_at', null);
@@ -4597,6 +4677,7 @@
     $('chatConversationPanel').classList.remove('hidden');
     pushNav(closeChatConversation);
     startChatPresenceHeartbeat('group', groupId);
+    updateChatBlockedBannerAndInput();
     await loadGroupMessages();
   }
 
@@ -4610,6 +4691,186 @@
     stopChatPresenceHeartbeat();
     setActiveChatPresence(null, null);
     popNav();
+  }
+
+  /* ============ Mute / Block / Info panel ============ */
+
+  function chatMuteKey(targetType, targetId) { return targetType + ':' + targetId; }
+
+  function isChatMuted(targetType, targetId) { return chatMutes.has(chatMuteKey(targetType, targetId)); }
+
+  async function loadChatMutesAndBlocks() {
+    if (!currentUser) return;
+    const { data: mutes } = await sb.from('chat_mutes').select('target_type, target_id').eq('user_id', currentUser.id);
+    chatMutes = new Set((mutes || []).map((m) => chatMuteKey(m.target_type, m.target_id)));
+
+    const { data: blockedByMe } = await sb.from('blocked_users').select('blocked_id').eq('blocker_id', currentUser.id);
+    iBlockedFriendIds = new Set((blockedByMe || []).map((r) => r.blocked_id));
+
+    const { data: blockingMe } = await sb.from('blocked_users').select('blocker_id').eq('blocked_id', currentUser.id);
+    blockedByFriendIds = new Set((blockingMe || []).map((r) => r.blocker_id));
+  }
+
+  function updateChatBlockedBannerAndInput() {
+    const isBlocked = !!activeChatFriendId && blockedByFriendIds.has(activeChatFriendId);
+    $('chatBlockedBanner').classList.toggle('hidden', !isBlocked);
+    $('chatInputRow').classList.toggle('hidden', isBlocked);
+  }
+
+  async function toggleChatMute() {
+    const targetType = activeChatGroupId ? 'group' : 'dm';
+    const targetId = activeChatGroupId || activeChatFriendId;
+    if (!targetId) return;
+    const key = chatMuteKey(targetType, targetId);
+    const nowMuted = !chatMutes.has(key);
+    if (nowMuted) {
+      const { error } = await sb.from('chat_mutes').upsert({ user_id: currentUser.id, target_type: targetType, target_id: targetId });
+      if (error) { showToast(tr('Грешка')); return; }
+      chatMutes.add(key);
+    } else {
+      const { error } = await sb.from('chat_mutes').delete()
+        .eq('user_id', currentUser.id).eq('target_type', targetType).eq('target_id', targetId);
+      if (error) { showToast(tr('Грешка')); return; }
+      chatMutes.delete(key);
+    }
+    $('chatMuteToggle').setAttribute('aria-checked', nowMuted ? 'true' : 'false');
+  }
+
+  async function blockCurrentFriend() {
+    if (!activeChatFriendId) return;
+    if (!confirm(tr('Сигурни ли сте, че искате да блокирате този потребител?'))) return;
+    const { error } = await sb.from('blocked_users').insert({ blocker_id: currentUser.id, blocked_id: activeChatFriendId });
+    if (error) { showToast(tr('Грешка при блокиране')); return; }
+    iBlockedFriendIds.add(activeChatFriendId);
+    $('chatBlockBtn').classList.add('hidden');
+    $('chatUnblockBtn').classList.remove('hidden');
+    showToast(tr('Потребителят е блокиран'));
+  }
+
+  async function unblockCurrentFriend() {
+    if (!activeChatFriendId) return;
+    const { error } = await sb.from('blocked_users').delete()
+      .eq('blocker_id', currentUser.id).eq('blocked_id', activeChatFriendId);
+    if (error) { showToast(tr('Грешка при отблокиране')); return; }
+    iBlockedFriendIds.delete(activeChatFriendId);
+    $('chatBlockBtn').classList.remove('hidden');
+    $('chatUnblockBtn').classList.add('hidden');
+    showToast(tr('Потребителят е отблокиран'));
+  }
+
+  function activeChatMessagesSource() {
+    return activeChatGroupId ? groupMessagesCache : chatMessagesCache;
+  }
+
+  function openChatInfoModal() {
+    const isGroup = !!activeChatGroupId;
+    const targetId = isGroup ? activeChatGroupId : activeChatFriendId;
+    if (!targetId) return;
+    const targetType = isGroup ? 'group' : 'dm';
+
+    $('chatInfoModalTitle').textContent = $('chatConversationName').textContent;
+    $('chatMuteToggle').setAttribute('aria-checked', isChatMuted(targetType, targetId) ? 'true' : 'false');
+
+    $('chatBlockBtn').classList.toggle('hidden', isGroup || iBlockedFriendIds.has(activeChatFriendId));
+    $('chatUnblockBtn').classList.toggle('hidden', isGroup || !iBlockedFriendIds.has(activeChatFriendId));
+
+    renderChatInfoMedia();
+    renderChatInfoFiles();
+    renderChatInfoLinks();
+    switchChatInfoTab('media');
+
+    $('chatInfoModal').classList.remove('hidden');
+    pushNav(closeChatInfoModal);
+  }
+
+  function closeChatInfoModal() {
+    $('chatInfoModal').classList.add('hidden');
+    popNav();
+  }
+
+  function switchChatInfoTab(tab) {
+    document.querySelectorAll('#chatInfoModal [data-info-tab]').forEach((btn) => btn.classList.toggle('active', btn.dataset.infoTab === tab));
+    $('chatInfoMediaPanel').classList.toggle('hidden', tab !== 'media');
+    $('chatInfoFilesPanel').classList.toggle('hidden', tab !== 'files');
+    $('chatInfoLinksPanel').classList.toggle('hidden', tab !== 'links');
+  }
+
+  function renderChatInfoMedia() {
+    const grid = $('chatInfoMediaGrid');
+    grid.innerHTML = '';
+    const imgs = activeChatMessagesSource().filter((m) => m.image_path);
+    imgs.forEach((m) => {
+      const thumb = document.createElement('div');
+      thumb.className = 'chat-info-media-thumb';
+      getSignedPhotoUrl(m.image_path).then(({ data, error }) => {
+        if (!error && data) thumb.style.backgroundImage = `url("${data.signedUrl}")`;
+      });
+      thumb.addEventListener('click', () => {
+        getSignedPhotoUrl(m.image_path).then(({ data, error }) => { if (!error && data) window.open(data.signedUrl, '_blank'); });
+      });
+      grid.appendChild(thumb);
+    });
+    $('chatInfoMediaEmpty').classList.toggle('hidden', imgs.length > 0);
+  }
+
+  function formatFileSize(bytes) {
+    if (!bytes) return '';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return Math.round(bytes / 1024) + ' KB';
+    return (bytes / 1024 / 1024).toFixed(1) + ' MB';
+  }
+
+  function renderChatInfoFiles() {
+    const list = $('chatInfoFilesList');
+    list.innerHTML = '';
+    const files = activeChatMessagesSource().filter((m) => m.file_path);
+    files.forEach((m) => {
+      const item = document.createElement('a');
+      item.className = 'chat-info-list-item';
+      item.href = '#';
+      const icon = document.createElement('span');
+      icon.className = 'chat-info-list-item-icon';
+      icon.textContent = '📎';
+      const text = document.createElement('div');
+      text.className = 'chat-info-list-item-text';
+      text.textContent = (m.file_name || tr('Файл')) + (m.file_size ? ' · ' + formatFileSize(m.file_size) : '');
+      item.append(icon, text);
+      item.addEventListener('click', (e) => {
+        e.preventDefault();
+        getSignedPhotoUrl(m.file_path).then(({ data, error }) => { if (!error && data) window.open(data.signedUrl, '_blank'); });
+      });
+      list.appendChild(item);
+    });
+    $('chatInfoFilesEmpty').classList.toggle('hidden', files.length > 0);
+  }
+
+  const CHAT_URL_REGEX = /https?:\/\/[^\s]+/gi;
+
+  function renderChatInfoLinks() {
+    const list = $('chatInfoLinksList');
+    list.innerHTML = '';
+    const links = [];
+    activeChatMessagesSource().forEach((m) => {
+      if (!m.body) return;
+      const matches = m.body.match(CHAT_URL_REGEX);
+      if (matches) matches.forEach((url) => links.push(url));
+    });
+    links.forEach((url) => {
+      const item = document.createElement('a');
+      item.className = 'chat-info-list-item';
+      item.href = url;
+      item.target = '_blank';
+      item.rel = 'noopener noreferrer';
+      const icon = document.createElement('span');
+      icon.className = 'chat-info-list-item-icon';
+      icon.textContent = '🔗';
+      const text = document.createElement('div');
+      text.className = 'chat-info-list-item-text';
+      text.textContent = url;
+      item.append(icon, text);
+      list.appendChild(item);
+    });
+    $('chatInfoLinksEmpty').classList.toggle('hidden', links.length > 0);
   }
 
   async function loadChatGroups() {
@@ -4988,6 +5249,28 @@
           caption.textContent = m.body;
           bubble.appendChild(caption);
         }
+      } else if (m.file_path) {
+        const fileLink = document.createElement('a');
+        fileLink.className = 'chat-message-file';
+        fileLink.href = '#';
+        const icon = document.createElement('span');
+        icon.className = 'chat-message-file-icon';
+        icon.textContent = '📎';
+        const fileInfo = document.createElement('div');
+        fileInfo.className = 'chat-message-file-info';
+        const fileName = document.createElement('div');
+        fileName.className = 'chat-message-file-name';
+        fileName.textContent = m.file_name || tr('Файл');
+        const fileSize = document.createElement('div');
+        fileSize.className = 'chat-message-file-size';
+        fileSize.textContent = formatFileSize(m.file_size);
+        fileInfo.append(fileName, fileSize);
+        fileLink.append(icon, fileInfo);
+        fileLink.addEventListener('click', (e) => {
+          e.preventDefault();
+          getSignedPhotoUrl(m.file_path).then(({ data, error }) => { if (!error && data) window.open(data.signedUrl, '_blank'); });
+        });
+        bubble.appendChild(fileLink);
       } else if (m.lat != null && m.lng != null) {
         const mapBox = document.createElement('div');
         mapBox.className = 'chat-message-map';
@@ -5019,7 +5302,7 @@
       bubble.appendChild(time);
 
       const isOwn = m.sender_id === currentUser.id;
-      const isPlainText = !m.image_path && m.lat == null && m.lng == null;
+      const isPlainText = !m.image_path && !m.file_path && m.lat == null && m.lng == null;
       if (isOwn) {
         const row = document.createElement('div');
         row.className = 'chat-message-row';
@@ -5069,6 +5352,7 @@
     const { error } = await sb.from(table).delete().eq('id', m.id);
     if (error) { showToast(tr('Грешка при изтриване')); return; }
     if (m.image_path) await sb.storage.from(PHOTO_BUCKET).remove([m.image_path]);
+    if (m.file_path) await sb.storage.from(PHOTO_BUCKET).remove([m.file_path]);
     if (isGroup) {
       groupMessagesCache = groupMessagesCache.filter((x) => x.id !== m.id);
     } else {
@@ -5102,6 +5386,30 @@
     }).select().single();
     if (error) { showToast(tr('Грешка при изпращане')); return; }
     chatMessagesCache.push(data);
+    renderChatMessages();
+  }
+
+  const MAX_FILE_MB = 20;
+
+  async function sendChatFile(file) {
+    if (!file || (!activeChatFriendId && !activeChatGroupId)) return;
+    if (activeChatFriendId && blockedByFriendIds.has(activeChatFriendId)) return;
+    if (file.size > MAX_FILE_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_FILE_MB}MB`); return; }
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
+    const path = `${currentUser.id}/chat/files/${genId('file')}-${safeName}`;
+    const { error: uploadError } = await sb.storage.from(PHOTO_BUCKET).upload(path, file, { contentType: file.type || 'application/octet-stream' });
+    if (uploadError) { showToast(tr('Грешка при качване на файл')); return; }
+
+    const payload = { sender_id: currentUser.id, file_path: path, file_name: file.name, file_size: file.size };
+    if (activeChatGroupId) {
+      const { data, error } = await sb.from('group_messages').insert({ ...payload, group_id: activeChatGroupId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      groupMessagesCache.push(data);
+    } else {
+      const { data, error } = await sb.from('messages').insert({ ...payload, receiver_id: activeChatFriendId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      chatMessagesCache.push(data);
+    }
     renderChatMessages();
   }
 
@@ -5163,6 +5471,7 @@
     const input = $('chatMessageInput');
     const body = (input.value || '').trim();
     if (!body || (!activeChatFriendId && !activeChatGroupId)) return;
+    if (activeChatFriendId && blockedByFriendIds.has(activeChatFriendId)) return;
     input.value = '';
 
     if (activeChatGroupId) {
@@ -5200,7 +5509,7 @@
           sb.from('messages').update({ read_at: new Date().toISOString() }).eq('id', m.id);
         } else {
           refreshUnreadCount();
-          showToast(tr('Ново съобщение'));
+          if (!isChatMuted('dm', m.sender_id)) showToast(tr('Ново съобщение'));
         }
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'messages', filter: `receiver_id=eq.${currentUser.id}` }, (payload) => {
@@ -5224,7 +5533,7 @@
           groupMessagesCache.push(m);
           renderChatMessages();
         } else if (m.sender_id !== currentUser.id) {
-          showToast(tr('Ново съобщение в група'));
+          if (!isChatMuted('group', m.group_id)) showToast(tr('Ново съобщение в група'));
         }
       })
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'group_messages' }, (payload) => {
@@ -5239,6 +5548,9 @@
           groupMessagesCache = groupMessagesCache.filter((x) => x.id !== oldId);
           renderChatMessages();
         }
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'blocked_users', filter: `blocked_id=eq.${currentUser.id}` }, () => {
+        loadChatMutesAndBlocks().then(updateChatBlockedBannerAndInput);
       })
       .subscribe();
   }
@@ -7374,6 +7686,9 @@
     updateLastSeen();
     stopLastSeenHeartbeat();
     onlineUserIds = new Set();
+    chatMutes = new Set();
+    blockedByFriendIds = new Set();
+    iBlockedFriendIds = new Set();
     currentUser = null;
     state = createDefaultState();
     chatFriendRequests = [];
@@ -7452,6 +7767,7 @@
     buildChatEmojiPicker();
     $('chatAttachCameraBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatCameraInput').click(); });
     $('chatAttachGalleryBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatPhotoInput').click(); });
+    $('chatAttachFileBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatFileInput').click(); });
     $('chatAttachLocationBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); sendChatLocation(); });
     $('chatPhotoInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
@@ -7462,6 +7778,20 @@
       const file = e.target.files[0];
       e.target.value = '';
       sendChatImage(file);
+    });
+    $('chatFileInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      e.target.value = '';
+      sendChatFile(file);
+    });
+
+    $('chatInfoBtn').addEventListener('click', openChatInfoModal);
+    $('chatInfoCloseBtn').addEventListener('click', closeChatInfoModal);
+    $('chatMuteToggle').addEventListener('click', toggleChatMute);
+    $('chatBlockBtn').addEventListener('click', blockCurrentFriend);
+    $('chatUnblockBtn').addEventListener('click', unblockCurrentFriend);
+    document.querySelectorAll('#chatInfoModal [data-info-tab]').forEach((btn) => {
+      btn.addEventListener('click', () => switchChatInfoTab(btn.dataset.infoTab));
     });
 
     $('dailyRate').addEventListener('input', onRateChange);
@@ -7720,6 +8050,7 @@
     syncOwnProfile();
     wireChatRealtime();
     wireOnlinePresence();
+    loadChatMutesAndBlocks();
     loadChatData().then(loadChatGroups);
     refreshUnreadCount();
     updatePushToggleUI();
