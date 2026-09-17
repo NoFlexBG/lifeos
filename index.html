@@ -4832,6 +4832,25 @@
     return (bytes / 1024 / 1024).toFixed(1) + ' MB';
   }
 
+  async function downloadChatFile(path, fileName) {
+    const { data, error } = await getSignedPhotoUrl(path);
+    if (error || !data) { showToast(tr('Грешка')); return; }
+    try {
+      const resp = await fetch(data.signedUrl);
+      const blob = await resp.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = fileName || 'file';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 10000);
+    } catch {
+      window.open(data.signedUrl, '_blank');
+    }
+  }
+
   function renderChatInfoFiles() {
     const list = $('chatInfoFilesList');
     list.innerHTML = '';
@@ -4849,7 +4868,7 @@
       item.append(icon, text);
       item.addEventListener('click', (e) => {
         e.preventDefault();
-        getSignedPhotoUrl(m.file_path).then(({ data, error }) => { if (!error && data) window.open(data.signedUrl, '_blank'); });
+        downloadChatFile(m.file_path, m.file_name);
       });
       list.appendChild(item);
     });
@@ -5280,7 +5299,7 @@
         fileLink.append(icon, fileInfo);
         fileLink.addEventListener('click', (e) => {
           e.preventDefault();
-          getSignedPhotoUrl(m.file_path).then(({ data, error }) => { if (!error && data) window.open(data.signedUrl, '_blank'); });
+          downloadChatFile(m.file_path, m.file_name);
         });
         bubble.appendChild(fileLink);
       } else if (m.lat != null && m.lng != null) {
@@ -5415,16 +5434,16 @@
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const path = `${currentUser.id}/chat/files/${genId('file')}-${safeName}`;
     const { error: uploadError } = await sb.storage.from(PHOTO_BUCKET).upload(path, file, { contentType: file.type || 'application/octet-stream' });
-    if (uploadError) { alert('FILE UPLOAD DEBUG: ' + JSON.stringify(uploadError)); showToast(tr('Грешка при качване на файл')); return; }
+    if (uploadError) { showToast(tr('Грешка при качване на файл')); return; }
 
     const payload = { sender_id: currentUser.id, file_path: path, file_name: file.name, file_size: file.size };
     if (activeChatGroupId) {
       const { data, error } = await sb.from('group_messages').insert({ ...payload, group_id: activeChatGroupId }).select().single();
-      if (error) { alert('FILE INSERT DEBUG: ' + JSON.stringify(error)); showToast(tr('Грешка при изпращане')); return; }
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
       groupMessagesCache.push(data);
     } else {
       const { data, error } = await sb.from('messages').insert({ ...payload, receiver_id: activeChatFriendId }).select().single();
-      if (error) { alert('FILE INSERT DEBUG: ' + JSON.stringify(error)); showToast(tr('Грешка при изпращане')); return; }
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
       chatMessagesCache.push(data);
     }
     renderChatMessages();
