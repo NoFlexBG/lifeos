@@ -4461,7 +4461,12 @@
       const name = document.createElement('div');
       name.className = 'chat-friend-name';
       name.textContent = chatFriendDisplayName(profile, otherId);
-      info.appendChild(name);
+      const status = document.createElement('div');
+      status.className = 'chat-friend-last';
+      status.textContent = onlineUserIds.has(otherId)
+        ? tr('На линия')
+        : (profile && profile.last_seen_at ? formatLastSeen(profile.last_seen_at) : '');
+      info.append(name, status);
       const delBtn = document.createElement('button');
       delBtn.className = 'chat-friend-del';
       delBtn.textContent = '×';
