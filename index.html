@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=4">
+<link rel="stylesheet" href="styles.css?v=5">
 </head>
 <body>
 
@@ -3288,9 +3288,11 @@
   function createCounterRow(count, onChange) {
     const row = document.createElement('div');
 
-    const times = document.createElement('span');
-    times.className = 'coin-card-times';
-    times.textContent = '×';
+    const resetBtn = document.createElement('button');
+    resetBtn.type = 'button';
+    resetBtn.className = 'coin-card-times';
+    resetBtn.textContent = '×';
+    resetBtn.title = tr('Нулирай');
 
     const minusBtn = document.createElement('button');
     minusBtn.type = 'button';
@@ -3312,6 +3314,7 @@
       onChange(count);
     };
 
+    resetBtn.addEventListener('click', () => setCount(0));
     minusBtn.addEventListener('click', () => setCount(count - 1));
     plusBtn.addEventListener('click', () => setCount(count + 1));
     valueEl.addEventListener('wheel', (e) => {
@@ -3319,7 +3322,7 @@
       setCount(count + (e.deltaY < 0 ? 1 : -1));
     }, { passive: false });
 
-    row.append(times, minusBtn, valueEl, plusBtn);
+    row.append(resetBtn, minusBtn, valueEl, plusBtn);
     return row;
   }
 

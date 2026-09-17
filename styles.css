@@ -1493,7 +1493,13 @@
     font-family: var(--font-mono);
     color: var(--text-faint);
     font-size: 11px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
   }
+
+  .coin-card-times:hover { color: var(--danger); }
 
   .coin-counter-btn {
     width: 22px;
