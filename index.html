@@ -4712,9 +4712,19 @@
   }
 
   function updateChatBlockedBannerAndInput() {
-    const isBlocked = !!activeChatFriendId && blockedByFriendIds.has(activeChatFriendId);
-    $('chatBlockedBanner').classList.toggle('hidden', !isBlocked);
-    $('chatInputRow').classList.toggle('hidden', isBlocked);
+    const blockedMe = !!activeChatFriendId && blockedByFriendIds.has(activeChatFriendId);
+    const iBlocked = !!activeChatFriendId && iBlockedFriendIds.has(activeChatFriendId);
+    const banner = $('chatBlockedBanner');
+    if (blockedMe) {
+      banner.textContent = tr('Вие бяхте блокирани');
+      banner.classList.remove('hidden');
+    } else if (iBlocked) {
+      banner.textContent = tr('Потребителят е блокиран');
+      banner.classList.remove('hidden');
+    } else {
+      banner.classList.add('hidden');
+    }
+    $('chatInputRow').classList.toggle('hidden', blockedMe || iBlocked);
   }
 
   async function toggleChatMute() {
@@ -5372,6 +5382,7 @@
 
   async function sendChatImage(file) {
     if (!file || !activeChatFriendId) return;
+    if (isChatFriendBlocked(activeChatFriendId)) return;
     if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
     if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
     let blob;
@@ -5391,9 +5402,13 @@
 
   const MAX_FILE_MB = 20;
 
+  function isChatFriendBlocked(friendId) {
+    return blockedByFriendIds.has(friendId) || iBlockedFriendIds.has(friendId);
+  }
+
   async function sendChatFile(file) {
     if (!file || (!activeChatFriendId && !activeChatGroupId)) return;
-    if (activeChatFriendId && blockedByFriendIds.has(activeChatFriendId)) return;
+    if (activeChatFriendId && isChatFriendBlocked(activeChatFriendId)) return;
     if (file.size > MAX_FILE_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_FILE_MB}MB`); return; }
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_');
     const path = `${currentUser.id}/chat/files/${genId('file')}-${safeName}`;
@@ -5415,6 +5430,7 @@
 
   function sendChatLocation() {
     if (!activeChatFriendId) return;
+    if (isChatFriendBlocked(activeChatFriendId)) return;
     if (!navigator.geolocation) { showToast(tr('Локацията не се поддържа на това устройство')); return; }
     showToast(tr('Определяне на локация...'));
     navigator.geolocation.getCurrentPosition(
@@ -5471,7 +5487,7 @@
     const input = $('chatMessageInput');
     const body = (input.value || '').trim();
     if (!body || (!activeChatFriendId && !activeChatGroupId)) return;
-    if (activeChatFriendId && blockedByFriendIds.has(activeChatFriendId)) return;
+    if (activeChatFriendId && isChatFriendBlocked(activeChatFriendId)) return;
     input.value = '';
 
     if (activeChatGroupId) {
