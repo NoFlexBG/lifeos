@@ -3240,6 +3240,90 @@
 
   .chat-message-voice { width: 220px; max-width: 100%; }
 
+  .chat-message-contact {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(0, 0, 0, 0.12);
+    border-radius: 8px;
+    text-decoration: none;
+    color: inherit;
+    max-width: 220px;
+  }
+
+  .chat-message-contact-icon { font-size: 20px; flex-shrink: 0; }
+  .chat-message-contact-info { min-width: 0; }
+  .chat-message-contact-name { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chat-message-contact-phone { font-size: 10px; color: var(--text-faint); }
+
+  .poll-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 4px;
+  }
+
+  .poll-option-row { display: flex; gap: 6px; align-items: center; }
+  .poll-option-row .mini-input { flex: 1; }
+
+  .poll-option-remove-btn {
+    width: 26px;
+    height: 26px;
+    border-radius: 6px;
+    border: 1px solid var(--line);
+    background: var(--surface-2);
+    color: var(--danger);
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .chat-poll { width: 220px; max-width: 100%; }
+  .chat-poll-question { font-size: 12.5px; font-weight: 600; margin-bottom: 8px; }
+
+  .chat-poll-option {
+    position: relative;
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 7px 10px;
+    margin-bottom: 6px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface-2);
+    cursor: pointer;
+    overflow: hidden;
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--text);
+  }
+
+  .chat-poll-option:last-child { margin-bottom: 0; }
+  .chat-poll-option.voted { border-color: var(--violet); }
+
+  .chat-poll-option-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    background: var(--violet-dim);
+    z-index: 0;
+  }
+
+  .chat-poll-option-label {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .chat-poll-total {
+    font-size: 10px;
+    color: var(--text-faint);
+    margin-top: 4px;
+  }
+
   .chat-input-field-wrap { position: relative; flex: 1; }
 
   .chat-typing-mascot {

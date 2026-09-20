@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=10">
+<link rel="stylesheet" href="styles.css?v=11">
 </head>
 <body>
 
@@ -877,6 +877,21 @@
                   </svg>
                   <span data-i18n>Прати пари</span>
                 </button>
+                <button type="button" id="chatAttachContactBtn">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+                    <circle cx="9" cy="10" r="2"></circle>
+                    <path d="M5 17c0-2 2-3 4-3s4 1 4 3"></path>
+                    <path d="M14 9h5M14 13h5"></path>
+                  </svg>
+                  <span data-i18n>Контакт</span>
+                </button>
+                <button type="button" id="chatAttachPollBtn">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 20V10M12 20V4M20 20v-7"></path>
+                  </svg>
+                  <span data-i18n>Анкета</span>
+                </button>
               </div>
             </div>
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
@@ -1533,6 +1548,51 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="contactShareModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>ПРАТИ КОНТАКТ</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="contactShareNameInput" data-i18n>Име</label>
+        <input type="text" id="contactShareNameInput" class="mini-input" placeholder="напр. Иван Иванов" maxlength="80" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label for="contactSharePhoneInput" data-i18n>Телефон</label>
+        <input type="tel" id="contactSharePhoneInput" class="mini-input" placeholder="напр. +359888123456" maxlength="30" data-i18n-ph />
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="contactShareCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="contactShareSendBtn" data-i18n>Изпрати</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="pollCreateModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" data-i18n>НОВА АНКЕТА</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="pollQuestionInput" data-i18n>Въпрос</label>
+        <input type="text" id="pollQuestionInput" class="mini-input" placeholder="напр. Къде ядем довечера?" maxlength="200" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label data-i18n>Опции</label>
+        <div class="poll-options-list" id="pollOptionsList"></div>
+        <button type="button" class="settings-action" id="pollAddOptionBtn" data-i18n>+ Добави опция</button>
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="pollCreateCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="pollCreateSendBtn" data-i18n>Изпрати</button>
+    </div>
+  </div>
+</div>
+
 <div class="product-edit-modal hidden" id="groupCreateModal">
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
@@ -1809,6 +1869,11 @@
     'Сума за изпращане (€):': 'Amount to send (€):', 'Въведи валидна сума': 'Enter a valid amount', 'Плащане': 'Payment',
     'Гласово съобщение': 'Voice message', 'Микрофонът не се поддържа на това устройство': 'Microphone is not supported on this device',
     'Нямаме достъп до микрофона': 'No access to the microphone', 'Грешка при качване на гласово съобщение': 'Error uploading the voice message',
+    'ПРАТИ КОНТАКТ': 'SEND CONTACT', 'Контакт': 'Contact', 'Телефон': 'Phone', 'напр. Иван Иванов': 'e.g. Ivan Ivanov',
+    'напр. +359888123456': 'e.g. +359888123456', 'Въведи име': 'Enter a name', 'Въведи телефонен номер': 'Enter a phone number',
+    'НОВА АНКЕТА': 'NEW POLL', 'Анкета': 'Poll', 'Въпрос': 'Question', 'напр. Къде ядем довечера?': 'e.g. Where should we eat tonight?',
+    'Опции': 'Options', '+ Добави опция': '+ Add option', 'Опция': 'Option', 'Въведи въпрос': 'Enter a question',
+    'Въведи поне 2 опции': 'Enter at least 2 options', 'Грешка при гласуване': 'Error voting', 'гласа': 'votes',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -2050,6 +2115,11 @@
     'Сума за изпращане (€):': 'Zu sendender Betrag (€):', 'Въведи валидна сума': 'Gib einen gültigen Betrag ein', 'Плащане': 'Zahlung',
     'Гласово съобщение': 'Sprachnachricht', 'Микрофонът не се поддържа на това устройство': 'Mikrofon wird auf diesem Gerät nicht unterstützt',
     'Нямаме достъп до микрофона': 'Kein Zugriff auf das Mikrofon', 'Грешка при качване на гласово съобщение': 'Fehler beim Hochladen der Sprachnachricht',
+    'ПРАТИ КОНТАКТ': 'KONTAKT SENDEN', 'Контакт': 'Kontakt', 'Телефон': 'Telefon', 'напр. Иван Иванов': 'z.B. Ivan Ivanov',
+    'напр. +359888123456': 'z.B. +359888123456', 'Въведи име': 'Gib einen Namen ein', 'Въведи телефонен номер': 'Gib eine Telefonnummer ein',
+    'НОВА АНКЕТА': 'NEUE UMFRAGE', 'Анкета': 'Umfrage', 'Въпрос': 'Frage', 'напр. Къде ядем довечера?': 'z.B. Wo essen wir heute Abend?',
+    'Опции': 'Optionen', '+ Добави опция': '+ Option hinzufügen', 'Опция': 'Option', 'Въведи въпрос': 'Gib eine Frage ein',
+    'Въведи поне 2 опции': 'Gib mindestens 2 Optionen ein', 'Грешка при гласуване': 'Fehler beim Abstimmen', 'гласа': 'Stimmen',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2291,6 +2361,11 @@
     'Сума за изпращане (€):': 'Gönderilecek tutar (€):', 'Въведи валидна сума': 'Geçerli bir tutar gir', 'Плащане': 'Ödeme',
     'Гласово съобщение': 'Sesli mesaj', 'Микрофонът не се поддържа на това устройство': 'Bu cihazda mikrofon desteklenmiyor',
     'Нямаме достъп до микрофона': 'Mikrofona erişim yok', 'Грешка при качване на гласово съобщение': 'Sesli mesaj yüklenirken hata oluştu',
+    'ПРАТИ КОНТАКТ': 'KİŞİ GÖNDER', 'Контакт': 'Kişi', 'Телефон': 'Telefon', 'напр. Иван Иванов': 'örn. Ivan Ivanov',
+    'напр. +359888123456': 'örn. +359888123456', 'Въведи име': 'Bir isim gir', 'Въведи телефонен номер': 'Bir telefon numarası gir',
+    'НОВА АНКЕТА': 'YENİ ANKET', 'Анкета': 'Anket', 'Въпрос': 'Soru', 'напр. Къде ядем довечера?': 'örn. Bu akşam nerede yiyelim?',
+    'Опции': 'Seçenekler', '+ Добави опция': '+ Seçenek ekle', 'Опция': 'Seçenek', 'Въведи въпрос': 'Bir soru gir',
+    'Въведи поне 2 опции': 'En az 2 seçenek gir', 'Грешка при гласуване': 'Oylama hatası', 'гласа': 'oy',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -5264,6 +5339,7 @@
     if (clearedAt) query = query.gt('created_at', clearedAt);
     const { data, error } = await query;
     groupMessagesCache = error ? [] : (data || []);
+    await loadPollVotesForMessages(groupMessagesCache);
     renderChatMessages();
   }
 
@@ -5326,6 +5402,7 @@
     if (clearedAt) query = query.gt('created_at', clearedAt);
     const { data, error } = await query;
     chatMessagesCache = error ? [] : (data || []);
+    await loadPollVotesForMessages(chatMessagesCache);
     renderChatMessages();
   }
 
@@ -5402,6 +5479,61 @@
           if (!error && data) audio.src = data.signedUrl;
         });
         bubble.appendChild(audio);
+      } else if (m.contact_name) {
+        const contactLink = document.createElement('a');
+        contactLink.className = 'chat-message-contact';
+        contactLink.href = `tel:${m.contact_phone}`;
+        const icon = document.createElement('span');
+        icon.className = 'chat-message-contact-icon';
+        icon.textContent = '📇';
+        const info = document.createElement('div');
+        info.className = 'chat-message-contact-info';
+        const name = document.createElement('div');
+        name.className = 'chat-message-contact-name';
+        name.textContent = m.contact_name;
+        const phone = document.createElement('div');
+        phone.className = 'chat-message-contact-phone';
+        phone.textContent = m.contact_phone || '';
+        info.append(name, phone);
+        contactLink.append(icon, info);
+        bubble.appendChild(contactLink);
+      } else if (m.poll_question) {
+        const poll = document.createElement('div');
+        poll.className = 'chat-poll';
+        const question = document.createElement('div');
+        question.className = 'chat-poll-question';
+        question.textContent = m.poll_question;
+        poll.appendChild(question);
+
+        const votes = pollVotesByMessageId[m.id] || [];
+        const totalVotes = votes.length;
+        const myVote = votes.find((v) => v.user_id === currentUser.id);
+        const options = Array.isArray(m.poll_options) ? m.poll_options : [];
+        options.forEach((optionText, idx) => {
+          const count = votes.filter((v) => v.option_index === idx).length;
+          const pct = totalVotes ? Math.round((count / totalVotes) * 100) : 0;
+          const optBtn = document.createElement('button');
+          optBtn.type = 'button';
+          optBtn.className = 'chat-poll-option' + (myVote && myVote.option_index === idx ? ' voted' : '');
+          const bar = document.createElement('span');
+          bar.className = 'chat-poll-option-bar';
+          bar.style.width = pct + '%';
+          const label = document.createElement('span');
+          label.className = 'chat-poll-option-label';
+          const optName = document.createElement('span');
+          optName.textContent = optionText;
+          const optCount = document.createElement('span');
+          optCount.textContent = totalVotes ? `${count} · ${pct}%` : '';
+          label.append(optName, optCount);
+          optBtn.append(bar, label);
+          optBtn.addEventListener('click', (e) => { e.stopPropagation(); castPollVote(m, idx, isGroup); });
+          poll.appendChild(optBtn);
+        });
+        const totalLabel = document.createElement('div');
+        totalLabel.className = 'chat-poll-total';
+        totalLabel.textContent = totalVotes + ' ' + tr('гласа');
+        poll.appendChild(totalLabel);
+        bubble.appendChild(poll);
       } else if (m.lat != null && m.lng != null) {
         const mapBox = document.createElement('div');
         mapBox.className = 'chat-message-map';
@@ -5433,7 +5565,7 @@
       bubble.appendChild(time);
 
       const isOwn = m.sender_id === currentUser.id;
-      const isPlainText = !m.image_path && !m.file_path && !m.voice_path && m.lat == null && m.lng == null;
+      const isPlainText = !m.image_path && !m.file_path && !m.voice_path && !m.contact_name && !m.poll_question && m.lat == null && m.lng == null;
       if (isOwn) {
         const row = document.createElement('div');
         row.className = 'chat-message-row';
@@ -5485,6 +5617,7 @@
     if (m.image_path) await sb.storage.from(PHOTO_BUCKET).remove([m.image_path]);
     if (m.file_path) await sb.storage.from(PHOTO_BUCKET).remove([m.file_path]);
     if (m.voice_path) await sb.storage.from(PHOTO_BUCKET).remove([m.voice_path]);
+    if (m.poll_question) { await sb.from('poll_votes').delete().eq('message_id', m.id); delete pollVotesByMessageId[m.id]; }
     if (isGroup) {
       groupMessagesCache = groupMessagesCache.filter((x) => x.id !== m.id);
     } else {
@@ -5690,6 +5823,125 @@
     renderChatMessages();
   }
 
+  function openContactShareModal() {
+    if (!activeChatFriendId && !activeChatGroupId) return;
+    if (activeChatFriendId && isChatFriendBlocked(activeChatFriendId)) return;
+    $('contactShareNameInput').value = '';
+    $('contactSharePhoneInput').value = '';
+    $('contactShareModal').classList.remove('hidden');
+    pushNav(closeContactShareModal);
+  }
+
+  function closeContactShareModal() {
+    $('contactShareModal').classList.add('hidden');
+    popNav();
+  }
+
+  async function sendContactFromModal() {
+    const name = $('contactShareNameInput').value.trim();
+    const phone = $('contactSharePhoneInput').value.trim();
+    if (!name) { showToast(tr('Въведи име')); return; }
+    if (!phone) { showToast(tr('Въведи телефонен номер')); return; }
+
+    const payload = { sender_id: currentUser.id, contact_name: name, contact_phone: phone };
+    if (activeChatGroupId) {
+      const { data, error } = await sb.from('group_messages').insert({ ...payload, group_id: activeChatGroupId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      groupMessagesCache.push(data);
+    } else {
+      const { data, error } = await sb.from('messages').insert({ ...payload, receiver_id: activeChatFriendId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      chatMessagesCache.push(data);
+    }
+    closeContactShareModal();
+    renderChatMessages();
+  }
+
+  function openPollCreateModal() {
+    if (!activeChatFriendId && !activeChatGroupId) return;
+    if (activeChatFriendId && isChatFriendBlocked(activeChatFriendId)) return;
+    $('pollQuestionInput').value = '';
+    $('pollOptionsList').innerHTML = '';
+    addPollOptionRow();
+    addPollOptionRow();
+    $('pollCreateModal').classList.remove('hidden');
+    pushNav(closePollCreateModal);
+  }
+
+  function closePollCreateModal() {
+    $('pollCreateModal').classList.add('hidden');
+    popNav();
+  }
+
+  function addPollOptionRow() {
+    const list = $('pollOptionsList');
+    if (list.children.length >= 6) return;
+    const row = document.createElement('div');
+    row.className = 'poll-option-row';
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.className = 'mini-input poll-option-input';
+    input.placeholder = tr('Опция');
+    input.maxLength = 80;
+    const removeBtn = document.createElement('button');
+    removeBtn.type = 'button';
+    removeBtn.className = 'poll-option-remove-btn';
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => {
+      if (list.children.length > 2) row.remove();
+    });
+    row.append(input, removeBtn);
+    list.appendChild(row);
+  }
+
+  async function sendPollFromModal() {
+    const question = $('pollQuestionInput').value.trim();
+    if (!question) { showToast(tr('Въведи въпрос')); return; }
+    const options = Array.from($('pollOptionsList').querySelectorAll('.poll-option-input'))
+      .map((el) => el.value.trim())
+      .filter(Boolean);
+    if (options.length < 2) { showToast(tr('Въведи поне 2 опции')); return; }
+
+    const payload = { sender_id: currentUser.id, poll_question: question, poll_options: options };
+    if (activeChatGroupId) {
+      const { data, error } = await sb.from('group_messages').insert({ ...payload, group_id: activeChatGroupId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      groupMessagesCache.push(data);
+    } else {
+      const { data, error } = await sb.from('messages').insert({ ...payload, receiver_id: activeChatFriendId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      chatMessagesCache.push(data);
+    }
+    closePollCreateModal();
+    renderChatMessages();
+  }
+
+  let pollVotesByMessageId = {};
+
+  async function loadPollVotesForMessages(messages) {
+    const pollIds = messages.filter((m) => m.poll_question).map((m) => m.id);
+    if (!pollIds.length) return;
+    const { data } = await sb.from('poll_votes').select('message_id, user_id, option_index').in('message_id', pollIds);
+    (data || []).forEach((v) => {
+      (pollVotesByMessageId[v.message_id] = pollVotesByMessageId[v.message_id] || []).push(v);
+    });
+  }
+
+  async function castPollVote(message, optionIndex, isGroup) {
+    const targetType = isGroup ? 'group' : 'dm';
+    const { error } = await sb.from('poll_votes').upsert({
+      message_id: message.id,
+      target_type: targetType,
+      user_id: currentUser.id,
+      option_index: optionIndex
+    }, { onConflict: 'message_id,user_id' });
+    if (error) { showToast(tr('Грешка при гласуване')); return; }
+    const votes = (pollVotesByMessageId[message.id] = pollVotesByMessageId[message.id] || []).filter((v) => v.user_id !== currentUser.id);
+    votes.push({ message_id: message.id, user_id: currentUser.id, option_index: optionIndex });
+    pollVotesByMessageId[message.id] = votes;
+    renderChatMessages();
+  }
+
   const CHAT_EMOJIS = [
     '😀','😃','😄','😁','😆','😅','😂','🤣','😊','😇','🙂','🙃','😉','😌','😍','🥰',
     '😘','😋','😛','😜','🤪','🤨','🧐','🤓','😎','🥳','😏','😒','😞','😔','🙁','☹️',
@@ -5807,6 +6059,16 @@
       })
       .on('postgres_changes', { event: '*', schema: 'public', table: 'blocked_users', filter: `blocked_id=eq.${currentUser.id}` }, () => {
         loadChatMutesAndBlocks().then(updateChatBlockedBannerAndInput);
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'poll_votes' }, (payload) => {
+        const record = payload.new && Object.keys(payload.new).length ? payload.new : payload.old;
+        if (!record) return;
+        const messageId = record.message_id;
+        const isVisible = chatMessagesCache.some((m) => m.id === messageId) || groupMessagesCache.some((m) => m.id === messageId);
+        if (!isVisible) return;
+        pollVotesByMessageId[messageId] = (pollVotesByMessageId[messageId] || []).filter((v) => v.user_id !== record.user_id);
+        if (payload.eventType !== 'DELETE') pollVotesByMessageId[messageId].push(record);
+        renderChatMessages();
       })
       .subscribe();
   }
@@ -8030,6 +8292,13 @@
     $('chatAttachFileBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatFileInput').click(); });
     $('chatAttachLocationBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); sendChatLocation(); });
     $('chatAttachMoneyBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); sendChatPayment(); });
+    $('chatAttachContactBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); openContactShareModal(); });
+    $('chatAttachPollBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); openPollCreateModal(); });
+    $('contactShareCancelBtn').addEventListener('click', closeContactShareModal);
+    $('contactShareSendBtn').addEventListener('click', sendContactFromModal);
+    $('pollCreateCancelBtn').addEventListener('click', closePollCreateModal);
+    $('pollCreateSendBtn').addEventListener('click', sendPollFromModal);
+    $('pollAddOptionBtn').addEventListener('click', addPollOptionRow);
     $('chatPhotoInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       e.target.value = '';
