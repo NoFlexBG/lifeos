@@ -5544,7 +5544,13 @@
     if (isChatFriendBlocked(activeChatFriendId)) return;
     const friendProfile = chatProfilesById[activeChatFriendId];
     const paypalMe = friendProfile && friendProfile.paypal_me;
-    if (!paypalMe) { showToast(tr('Този потребител няма добавен начин за плащане')); return; }
+    if (!paypalMe) {
+      alert('PAYPAL DEBUG: friendId=' + activeChatFriendId + ' cachedProfile=' + JSON.stringify(friendProfile));
+      const { data: freshProfile, error: freshError } = await sb.from('profiles').select('id, name, paypal_me').eq('id', activeChatFriendId).maybeSingle();
+      alert('PAYPAL DEBUG fresh fetch: ' + JSON.stringify(freshProfile) + ' error=' + JSON.stringify(freshError));
+      showToast(tr('Този потребител няма добавен начин за плащане'));
+      return;
+    }
 
     const amountStr = prompt(tr('Сума за изпращане (€):'));
     if (amountStr === null) return;
