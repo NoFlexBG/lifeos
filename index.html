@@ -869,6 +869,14 @@
                   </svg>
                   <span data-i18n>Локация</span>
                 </button>
+                <button type="button" id="chatAttachMoneyBtn">
+                  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9"></circle>
+                    <path d="M9.5 15.5c0 1.1 1.12 2 2.5 2s2.5-.9 2.5-2-1.12-1.8-2.5-2.2c-1.38-.4-2.5-1.1-2.5-2.2 0-1.1 1.12-2 2.5-2s2.5.9 2.5 2"></path>
+                    <path d="M12 7.5v1M12 15.5v1"></path>
+                  </svg>
+                  <span data-i18n>Прати пари</span>
+                </button>
               </div>
             </div>
             <input type="file" id="chatPhotoInput" accept="image/*" class="hidden" />
@@ -1445,6 +1453,10 @@
         <label for="profileEmailDisplay" data-i18n>Имейл</label>
         <input type="text" id="profileEmailDisplay" class="mini-input" disabled />
       </div>
+      <div class="product-edit-field">
+        <label for="profilePaypalMeInput" data-i18n>PayPal.me потребителско име</label>
+        <input type="text" id="profilePaypalMeInput" class="mini-input" placeholder="напр. ivan123" maxlength="60" data-i18n-ph />
+      </div>
     </div>
 
     <div class="settings-divider profile-modal-divider"></div>
@@ -1780,6 +1792,9 @@
     'Грешка при блокиране': 'Error blocking', 'Потребителят е блокиран': 'User blocked',
     'Грешка при отблокиране': 'Error unblocking', 'Потребителят е отблокиран': 'User unblocked',
     'Грешка при качване на файл': 'Error uploading the file', 'Изтегли': 'Download',
+    'Прати пари': 'Send money', 'PayPal.me потребителско име': 'PayPal.me username', 'напр. ivan123': 'e.g. ivan123',
+    'Този потребител няма добавен начин за плащане': 'This user has not added a payment method',
+    'Сума за изпращане (€):': 'Amount to send (€):', 'Въведи валидна сума': 'Enter a valid amount', 'Плащане': 'Payment',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -2016,6 +2031,9 @@
     'Грешка при блокиране': 'Fehler beim Blockieren', 'Потребителят е блокиран': 'Nutzer blockiert',
     'Грешка при отблокиране': 'Fehler beim Entsperren', 'Потребителят е отблокиран': 'Nutzer entsperrt',
     'Грешка при качване на файл': 'Fehler beim Hochladen der Datei', 'Изтегли': 'Herunterladen',
+    'Прати пари': 'Geld senden', 'PayPal.me потребителско име': 'PayPal.me-Benutzername', 'напр. ivan123': 'z.B. ivan123',
+    'Този потребител няма добавен начин за плащане': 'Dieser Nutzer hat keine Zahlungsmethode hinzugefügt',
+    'Сума за изпращане (€):': 'Zu sendender Betrag (€):', 'Въведи валидна сума': 'Gib einen gültigen Betrag ein', 'Плащане': 'Zahlung',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2252,6 +2270,9 @@
     'Грешка при блокиране': 'Engelleme hatası', 'Потребителят е блокиран': 'Kullanıcı engellendi',
     'Грешка при отблокиране': 'Engel kaldırma hatası', 'Потребителят е отблокиран': 'Kullanıcının engeli kaldırıldı',
     'Грешка при качване на файл': 'Dosya yüklenirken hata oluştu', 'Изтегли': 'İndir',
+    'Прати пари': 'Para gönder', 'PayPal.me потребителско име': 'PayPal.me kullanıcı adı', 'напр. ivan123': 'örn. ivan123',
+    'Този потребител няма добавен начин за плащане': 'Bu kullanıcı bir ödeme yöntemi eklememiş',
+    'Сума за изпращане (€):': 'Gönderilecek tutar (€):', 'Въведи валидна сума': 'Geçerli bir tutar gir', 'Плащане': 'Ödeme',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -2479,7 +2500,7 @@
       },
       savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
       company: { advances: [], expenses: [] },
-      profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true },
+      profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true, paypalMe: '' },
       notes: { entries: [] }
     };
   }
@@ -2541,7 +2562,8 @@
             name: (parsed.profile && parsed.profile.name) || '',
             avatarPath: (parsed.profile && parsed.profile.avatarPath) || '',
             currency: (parsed.profile && parsed.profile.currency) || 'EUR',
-            onboarded: (parsed.profile && typeof parsed.profile.onboarded === 'boolean') ? parsed.profile.onboarded : true
+            onboarded: (parsed.profile && typeof parsed.profile.onboarded === 'boolean') ? parsed.profile.onboarded : true,
+            paypalMe: (parsed.profile && parsed.profile.paypalMe) || ''
           },
           notes: {
             entries: (parsed.notes && parsed.notes.entries) || []
@@ -3906,6 +3928,7 @@
   function openProfileModal() {
     $('profileNameInput').value = state.profile.name || '';
     $('profileEmailDisplay').value = currentUser ? currentUser.email : '';
+    $('profilePaypalMeInput').value = state.profile.paypalMe || '';
     renderAvatarInto($('profileModalAvatarImg'), $('profileModalAvatarInitial'), state.profile.avatarPath);
     $('profileModal').classList.remove('hidden');
     pushNav(closeProfileModal);
@@ -3926,8 +3949,16 @@
     popNav();
   }
 
+  function parsePaypalMeUsername(input) {
+    const trimmed = (input || '').trim();
+    if (!trimmed) return '';
+    const match = trimmed.match(/paypal\.me\/([^/?#\s]+)/i);
+    return (match ? match[1] : trimmed).replace(/^@/, '');
+  }
+
   function saveProfileFromModal() {
     state.profile.name = $('profileNameInput').value.trim();
+    state.profile.paypalMe = parsePaypalMeUsername($('profilePaypalMeInput').value);
     saveState();
     renderProfileIdentity();
     closeProfileModal();
@@ -4374,6 +4405,7 @@
         email: currentUser.email,
         name: state.profile.name || '',
         avatar_path: state.profile.avatarPath || '',
+        paypal_me: state.profile.paypalMe || '',
         updated_at: new Date().toISOString()
       });
     } catch {}
@@ -4427,7 +4459,7 @@
       otherIds.add(r.from_user_id === currentUser.id ? r.to_user_id : r.from_user_id);
     });
     if (otherIds.size) {
-      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path, last_seen_at').in('id', [...otherIds]);
+      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path, last_seen_at, paypal_me').in('id', [...otherIds]);
       (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
     } else {
       // keep entries added by loadChatGroups() for people who are only group co-members
@@ -4950,7 +4982,7 @@
     const memberIds = new Set();
     (allMembers || []).forEach((r) => { if (r.user_id !== currentUser.id) memberIds.add(r.user_id); });
     if (memberIds.size) {
-      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path, last_seen_at').in('id', [...memberIds]);
+      const { data: profiles } = await sb.from('profiles').select('id, name, email, avatar_path, last_seen_at, paypal_me').in('id', [...memberIds]);
       (profiles || []).forEach((p) => { chatProfilesById[p.id] = p; });
     }
 
@@ -5505,6 +5537,31 @@
       () => showToast(tr('Не успяхме да определим локацията ти')),
       { enableHighAccuracy: true, timeout: 10000 }
     );
+  }
+
+  async function sendChatPayment() {
+    if (!activeChatFriendId) return;
+    if (isChatFriendBlocked(activeChatFriendId)) return;
+    const friendProfile = chatProfilesById[activeChatFriendId];
+    const paypalMe = friendProfile && friendProfile.paypal_me;
+    if (!paypalMe) { showToast(tr('Този потребител няма добавен начин за плащане')); return; }
+
+    const amountStr = prompt(tr('Сума за изпращане (€):'));
+    if (amountStr === null) return;
+    const amount = parseFloat(amountStr.replace(',', '.'));
+    if (!amount || amount <= 0) { showToast(tr('Въведи валидна сума')); return; }
+
+    const currencyCode = state.profile.currency || 'EUR';
+    const link = `https://paypal.me/${paypalMe}/${amount.toFixed(2)}${currencyCode}`;
+    const body = `💸 ${tr('Плащане')}: ${formatMoney(amount)} ${curSym()} — ${link}`;
+    const { data, error } = await sb.from('messages').insert({
+      sender_id: currentUser.id,
+      receiver_id: activeChatFriendId,
+      body
+    }).select().single();
+    if (error) { showToast(tr('Грешка при изпращане')); return; }
+    chatMessagesCache.push(data);
+    renderChatMessages();
   }
 
   const CHAT_EMOJIS = [
@@ -7636,7 +7693,8 @@
           profile: parsed.profile ? {
             name: parsed.profile.name || '',
             avatarPath: parsed.profile.avatarPath || '',
-            currency: parsed.profile.currency || 'EUR'
+            currency: parsed.profile.currency || 'EUR',
+            paypalMe: parsed.profile.paypalMe || ''
           } : state.profile,
           notes: parsed.notes ? {
             entries: parsed.notes.entries || []
@@ -7842,6 +7900,7 @@
     $('chatAttachGalleryBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatPhotoInput').click(); });
     $('chatAttachFileBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); $('chatFileInput').click(); });
     $('chatAttachLocationBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); sendChatLocation(); });
+    $('chatAttachMoneyBtn').addEventListener('click', () => { $('chatAttachMenu').classList.add('hidden'); sendChatPayment(); });
     $('chatPhotoInput').addEventListener('change', (e) => {
       const file = e.target.files[0];
       e.target.value = '';
@@ -7979,6 +8038,7 @@
     $('profileCancelBtn').addEventListener('click', closeProfileModal);
     $('profileSaveBtn').addEventListener('click', saveProfileFromModal);
     $('profileNameInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveProfileFromModal(); });
+    $('profilePaypalMeInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveProfileFromModal(); });
     $('noteAddOpenBtn').addEventListener('click', openNoteAddModal);
     $('noteCancelBtn').addEventListener('click', closeNoteModal);
     $('noteSaveBtn').addEventListener('click', saveNoteFromModal);
