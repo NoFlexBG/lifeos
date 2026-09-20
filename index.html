@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=9">
+<link rel="stylesheet" href="styles.css?v=10">
 </head>
 <body>
 
@@ -911,7 +911,19 @@
                 <div class="chat-emoji-picker hidden" id="chatEmojiPicker"></div>
               </div>
             </div>
+            <button class="icon-btn chat-mic-btn" id="chatMicBtn" title="Гласово съобщение" data-i18n-title>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="2" width="6" height="12" rx="3"></rect>
+                <path d="M5 10a7 7 0 0 0 14 0M12 19v3"></path>
+              </svg>
+            </button>
             <button class="chip" id="chatSendBtn" data-i18n>Изпрати</button>
+          </div>
+          <div class="chat-recording-row hidden" id="chatRecordingRow">
+            <button class="icon-btn chat-recording-cancel" id="chatRecordingCancelBtn" title="Отказ" data-i18n-title>✕</button>
+            <span class="chat-recording-dot"></span>
+            <span class="chat-recording-time" id="chatRecordingTime">0:00</span>
+            <button class="chip" id="chatRecordingSendBtn" data-i18n>Изпрати</button>
           </div>
         </div>
       </div>
@@ -1795,6 +1807,8 @@
     'Прати пари': 'Send money', 'PayPal.me потребителско име': 'PayPal.me username', 'напр. ivan123': 'e.g. ivan123',
     'Този потребител няма добавен начин за плащане': 'This user has not added a payment method',
     'Сума за изпращане (€):': 'Amount to send (€):', 'Въведи валидна сума': 'Enter a valid amount', 'Плащане': 'Payment',
+    'Гласово съобщение': 'Voice message', 'Микрофонът не се поддържа на това устройство': 'Microphone is not supported on this device',
+    'Нямаме достъп до микрофона': 'No access to the microphone', 'Грешка при качване на гласово съобщение': 'Error uploading the voice message',
     'Работни дни и доходи': 'Work days and income', 'ДНИ ТОЗИ МЕСЕЦ': 'DAYS THIS MONTH', 'ДОХОД ТОЗИ МЕСЕЦ': 'INCOME THIS MONTH',
     'Спестени пари': 'Saved money', 'ОБЩО СПЕСТЕНО': 'TOTAL SAVED', 'ДО ЦЕЛТА': 'TO GOAL',
     'Служебни пари и отчитане': 'Company money and reporting', 'ТЕКУЩ БАЛАНС': 'CURRENT BALANCE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'SPENT THIS MONTH',
@@ -2034,6 +2048,8 @@
     'Прати пари': 'Geld senden', 'PayPal.me потребителско име': 'PayPal.me-Benutzername', 'напр. ivan123': 'z.B. ivan123',
     'Този потребител няма добавен начин за плащане': 'Dieser Nutzer hat keine Zahlungsmethode hinzugefügt',
     'Сума за изпращане (€):': 'Zu sendender Betrag (€):', 'Въведи валидна сума': 'Gib einen gültigen Betrag ein', 'Плащане': 'Zahlung',
+    'Гласово съобщение': 'Sprachnachricht', 'Микрофонът не се поддържа на това устройство': 'Mikrofon wird auf diesem Gerät nicht unterstützt',
+    'Нямаме достъп до микрофона': 'Kein Zugriff auf das Mikrofon', 'Грешка при качване на гласово съобщение': 'Fehler beim Hochladen der Sprachnachricht',
     'Работни дни и доходи': 'Arbeitstage und Einkommen', 'ДНИ ТОЗИ МЕСЕЦ': 'TAGE DIESEN MONAT', 'ДОХОД ТОЗИ МЕСЕЦ': 'EINKOMMEN DIESEN MONAT',
     'Спестени пари': 'Gespartes Geld', 'ОБЩО СПЕСТЕНО': 'GESAMT GESPART', 'ДО ЦЕЛТА': 'BIS ZUM ZIEL',
     'Служебни пари и отчитане': 'Firmengeld und Abrechnung', 'ТЕКУЩ БАЛАНС': 'AKTUELLER SALDO', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'AUSGEGEBEN DIESEN MONAT',
@@ -2273,6 +2289,8 @@
     'Прати пари': 'Para gönder', 'PayPal.me потребителско име': 'PayPal.me kullanıcı adı', 'напр. ivan123': 'örn. ivan123',
     'Този потребител няма добавен начин за плащане': 'Bu kullanıcı bir ödeme yöntemi eklememiş',
     'Сума за изпращане (€):': 'Gönderilecek tutar (€):', 'Въведи валидна сума': 'Geçerli bir tutar gir', 'Плащане': 'Ödeme',
+    'Гласово съобщение': 'Sesli mesaj', 'Микрофонът не се поддържа на това устройство': 'Bu cihazda mikrofon desteklenmiyor',
+    'Нямаме достъп до микрофона': 'Mikrofona erişim yok', 'Грешка при качване на гласово съобщение': 'Sesli mesaj yüklenirken hata oluştu',
     'Работни дни и доходи': 'Çalışma günleri ve gelir', 'ДНИ ТОЗИ МЕСЕЦ': 'BU AY GÜNLER', 'ДОХОД ТОЗИ МЕСЕЦ': 'BU AY GELİR',
     'Спестени пари': 'Biriktirilen para', 'ОБЩО СПЕСТЕНО': 'TOPLAM BİRİKİM', 'ДО ЦЕЛТА': 'HEDEFE KALAN',
     'Служебни пари и отчитане': 'Şirket parası ve raporlama', 'ТЕКУЩ БАЛАНС': 'GÜNCEL BAKİYE', 'ПОХАРЧЕНО ТОЗИ МЕСЕЦ': 'BU AY HARCANAN',
@@ -4369,6 +4387,11 @@
   let chatMutes = new Set();
   let blockedByFriendIds = new Set();
   let iBlockedFriendIds = new Set();
+  let mediaRecorder = null;
+  let recordingStream = null;
+  let recordedChunks = [];
+  let recordingStartTime = 0;
+  let recordingTimerInterval = null;
 
   async function setActiveChatPresence(targetType, targetId) {
     if (!currentUser) return;
@@ -5370,6 +5393,15 @@
           downloadChatFile(m.file_path, m.file_name);
         });
         bubble.appendChild(fileLink);
+      } else if (m.voice_path) {
+        const audio = document.createElement('audio');
+        audio.className = 'chat-message-voice';
+        audio.controls = true;
+        audio.preload = 'none';
+        getSignedPhotoUrl(m.voice_path).then(({ data, error }) => {
+          if (!error && data) audio.src = data.signedUrl;
+        });
+        bubble.appendChild(audio);
       } else if (m.lat != null && m.lng != null) {
         const mapBox = document.createElement('div');
         mapBox.className = 'chat-message-map';
@@ -5401,7 +5433,7 @@
       bubble.appendChild(time);
 
       const isOwn = m.sender_id === currentUser.id;
-      const isPlainText = !m.image_path && !m.file_path && m.lat == null && m.lng == null;
+      const isPlainText = !m.image_path && !m.file_path && !m.voice_path && m.lat == null && m.lng == null;
       if (isOwn) {
         const row = document.createElement('div');
         row.className = 'chat-message-row';
@@ -5452,6 +5484,7 @@
     if (error) { showToast(tr('Грешка при изтриване')); return; }
     if (m.image_path) await sb.storage.from(PHOTO_BUCKET).remove([m.image_path]);
     if (m.file_path) await sb.storage.from(PHOTO_BUCKET).remove([m.file_path]);
+    if (m.voice_path) await sb.storage.from(PHOTO_BUCKET).remove([m.voice_path]);
     if (isGroup) {
       groupMessagesCache = groupMessagesCache.filter((x) => x.id !== m.id);
     } else {
@@ -5561,6 +5594,99 @@
     }).select().single();
     if (error) { showToast(tr('Грешка при изпращане')); return; }
     chatMessagesCache.push(data);
+    renderChatMessages();
+  }
+
+  const MAX_VOICE_SECONDS = 120;
+
+  function formatDuration(secs) {
+    const s = Math.max(0, Math.round(secs || 0));
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  async function startVoiceRecording() {
+    if (!activeChatFriendId && !activeChatGroupId) return;
+    if (activeChatFriendId && isChatFriendBlocked(activeChatFriendId)) return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || typeof MediaRecorder === 'undefined') {
+      showToast(tr('Микрофонът не се поддържа на това устройство'));
+      return;
+    }
+    try {
+      recordingStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      showToast(tr('Нямаме достъп до микрофона'));
+      return;
+    }
+    const mimeCandidates = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4'];
+    const mimeType = mimeCandidates.find((t) => MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) || '';
+    mediaRecorder = mimeType ? new MediaRecorder(recordingStream, { mimeType }) : new MediaRecorder(recordingStream);
+    recordedChunks = [];
+    mediaRecorder.addEventListener('dataavailable', (e) => { if (e.data.size > 0) recordedChunks.push(e.data); });
+    mediaRecorder.start();
+    recordingStartTime = Date.now();
+    $('chatInputRow').classList.add('hidden');
+    $('chatRecordingRow').classList.remove('hidden');
+    updateRecordingTimer();
+    recordingTimerInterval = setInterval(updateRecordingTimer, 500);
+  }
+
+  function updateRecordingTimer() {
+    const secs = Math.floor((Date.now() - recordingStartTime) / 1000);
+    if (secs >= MAX_VOICE_SECONDS) { finishVoiceRecordingAndSend(); return; }
+    $('chatRecordingTime').textContent = formatDuration(secs);
+  }
+
+  function stopRecordingTracks() {
+    if (recordingStream) { recordingStream.getTracks().forEach((t) => t.stop()); recordingStream = null; }
+    clearInterval(recordingTimerInterval);
+    recordingTimerInterval = null;
+  }
+
+  function cancelVoiceRecording() {
+    if (mediaRecorder && mediaRecorder.state !== 'inactive') mediaRecorder.stop();
+    stopRecordingTracks();
+    recordedChunks = [];
+    mediaRecorder = null;
+    $('chatRecordingRow').classList.add('hidden');
+    updateChatBlockedBannerAndInput();
+  }
+
+  function finishVoiceRecordingAndSend() {
+    if (!mediaRecorder || mediaRecorder.state === 'inactive') return;
+    const durationSecs = Math.round((Date.now() - recordingStartTime) / 1000);
+    const recorder = mediaRecorder;
+    recorder.addEventListener('stop', async () => {
+      stopRecordingTracks();
+      $('chatRecordingRow').classList.add('hidden');
+      updateChatBlockedBannerAndInput();
+      const chunks = recordedChunks;
+      recordedChunks = [];
+      mediaRecorder = null;
+      if (!chunks.length) return;
+      const blob = new Blob(chunks, { type: recorder.mimeType || 'audio/webm' });
+      await sendChatVoice(blob, durationSecs);
+    }, { once: true });
+    recorder.stop();
+  }
+
+  async function sendChatVoice(blob, durationSecs) {
+    if (!blob || (!activeChatFriendId && !activeChatGroupId)) return;
+    if (activeChatFriendId && isChatFriendBlocked(activeChatFriendId)) return;
+    const ext = (blob.type || '').includes('mp4') ? 'm4a' : 'webm';
+    const path = `${currentUser.id}/chat/voice/${genId('voice')}.${ext}`;
+    const { error: uploadError } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: blob.type || 'audio/webm' });
+    if (uploadError) { showToast(tr('Грешка при качване на гласово съобщение')); return; }
+
+    const payload = { sender_id: currentUser.id, voice_path: path, voice_duration: durationSecs };
+    if (activeChatGroupId) {
+      const { data, error } = await sb.from('group_messages').insert({ ...payload, group_id: activeChatGroupId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      groupMessagesCache.push(data);
+    } else {
+      const { data, error } = await sb.from('messages').insert({ ...payload, receiver_id: activeChatFriendId }).select().single();
+      if (error) { showToast(tr('Грешка при изпращане')); return; }
+      chatMessagesCache.push(data);
+    }
     renderChatMessages();
   }
 
@@ -7877,6 +8003,9 @@
     });
     $('chatBackBtn').addEventListener('click', closeChatConversation);
     $('chatSendBtn').addEventListener('click', sendChatMessage);
+    $('chatMicBtn').addEventListener('click', startVoiceRecording);
+    $('chatRecordingCancelBtn').addEventListener('click', cancelVoiceRecording);
+    $('chatRecordingSendBtn').addEventListener('click', finishVoiceRecordingAndSend);
     $('chatMessageInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') sendChatMessage(); });
     $('chatMessageInput').addEventListener('input', onChatInputTyping);
     $('chatAttachBtn').addEventListener('click', (e) => {
