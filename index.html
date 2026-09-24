@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=13">
+<link rel="stylesheet" href="styles.css?v=14">
 </head>
 <body>
 
@@ -1106,7 +1106,9 @@
     <button class="photo-lightbox-close" id="photoLightboxClose" aria-label="Затвори" data-i18n-aria>×</button>
     <button class="photo-lightbox-nav photo-lightbox-prev" id="photoLightboxPrev" aria-label="Предишна снимка" data-i18n-aria>‹</button>
     <button class="photo-lightbox-nav photo-lightbox-next" id="photoLightboxNext" aria-label="Следваща снимка" data-i18n-aria>›</button>
-    <img id="photoLightboxImg" src="" alt="" />
+    <div class="photo-lightbox-viewport" id="photoLightboxViewport">
+      <img id="photoLightboxImg" src="" alt="" />
+    </div>
     <div class="photo-lightbox-actions">
       <button class="chip" id="photoLightboxDownload" data-i18n>⭳ Изтегли</button>
     </div>
@@ -1843,6 +1845,6 @@
   </div>
 </div>
 
-<script src="app.js?v=5" charset="UTF-8"></script>
+<script src="app.js?v=6" charset="UTF-8"></script>
 </body>
 </html>
