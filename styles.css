@@ -3841,6 +3841,42 @@
 
   .product-edit-modal .product-ref-field { align-self: flex-start; }
 
+  .fine-view-details {
+    display: flex;
+    flex-direction: column;
+    margin-top: 16px;
+  }
+
+  .fine-view-details.hidden { display: none; }
+
+  .fine-view-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 14px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .fine-view-row:last-of-type { border-bottom: none; }
+
+  .fine-view-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+  }
+
+  .fine-view-value {
+    font-size: 12.5px;
+    color: var(--text);
+    text-align: right;
+    word-break: break-word;
+  }
+
+  #fineViewPhotoBtn { margin-top: 12px; width: 100%; }
+
   .product-edit-modal .matrix-modal-actions { margin-top: 18px; justify-content: flex-end; }
 
   .product-edit-modal #productEditSaveBtn {

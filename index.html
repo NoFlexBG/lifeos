@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=16">
+<link rel="stylesheet" href="styles.css?v=17">
 </head>
 <body>
 
@@ -1385,7 +1385,7 @@
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
     <span class="gauge-label" id="fineModalTitle" data-i18n>ДОБАВИ ФИШ</span>
-    <div class="product-edit-form">
+    <div class="product-edit-form" id="fineEditForm">
       <div class="product-edit-row-2">
         <div class="product-edit-field">
           <label for="fineDate" data-i18n>Дата</label>
@@ -1432,6 +1432,43 @@
         <input type="file" id="finePhotoInput" accept="image/*" class="hidden" />
       </div>
     </div>
+
+    <div class="fine-view-details hidden" id="fineViewDetails">
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>Дата</span>
+        <span class="fine-view-value" id="fvDate"></span>
+      </div>
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>Сума €</span>
+        <span class="fine-view-value" id="fvAmount"></span>
+      </div>
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>Серия на фиша</span>
+        <span class="fine-view-value" id="fvSeries">—</span>
+      </div>
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>Номер на фиша</span>
+        <span class="fine-view-value" id="fvNumber">—</span>
+      </div>
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>На коя кола е</span>
+        <span class="fine-view-value" id="fvVehicle"></span>
+      </div>
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>Издаден от (име на полицая)</span>
+        <span class="fine-view-value" id="fvOfficer">—</span>
+      </div>
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>От кое районно е</span>
+        <span class="fine-view-value" id="fvPrecinct">—</span>
+      </div>
+      <div class="fine-view-row">
+        <span class="fine-view-label" data-i18n>Статус</span>
+        <span class="status-chip" id="fvPaidChip"></span>
+      </div>
+      <button type="button" class="chip hidden" id="fineViewPhotoBtn" data-i18n>▣ Виж снимката</button>
+    </div>
+
     <div class="matrix-modal-actions">
       <button class="chip" id="fineModalCancelBtn" data-i18n>Отказ</button>
       <button class="chip" id="fineModalSaveBtn" data-i18n>Добави</button>
@@ -1892,6 +1929,6 @@
   </div>
 </div>
 
-<script src="app.js?v=9" charset="UTF-8"></script>
+<script src="app.js?v=10" charset="UTF-8"></script>
 </body>
 </html>

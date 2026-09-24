@@ -6054,21 +6054,19 @@
 
   let fineViewMode = false;
 
-  function setFineModalReadOnly(readonly) {
-    fineViewMode = readonly;
-    ['fineDate', 'fineAmount', 'fineCategory', 'fineSeries', 'fineNumber', 'fineVehicle', 'fineOfficer', 'finePrecinct'].forEach((id) => {
-      $(id).disabled = readonly;
-    });
-    $('fineModalSaveBtn').classList.toggle('hidden', readonly);
-    $('fineModalCancelBtn').textContent = tr(readonly ? 'Затвори' : 'Отказ');
-    const hasPhoto = !!(fineDraftPhotoPath && !fineDraftPhotoRemoved);
-    if (readonly) {
-      $('finePhotoBtn').textContent = tr('▣ Виж снимката');
-      $('finePhotoBtn').classList.toggle('hidden', !hasPhoto);
-    } else {
-      updateFinePhotoField();
-    }
-    $('finePhotoRemoveBtn').classList.toggle('hidden', readonly || !hasPhoto);
+  function setFineModalMode(mode) {
+    fineViewMode = mode === 'view';
+    $('fineEditForm').classList.toggle('hidden', fineViewMode);
+    $('fineViewDetails').classList.toggle('hidden', !fineViewMode);
+    $('fineModalSaveBtn').classList.toggle('hidden', fineViewMode);
+    $('fineModalCancelBtn').textContent = tr(fineViewMode ? 'Затвори' : 'Отказ');
+  }
+
+  function refreshFineViewPaidChip(f) {
+    const chip = $('fvPaidChip');
+    chip.className = 'status-chip ' + (f.paid ? 'paid' : 'unpaid');
+    chip.textContent = f.paid ? tr('Платен') : tr('Неплатен');
+    chip.title = tr('Кликни, за да превключиш');
   }
 
   function openFineViewModal(id) {
@@ -6076,18 +6074,17 @@
     if (!owner) return;
     const f = owner.fine;
     editingFineId = id;
-    populateFineSelects();
     $('fineModalTitle').textContent = getFineCategoryLabel(f.category) || tr('ФИШ');
-    $('fineDate').value = f.date;
-    $('fineAmount').value = f.amount;
-    $('fineCategory').value = f.category || 'other';
-    $('fineSeries').value = f.series || '';
-    $('fineNumber').value = f.number || '';
-    $('fineVehicle').value = owner.vehicleId;
-    $('fineOfficer').value = f.officer || '';
-    $('finePrecinct').value = f.precinct || '';
-    resetFinePhotoDraft(f.photoPath);
-    setFineModalReadOnly(true);
+    $('fvDate').textContent = formatDateDisplay(f.date);
+    $('fvAmount').textContent = formatNumber(f.amount) + ' ' + curSym();
+    $('fvSeries').textContent = f.series || '—';
+    $('fvNumber').textContent = f.number || '—';
+    $('fvVehicle').textContent = getVehicleLabel(owner.vehicleId);
+    $('fvOfficer').textContent = f.officer || '—';
+    $('fvPrecinct').textContent = f.precinct || '—';
+    refreshFineViewPaidChip(f);
+    $('fineViewPhotoBtn').classList.toggle('hidden', !f.photoPath);
+    setFineModalMode('view');
     $('fineModal').classList.remove('hidden');
     pushNav(closeFineModal);
   }
@@ -6095,7 +6092,7 @@
   function openFineModal() {
     editingFineId = '';
     populateFineSelects();
-    setFineModalReadOnly(false);
+    setFineModalMode('add');
     $('fineModalTitle').textContent = tr('ДОБАВИ ФИШ');
     $('fineModalSaveBtn').textContent = tr('Добави');
     $('fineDate').value = todayKey();
@@ -6117,7 +6114,7 @@
     const f = owner.fine;
     editingFineId = id;
     populateFineSelects();
-    setFineModalReadOnly(false);
+    setFineModalMode('edit');
     $('fineModalTitle').textContent = tr('РЕДАКТИРАЙ ФИШ');
     $('fineModalSaveBtn').textContent = tr('Запиши');
     $('fineDate').value = f.date;
@@ -7248,11 +7245,15 @@
     $('finesSearchInput').addEventListener('input', renderAllFines);
     $('fineModalCancelBtn').addEventListener('click', closeFineModal);
     $('fineModalSaveBtn').addEventListener('click', addFine);
-    $('finePhotoBtn').addEventListener('click', () => {
-      if (fineViewMode) { if (fineDraftPhotoPath) onFinePhotoClick(editingFineId); return; }
-      $('finePhotoInput').click();
-    });
+    $('finePhotoBtn').addEventListener('click', () => $('finePhotoInput').click());
     $('finePhotoInput').addEventListener('change', onFinePhotoChosen);
+    $('fineViewPhotoBtn').addEventListener('click', () => { if (editingFineId) onFinePhotoClick(editingFineId); });
+    $('fvPaidChip').addEventListener('click', () => {
+      if (!editingFineId) return;
+      toggleFinePaid(editingFineId);
+      const owner = findFineOwner(editingFineId);
+      if (owner) refreshFineViewPaidChip(owner.fine);
+    });
     $('finePhotoRemoveBtn').addEventListener('click', removeFinePhotoDraft);
     $('finePhotoListInput').addEventListener('change', onFinePhotoListSelected);
     ['fineSeries','fineNumber','fineAmount'].forEach((id) => {
