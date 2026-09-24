@@ -204,7 +204,7 @@
     'Снимка на фиша': 'Ticket photo', 'Премахни': 'Remove', '▣ Добави снимка': '▣ Add photo', '▣ Смени снимка': '▣ Change photo',
     'Виж снимката на фиша': 'View ticket photo', 'Добави снимка на фиша': 'Add ticket photo',
     'РЕДАКТИРАЙ ФИШ': 'EDIT TICKET', 'Категория на фиша': 'Ticket category', 'Номер на фиша': 'Ticket number',
-    'За какво е': 'What it is for', 'На коя кола е': 'Which car', 'Издаден от (име на полицая)': 'Issued by (officer name)',
+    'Серия на фиша': 'Ticket series', 'Серия': 'Series', 'напр. AB': 'e.g. AB','На коя кола е': 'Which car', 'Издаден от (име на полицая)': 'Issued by (officer name)',
     'От кое районно е': 'Police station / precinct', 'напр. 0123456': 'e.g. 0123456',
     'напр. Превишена скорост в населено място': 'e.g. Speeding in a built-up area', 'напр. Иван Иванов': 'e.g. John Smith', 'напр. РУ Банско': 'e.g. Bansko Police Station',
     'Превишена скорост': 'Speeding', 'Неправилно паркиране': 'Illegal parking', 'Преминаване на червен светофар': 'Running a red light', 'Нарушение на пътна маркировка': 'Road marking violation',
@@ -459,7 +459,7 @@
     'Снимка на фиша': 'Foto des Bußgelds', 'Премахни': 'Entfernen', '▣ Добави снимка': '▣ Foto hinzufügen', '▣ Смени снимка': '▣ Foto ändern',
     'Виж снимката на фиша': 'Foto des Bußgelds ansehen', 'Добави снимка на фиша': 'Foto des Bußgelds hinzufügen',
     'РЕДАКТИРАЙ ФИШ': 'BUSSGELD BEARBEITEN', 'Категория на фиша': 'Kategorie des Bußgelds', 'Номер на фиша': 'Aktenzeichen',
-    'За какво е': 'Wofür', 'На коя кола е': 'Für welches Auto', 'Издаден от (име на полицая)': 'Ausgestellt von (Name des Beamten)',
+    'Серия на фиша': 'Serie des Bußgelds', 'Серия': 'Serie', 'напр. AB': 'z. B. AB','На коя кола е': 'Für welches Auto', 'Издаден от (име на полицая)': 'Ausgestellt von (Name des Beamten)',
     'От кое районно е': 'Polizeidienststelle', 'напр. 0123456': 'z. B. 0123456',
     'напр. Превишена скорост в населено място': 'z. B. Geschwindigkeitsüberschreitung innerorts', 'напр. Иван Иванов': 'z. B. Max Mustermann', 'напр. РУ Банско': 'z. B. Polizeiinspektion Bansko',
     'Превишена скорост': 'Geschwindigkeitsüberschreitung', 'Неправилно паркиране': 'Falschparken', 'Преминаване на червен светофар': 'Rotlichtverstoß', 'Нарушение на пътна маркировка': 'Verstoß gegen Fahrbahnmarkierung',
@@ -714,7 +714,7 @@
     'Снимка на фиша': 'Ceza fotoğrafı', 'Премахни': 'Kaldır', '▣ Добави снимка': '▣ Fotoğraf ekle', '▣ Смени снимка': '▣ Fotoğrafı değiştir',
     'Виж снимката на фиша': 'Ceza fotoğrafını gör', 'Добави снимка на фиша': 'Ceza fotoğrafı ekle',
     'РЕДАКТИРАЙ ФИШ': 'CEZAYI DÜZENLE', 'Категория на фиша': 'Ceza kategorisi', 'Номер на фиша': 'Ceza numarası',
-    'За какво е': 'Ne için', 'На коя кола е': 'Hangi araç', 'Издаден от (име на полицая)': 'Düzenleyen (görevli adı)',
+    'Серия на фиша': 'Ceza seri no', 'Серия': 'Seri', 'напр. AB': 'ör. AB','На коя кола е': 'Hangi araç', 'Издаден от (име на полицая)': 'Düzenleyen (görevli adı)',
     'От кое районно е': 'Emniyet / karakol', 'напр. 0123456': 'ör. 0123456',
     'напр. Превишена скорост в населено място': 'ör. Yerleşim yerinde hız ihlali', 'напр. Иван Иванов': 'ör. Ahmet Yılmaz', 'напр. РУ Банско': 'ör. Bansko Emniyet Müdürlüğü',
     'Превишена скорост': 'Hız ihlali', 'Неправилно паркиране': 'Yanlış park', 'Преминаване на червен светофар': 'Kırmızı ışık ihlali', 'Нарушение на пътна маркировка': 'Yol çizgisi ihlali',
@@ -5807,7 +5807,7 @@
 
   function buildFineDetails(f) {
     const parts = [];
-    if (f.number) parts.push('№ ' + f.number);
+    if (f.series || f.number) parts.push([f.series && `${tr('Серия')} ${f.series}`, f.number && `№ ${f.number}`].filter(Boolean).join(' '));
     if (f.officer) parts.push(f.officer);
     if (f.precinct) parts.push(f.precinct);
     if (state.garage.vehicles.length > 1) parts.push(getVehicleLabel(state.garage.activeVehicleId));
@@ -5966,8 +5966,8 @@
     $('fineDate').value = todayKey();
     $('fineAmount').value = '';
     $('fineCategory').value = 'speeding';
+    $('fineSeries').value = '';
     $('fineNumber').value = '';
-    $('fineDesc').value = '';
     $('fineVehicle').value = state.garage.activeVehicleId;
     $('fineOfficer').value = '';
     $('finePrecinct').value = '';
@@ -5986,8 +5986,8 @@
     $('fineDate').value = f.date;
     $('fineAmount').value = f.amount;
     $('fineCategory').value = f.category || 'other';
+    $('fineSeries').value = f.series || '';
     $('fineNumber').value = f.number || '';
-    $('fineDesc').value = f.desc || '';
     $('fineVehicle').value = state.garage.activeVehicleId;
     $('fineOfficer').value = f.officer || '';
     $('finePrecinct').value = f.precinct || '';
@@ -6032,8 +6032,8 @@
       date,
       amount,
       category: $('fineCategory').value || 'other',
+      series: $('fineSeries').value.trim(),
       number: $('fineNumber').value.trim(),
-      desc: $('fineDesc').value.trim(),
       officer: $('fineOfficer').value.trim(),
       precinct: $('finePrecinct').value.trim()
     };
@@ -6988,7 +6988,7 @@
     $('finePhotoInput').addEventListener('change', onFinePhotoChosen);
     $('finePhotoRemoveBtn').addEventListener('click', removeFinePhotoDraft);
     $('finePhotoListInput').addEventListener('change', onFinePhotoListSelected);
-    ['fineDesc','fineAmount'].forEach((id) => {
+    ['fineSeries','fineNumber','fineAmount'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addFine(); });
     });
 
