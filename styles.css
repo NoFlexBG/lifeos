@@ -2136,6 +2136,7 @@
   }
 
   .record-row-desc { color: var(--text); overflow-wrap: break-word; word-break: break-word; }
+  .record-row-sub { margin-top: 3px; font-family: var(--font-mono); font-size: 10.5px; color: var(--text-dim); }
   .record-row-meta { font-family: var(--font-mono); color: var(--text-dim); font-size: 11px; white-space: nowrap; }
   .record-row-cost { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
 

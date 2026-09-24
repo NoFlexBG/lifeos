@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=11">
+<link rel="stylesheet" href="styles.css?v=12">
 </head>
 <body>
 
@@ -1335,19 +1335,41 @@
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
-    <span class="gauge-label" data-i18n>ДОБАВИ ФИШ</span>
+    <span class="gauge-label" id="fineModalTitle" data-i18n>ДОБАВИ ФИШ</span>
     <div class="product-edit-form">
-      <div class="product-edit-field">
-        <label for="fineDate" data-i18n>Дата</label>
-        <input type="date" id="fineDate" class="mini-input" />
+      <div class="product-edit-row-2">
+        <div class="product-edit-field">
+          <label for="fineDate" data-i18n>Дата</label>
+          <input type="date" id="fineDate" class="mini-input" />
+        </div>
+        <div class="product-edit-field">
+          <label for="fineAmount" data-i18n>Сума €</label>
+          <input type="number" id="fineAmount" class="mini-input" min="0" step="0.01" />
+        </div>
       </div>
       <div class="product-edit-field">
-        <label for="fineDesc" data-i18n>Описание</label>
-        <input type="text" id="fineDesc" class="mini-input" placeholder="Описание" data-i18n-ph />
+        <label for="fineCategory" data-i18n>Категория на фиша</label>
+        <select id="fineCategory" class="mini-input"></select>
       </div>
       <div class="product-edit-field">
-        <label for="fineAmount" data-i18n>Сума €</label>
-        <input type="number" id="fineAmount" class="mini-input" min="0" />
+        <label for="fineNumber" data-i18n>Номер на фиша</label>
+        <input type="text" id="fineNumber" class="mini-input" placeholder="напр. 0123456" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label for="fineDesc" data-i18n>За какво е</label>
+        <input type="text" id="fineDesc" class="mini-input" placeholder="напр. Превишена скорост в населено място" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label for="fineVehicle" data-i18n>На коя кола е</label>
+        <select id="fineVehicle" class="mini-input"></select>
+      </div>
+      <div class="product-edit-field">
+        <label for="fineOfficer" data-i18n>Издаден от (име на полицая)</label>
+        <input type="text" id="fineOfficer" class="mini-input" placeholder="напр. Иван Иванов" data-i18n-ph />
+      </div>
+      <div class="product-edit-field">
+        <label for="finePrecinct" data-i18n>От кое районно е</label>
+        <input type="text" id="finePrecinct" class="mini-input" placeholder="напр. РУ Банско" data-i18n-ph />
       </div>
     </div>
     <div class="matrix-modal-actions">
@@ -1809,6 +1831,6 @@
   </div>
 </div>
 
-<script src="app.js?v=1" charset="UTF-8"></script>
+<script src="app.js?v=2" charset="UTF-8"></script>
 </body>
 </html>

@@ -201,6 +201,13 @@
     'Л/100КМ': 'L/100KM',
     'Няма документи, изтичащи скоро': 'No documents expiring soon', 'Няма неплатени фишове': 'No unpaid tickets',
     'Фиш': 'Ticket', 'е над': 'is over', 'прескочена': 'skipped',
+    'РЕДАКТИРАЙ ФИШ': 'EDIT TICKET', 'Категория на фиша': 'Ticket category', 'Номер на фиша': 'Ticket number',
+    'За какво е': 'What it is for', 'На коя кола е': 'Which car', 'Издаден от (име на полицая)': 'Issued by (officer name)',
+    'От кое районно е': 'Police station / precinct', 'напр. 0123456': 'e.g. 0123456',
+    'напр. Превишена скорост в населено място': 'e.g. Speeding in a built-up area', 'напр. Иван Иванов': 'e.g. John Smith', 'напр. РУ Банско': 'e.g. Bansko Police Station',
+    'Превишена скорост': 'Speeding', 'Неправилно паркиране': 'Illegal parking', 'Преминаване на червен светофар': 'Running a red light',
+    'Телефон зад волана': 'Phone while driving', 'Липса на колан': 'No seatbelt', 'Липса на документи / застраховка': 'Missing documents / insurance',
+    'Липса на винетка': 'No vignette', 'Алкохол / наркотици': 'Alcohol / drugs', 'Технически неизправности': 'Technical defects',
     'Обработка': 'Processing', 'Качване': 'Uploading',
     'Няма добавени снимки за тази кола': 'No photos added for this car',
     'Грешка при изтегляне': 'Download error', 'Резервно копие изтеглено': 'Backup downloaded',
@@ -447,6 +454,13 @@
     'Л/100КМ': 'L/100KM',
     'Няма документи, изтичащи скоро': 'Keine Dokumente laufen bald ab', 'Няма неплатени фишове': 'Keine unbezahlten Bußgelder',
     'Фиш': 'Bußgeld', 'е над': 'ist über', 'прескочена': 'übersprungen',
+    'РЕДАКТИРАЙ ФИШ': 'BUSSGELD BEARBEITEN', 'Категория на фиша': 'Kategorie des Bußgelds', 'Номер на фиша': 'Aktenzeichen',
+    'За какво е': 'Wofür', 'На коя кола е': 'Für welches Auto', 'Издаден от (име на полицая)': 'Ausgestellt von (Name des Beamten)',
+    'От кое районно е': 'Polizeidienststelle', 'напр. 0123456': 'z. B. 0123456',
+    'напр. Превишена скорост в населено място': 'z. B. Geschwindigkeitsüberschreitung innerorts', 'напр. Иван Иванов': 'z. B. Max Mustermann', 'напр. РУ Банско': 'z. B. Polizeiinspektion Bansko',
+    'Превишена скорост': 'Geschwindigkeitsüberschreitung', 'Неправилно паркиране': 'Falschparken', 'Преминаване на червен светофар': 'Rotlichtverstoß',
+    'Телефон зад волана': 'Handy am Steuer', 'Липса на колан': 'Kein Sicherheitsgurt', 'Липса на документи / застраховка': 'Fehlende Dokumente / Versicherung',
+    'Липса на винетка': 'Keine Vignette', 'Алкохол / наркотици': 'Alkohol / Drogen', 'Технически неизправности': 'Technische Mängel',
     'Обработка': 'Verarbeitung', 'Качване': 'Hochladen',
     'Няма добавени снимки за тази кола': 'Keine Fotos für dieses Auto hinzugefügt',
     'Грешка при изтегляне': 'Fehler beim Herunterladen', 'Резервно копие изтеглено': 'Backup heruntergeladen',
@@ -693,6 +707,13 @@
     'Л/100КМ': 'L/100KM',
     'Няма документи, изтичащи скоро': 'Yakında sona erecek belge yok', 'Няма неплатени фишове': 'Ödenmemiş ceza yok',
     'Фиш': 'Ceza', 'е над': 'şundan büyük', 'прескочена': 'atlandı',
+    'РЕДАКТИРАЙ ФИШ': 'CEZAYI DÜZENLE', 'Категория на фиша': 'Ceza kategorisi', 'Номер на фиша': 'Ceza numarası',
+    'За какво е': 'Ne için', 'На коя кола е': 'Hangi araç', 'Издаден от (име на полицая)': 'Düzenleyen (görevli adı)',
+    'От кое районно е': 'Emniyet / karakol', 'напр. 0123456': 'ör. 0123456',
+    'напр. Превишена скорост в населено място': 'ör. Yerleşim yerinde hız ihlali', 'напр. Иван Иванов': 'ör. Ahmet Yılmaz', 'напр. РУ Банско': 'ör. Bansko Emniyet Müdürlüğü',
+    'Превишена скорост': 'Hız ihlali', 'Неправилно паркиране': 'Yanlış park', 'Преминаване на червен светофар': 'Kırmızı ışık ihlali',
+    'Телефон зад волана': 'Direksiyonda telefon', 'Липса на колан': 'Emniyet kemeri yok', 'Липса на документи / застраховка': 'Eksik belge / sigorta',
+    'Липса на винетка': 'Vinyet yok', 'Алкохол / наркотици': 'Alkol / uyuşturucu', 'Технически неизправности': 'Teknik arızalar',
     'Обработка': 'İşleniyor', 'Качване': 'Yükleniyor',
     'Няма добавени снимки за тази кола': 'Bu araba için eklenmiş fotoğraf yok',
     'Грешка при изтегляне': 'İndirme hatası', 'Резервно копие изтеглено': 'Yedek indirildi',
@@ -5746,6 +5767,46 @@
     renderGarageOverview();
   }
 
+  const FINE_CATEGORIES = [
+    { id: 'speeding', label: 'Превишена скорост' },
+    { id: 'parking', label: 'Неправилно паркиране' },
+    { id: 'redlight', label: 'Преминаване на червен светофар' },
+    { id: 'phone', label: 'Телефон зад волана' },
+    { id: 'seatbelt', label: 'Липса на колан' },
+    { id: 'documents', label: 'Липса на документи / застраховка' },
+    { id: 'vignette', label: 'Липса на винетка' },
+    { id: 'alcohol', label: 'Алкохол / наркотици' },
+    { id: 'technical', label: 'Технически неизправности' },
+    { id: 'other', label: 'Друго' }
+  ];
+
+  function getFineCategoryLabel(id) {
+    const c = FINE_CATEGORIES.find((x) => x.id === id);
+    return c ? tr(c.label) : '';
+  }
+
+  function getVehicleRecords(vehicleId) {
+    if (!state.garage.records[vehicleId]) {
+      state.garage.records[vehicleId] = { repairs: [], fuel: [], documents: [], fines: [], photos: [] };
+    }
+    return state.garage.records[vehicleId];
+  }
+
+  function getVehicleLabel(vehicleId) {
+    const v = state.garage.vehicles.find((x) => x.id === vehicleId);
+    if (!v) return '';
+    return v.plate ? `${v.name} (${v.plate})` : v.name;
+  }
+
+  function buildFineDetails(f) {
+    const parts = [];
+    if (f.number) parts.push('№ ' + f.number);
+    if (f.officer) parts.push(f.officer);
+    if (f.precinct) parts.push(f.precinct);
+    if (state.garage.vehicles.length > 1) parts.push(getVehicleLabel(state.garage.activeVehicleId));
+    return parts.join(' · ');
+  }
+
   function renderFines() {
     const list = getActiveRecords().fines.slice().sort((a, b) => b.date.localeCompare(a.date));
     const container = $('finesList');
@@ -5757,37 +5818,125 @@
       chip.textContent = f.paid ? tr('Платен') : tr('Неплатен');
       chip.title = tr('Кликни, за да превключиш');
       chip.addEventListener('click', () => toggleFinePaid(f.id));
+
+      const descNode = document.createDocumentFragment();
+      const category = getFineCategoryLabel(f.category);
+      const title = document.createElement('span');
+      title.textContent = [category, f.desc].filter(Boolean).join(' — ') || tr('Фиш');
+      descNode.appendChild(title);
+      const details = buildFineDetails(f);
+      if (details) {
+        const sub = document.createElement('div');
+        sub.className = 'record-row-sub';
+        sub.textContent = details;
+        descNode.appendChild(sub);
+      }
+
       container.appendChild(createRecordRow({
         date: formatDateDisplay(f.date),
-        desc: f.desc,
+        desc: descNode,
         meta: chip,
         cost: formatNumber(f.amount) + ' ' + curSym(),
-        onDelete: () => deleteFine(f.id)
+        onDelete: () => deleteFine(f.id),
+        onEdit: () => openFineEditModal(f.id)
       }));
     });
   }
 
+  let editingFineId = '';
+
+  function populateFineSelects() {
+    const cat = $('fineCategory');
+    cat.innerHTML = '';
+    FINE_CATEGORIES.forEach((c) => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = tr(c.label);
+      cat.appendChild(opt);
+    });
+    const veh = $('fineVehicle');
+    veh.innerHTML = '';
+    state.garage.vehicles.forEach((v) => {
+      const opt = document.createElement('option');
+      opt.value = v.id;
+      opt.textContent = getVehicleLabel(v.id);
+      veh.appendChild(opt);
+    });
+  }
+
   function openFineModal() {
+    editingFineId = '';
+    populateFineSelects();
+    $('fineModalTitle').textContent = tr('ДОБАВИ ФИШ');
+    $('fineModalSaveBtn').textContent = tr('Добави');
     $('fineDate').value = todayKey();
-    $('fineDesc').value = '';
     $('fineAmount').value = '';
+    $('fineCategory').value = 'speeding';
+    $('fineNumber').value = '';
+    $('fineDesc').value = '';
+    $('fineVehicle').value = state.garage.activeVehicleId;
+    $('fineOfficer').value = '';
+    $('finePrecinct').value = '';
     $('fineModal').classList.remove('hidden');
-    $('fineDesc').focus();
+    pushNav(closeFineModal);
+  }
+
+  function openFineEditModal(id) {
+    const f = getActiveRecords().fines.find((x) => x.id === id);
+    if (!f) return;
+    editingFineId = id;
+    populateFineSelects();
+    $('fineModalTitle').textContent = tr('РЕДАКТИРАЙ ФИШ');
+    $('fineModalSaveBtn').textContent = tr('Запиши');
+    $('fineDate').value = f.date;
+    $('fineAmount').value = f.amount;
+    $('fineCategory').value = f.category || 'other';
+    $('fineNumber').value = f.number || '';
+    $('fineDesc').value = f.desc || '';
+    $('fineVehicle').value = state.garage.activeVehicleId;
+    $('fineOfficer').value = f.officer || '';
+    $('finePrecinct').value = f.precinct || '';
+    $('fineModal').classList.remove('hidden');
     pushNav(closeFineModal);
   }
 
   function closeFineModal() {
+    editingFineId = '';
     $('fineModal').classList.add('hidden');
     popNav();
   }
 
   function addFine() {
     const date = $('fineDate').value;
-    const desc = $('fineDesc').value.trim();
     const amount = parseFloat($('fineAmount').value) || 0;
     if (!date) { showToast(tr('Избери дата')); return; }
     if (!amount) { showToast(tr('Въведи сума')); return; }
-    getActiveRecords().fines.push({ id: genId('x'), date, desc, amount, paid: false });
+
+    const values = {
+      date,
+      amount,
+      category: $('fineCategory').value || 'other',
+      number: $('fineNumber').value.trim(),
+      desc: $('fineDesc').value.trim(),
+      officer: $('fineOfficer').value.trim(),
+      precinct: $('finePrecinct').value.trim()
+    };
+    const targetVehicleId = $('fineVehicle').value || state.garage.activeVehicleId;
+
+    if (editingFineId) {
+      const activeRec = getActiveRecords();
+      const f = activeRec.fines.find((x) => x.id === editingFineId);
+      if (f) {
+        Object.assign(f, values);
+        if (targetVehicleId !== state.garage.activeVehicleId) {
+          activeRec.fines = activeRec.fines.filter((x) => x.id !== f.id);
+          getVehicleRecords(targetVehicleId).fines.push(f);
+        }
+      }
+    } else {
+      getVehicleRecords(targetVehicleId).fines.push({ id: genId('x'), ...values, paid: false });
+    }
+
     saveState();
     closeFineModal();
     renderFines();
@@ -5866,7 +6015,7 @@
         const item = document.createElement('div');
         item.className = 'garage-alert-item';
         const label = document.createElement('span');
-        label.textContent = `${f.desc || tr('Фиш')} — ${formatDateDisplay(f.date)}`;
+        label.textContent = `${f.desc || getFineCategoryLabel(f.category) || tr('Фиш')} — ${formatDateDisplay(f.date)}`;
         const amt = document.createElement('span');
         amt.className = 'record-row-cost';
         amt.textContent = formatNumber(f.amount) + ' ' + curSym();
