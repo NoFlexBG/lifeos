@@ -2143,6 +2143,15 @@
 
   .record-row > * { min-width: 0; }
 
+  .clickable-row { cursor: pointer; transition: border-color 0.15s ease; }
+  .clickable-row:hover { border-color: var(--line-strong); }
+
+  .mini-input:disabled, select.mini-input:disabled {
+    opacity: 0.75;
+    cursor: default;
+    background: var(--surface);
+  }
+
   .record-row-actions { display: flex; align-items: center; gap: 4px; }
 
   .record-row-date {

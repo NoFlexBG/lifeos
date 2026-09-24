@@ -30,6 +30,7 @@
     'Калории, вода, крачки': 'Calories, water, steps', 'ККАЛ ДНЕС': 'KCAL TODAY', 'МЛ ДНЕС': 'ML TODAY', 'КРАЧКИ ДНЕС': 'STEPS TODAY',
     'Ремонти, гориво, документи, фишове': 'Repairs, fuel, documents, tickets', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNPAID TICKETS', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOCUMENTS EXPIRING',
     '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
+    'ФИШ': 'TICKET', '▣ Виж снимката': '▣ View photo',
     'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
     'Обща цена €': 'Total price €',
     'На линия': 'Online', 'последно видян': 'last seen', 'преди малко': 'just now', 'мин.': 'min', 'ч.': 'h', 'д.': 'd',
@@ -285,6 +286,7 @@
     'Калории, вода, крачки': 'Kalorien, Wasser, Schritte', 'ККАЛ ДНЕС': 'KCAL HEUTE', 'МЛ ДНЕС': 'ML HEUTE', 'КРАЧКИ ДНЕС': 'SCHRITTE HEUTE',
     'Ремонти, гориво, документи, фишове': 'Reparaturen, Kraftstoff, Dokumente, Bußgelder', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNBEZAHLTE BUSSGELDER', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOKUMENTE LAUFEN AB',
     '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
+    'ФИШ': 'BUSSGELD', '▣ Виж снимката': '▣ Foto ansehen',
     'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
     'Обща цена €': 'Gesamtpreis €',
     'На линия': 'Online', 'последно видян': 'zuletzt online', 'преди малко': 'gerade eben', 'мин.': 'Min', 'ч.': 'Std', 'д.': 'Tg',
@@ -540,6 +542,7 @@
     'Калории, вода, крачки': 'Kalori, su, adım', 'ККАЛ ДНЕС': 'BUGÜN KKAL', 'МЛ ДНЕС': 'BUGÜN ML', 'КРАЧКИ ДНЕС': 'BUGÜN ADIM',
     'Ремонти, гориво, документи, фишове': 'Tamirler, yakıt, belgeler, cezalar', 'НЕПЛАТЕНИ ФИШОВЕ': 'ÖDENMEMİŞ CEZALAR', 'ДОКУМЕНТИ ИЗТИЧАТ': 'BELGELER SONA ERİYOR',
     '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
+    'ФИШ': 'CEZA', '▣ Виж снимката': '▣ Fotoğrafı görüntüle',
     'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
     'Обща цена €': 'Toplam fiyat €',
     'На линия': 'Çevrimiçi', 'последно видян': 'son görülme', 'преди малко': 'az önce', 'мин.': 'dk', 'ч.': 'sa', 'д.': 'g',
@@ -5538,9 +5541,13 @@
     return { cls: 'valid', label: tr('Валиден') };
   }
 
-  function createRecordRow({ date, desc, meta, cost, onDelete, onEdit, onPhoto, hasPhoto, photoTitleHas, photoTitleAdd }) {
+  function createRecordRow({ date, desc, meta, cost, onDelete, onEdit, onPhoto, hasPhoto, photoTitleHas, photoTitleAdd, onRowClick }) {
     const row = document.createElement('div');
     row.className = 'record-row';
+    if (onRowClick) {
+      row.classList.add('clickable-row');
+      row.addEventListener('click', onRowClick);
+    }
 
     const dateEl = document.createElement('span');
     dateEl.className = 'record-row-date';
@@ -5567,6 +5574,7 @@
 
     const actions = document.createElement('div');
     actions.className = 'record-row-actions';
+    actions.addEventListener('click', (e) => e.stopPropagation());
     if (onPhoto) {
       const photoBtn = document.createElement('button');
       photoBtn.className = 'record-row-edit' + (hasPhoto ? ' has-receipt' : '');
@@ -5824,7 +5832,7 @@
       chip.className = 'status-chip ' + (f.paid ? 'paid' : 'unpaid');
       chip.textContent = f.paid ? tr('Платен') : tr('Неплатен');
       chip.title = tr('Кликни, за да превключиш');
-      chip.addEventListener('click', () => toggleFinePaid(f.id));
+      chip.addEventListener('click', (e) => { e.stopPropagation(); toggleFinePaid(f.id); });
 
       const descNode = document.createDocumentFragment();
       const category = getFineCategoryLabel(f.category);
@@ -5849,7 +5857,8 @@
         onPhoto: () => onFinePhotoClick(f.id),
         hasPhoto: !!f.photoPath,
         photoTitleHas: 'Виж снимката на фиша',
-        photoTitleAdd: 'Добави снимка на фиша'
+        photoTitleAdd: 'Добави снимка на фиша',
+        onRowClick: () => openFineViewModal(f.id)
       }));
     });
   }
@@ -5958,9 +5967,49 @@
     });
   }
 
+  let fineViewMode = false;
+
+  function setFineModalReadOnly(readonly) {
+    fineViewMode = readonly;
+    ['fineDate', 'fineAmount', 'fineCategory', 'fineSeries', 'fineNumber', 'fineVehicle', 'fineOfficer', 'finePrecinct'].forEach((id) => {
+      $(id).disabled = readonly;
+    });
+    $('fineModalSaveBtn').classList.toggle('hidden', readonly);
+    $('fineModalCancelBtn').textContent = tr(readonly ? 'Затвори' : 'Отказ');
+    const hasPhoto = !!(fineDraftPhotoPath && !fineDraftPhotoRemoved);
+    if (readonly) {
+      $('finePhotoBtn').textContent = tr('▣ Виж снимката');
+      $('finePhotoBtn').classList.toggle('hidden', !hasPhoto);
+    } else {
+      updateFinePhotoField();
+    }
+    $('finePhotoRemoveBtn').classList.toggle('hidden', readonly || !hasPhoto);
+  }
+
+  function openFineViewModal(id) {
+    const f = getActiveRecords().fines.find((x) => x.id === id);
+    if (!f) return;
+    editingFineId = id;
+    populateFineSelects();
+    $('fineModalTitle').textContent = getFineCategoryLabel(f.category) || tr('ФИШ');
+    $('fineDate').value = f.date;
+    $('fineAmount').value = f.amount;
+    $('fineCategory').value = f.category || 'other';
+    $('fineSeries').value = f.series || '';
+    $('fineNumber').value = f.number || '';
+    $('fineVehicle').value = state.garage.activeVehicleId;
+    $('fineOfficer').value = f.officer || '';
+    $('finePrecinct').value = f.precinct || '';
+    resetFinePhotoDraft(f.photoPath);
+    setFineModalReadOnly(true);
+    $('fineModal').classList.remove('hidden');
+    pushNav(closeFineModal);
+  }
+
   function openFineModal() {
     editingFineId = '';
     populateFineSelects();
+    setFineModalReadOnly(false);
     $('fineModalTitle').textContent = tr('ДОБАВИ ФИШ');
     $('fineModalSaveBtn').textContent = tr('Добави');
     $('fineDate').value = todayKey();
@@ -5981,6 +6030,7 @@
     if (!f) return;
     editingFineId = id;
     populateFineSelects();
+    setFineModalReadOnly(false);
     $('fineModalTitle').textContent = tr('РЕДАКТИРАЙ ФИШ');
     $('fineModalSaveBtn').textContent = tr('Запиши');
     $('fineDate').value = f.date;
@@ -5998,6 +6048,7 @@
 
   function closeFineModal() {
     editingFineId = '';
+    fineViewMode = false;
     $('fineModal').classList.add('hidden');
     popNav();
   }
@@ -7105,7 +7156,10 @@
     $('fineOpenModalBtn').addEventListener('click', openFineModal);
     $('fineModalCancelBtn').addEventListener('click', closeFineModal);
     $('fineModalSaveBtn').addEventListener('click', addFine);
-    $('finePhotoBtn').addEventListener('click', () => $('finePhotoInput').click());
+    $('finePhotoBtn').addEventListener('click', () => {
+      if (fineViewMode) { if (fineDraftPhotoPath) onFinePhotoClick(editingFineId); return; }
+      $('finePhotoInput').click();
+    });
     $('finePhotoInput').addEventListener('change', onFinePhotoChosen);
     $('finePhotoRemoveBtn').addEventListener('click', removeFinePhotoDraft);
     $('finePhotoListInput').addEventListener('change', onFinePhotoListSelected);
