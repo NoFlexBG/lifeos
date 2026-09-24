@@ -29,6 +29,7 @@
     'ИЗБЕРИ МОДУЛ': 'SELECT MODULE',
     'Калории, вода, крачки': 'Calories, water, steps', 'ККАЛ ДНЕС': 'KCAL TODAY', 'МЛ ДНЕС': 'ML TODAY', 'КРАЧКИ ДНЕС': 'STEPS TODAY',
     'Ремонти, гориво, документи, фишове': 'Repairs, fuel, documents, tickets', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNPAID TICKETS', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOCUMENTS EXPIRING',
+    'Всички фишове на всички коли': 'All tickets across every car', 'ОБЩО ФИШОВЕ': 'TOTAL TICKETS', 'ВСИЧКИ ФИШОВЕ': 'ALL TICKETS', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TICKETS ACROSS ALL CARS',
     '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
     'ФИШ': 'TICKET', '▣ Виж снимката': '▣ View photo',
     'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
@@ -285,6 +286,7 @@
     'ИЗБЕРИ МОДУЛ': 'MODUL WÄHLEN',
     'Калории, вода, крачки': 'Kalorien, Wasser, Schritte', 'ККАЛ ДНЕС': 'KCAL HEUTE', 'МЛ ДНЕС': 'ML HEUTE', 'КРАЧКИ ДНЕС': 'SCHRITTE HEUTE',
     'Ремонти, гориво, документи, фишове': 'Reparaturen, Kraftstoff, Dokumente, Bußgelder', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNBEZAHLTE BUSSGELDER', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOKUMENTE LAUFEN AB',
+    'Всички фишове на всички коли': 'Alle Bußgelder aller Autos', 'ОБЩО ФИШОВЕ': 'BUSSGELDER GESAMT', 'ВСИЧКИ ФИШОВЕ': 'ALLE BUSSGELDER', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'BUSSGELDER ALLER AUTOS',
     '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
     'ФИШ': 'BUSSGELD', '▣ Виж снимката': '▣ Foto ansehen',
     'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
@@ -541,6 +543,7 @@
     'ИЗБЕРИ МОДУЛ': 'MODÜL SEÇ',
     'Калории, вода, крачки': 'Kalori, su, adım', 'ККАЛ ДНЕС': 'BUGÜN KKAL', 'МЛ ДНЕС': 'BUGÜN ML', 'КРАЧКИ ДНЕС': 'BUGÜN ADIM',
     'Ремонти, гориво, документи, фишове': 'Tamirler, yakıt, belgeler, cezalar', 'НЕПЛАТЕНИ ФИШОВЕ': 'ÖDENMEMİŞ CEZALAR', 'ДОКУМЕНТИ ИЗТИЧАТ': 'BELGELER SONA ERİYOR',
+    'Всички фишове на всички коли': 'Tüm araçların tüm cezaları', 'ОБЩО ФИШОВЕ': 'TOPLAM CEZA', 'ВСИЧКИ ФИШОВЕ': 'TÜM CEZALAR', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TÜM ARAÇLARIN CEZALARI',
     '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
     'ФИШ': 'CEZA', '▣ Виж снимката': '▣ Fotoğrafı görüntüle',
     'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
@@ -1017,13 +1020,14 @@
     $('vehicleBox').classList.toggle('hidden', name !== 'garage');
     updateChatFabVisibility();
 
-    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', chat: 'CHAT', admin: 'ADMIN' };
+    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', fines: 'TICKETS', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', chat: 'CHAT', admin: 'ADMIN' };
     const subs = {
       hub: 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР',
       workdays: 'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ',
       vitals: 'ВИТАЛНИ ПОКАЗАТЕЛИ',
       tdee: 'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД',
       garage: 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ',
+      fines: 'ФИШОВЕ НА ВСИЧКИ КОЛИ',
       savings: 'СПЕСТЕНИ ПАРИ',
       company: 'СЛУЖЕБНИ ПАРИ',
       notes: 'БЕЛЕЖКИ',
@@ -1038,6 +1042,7 @@
     if (name === 'vitals') { renderVitalsToday(true); renderVitalsCharts(); renderMealHistory(); renderProducts(); switchVitalsTab('today'); }
     if (name === 'tdee') computeTDEE();
     if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
+    if (name === 'fines') renderAllFines();
     if (name === 'savings') renderSavingsAll();
     if (name === 'company') { renderCompanyAll(); switchCompanyTab('overview'); }
     if (name === 'notes') renderNotes();
@@ -1068,13 +1073,17 @@
 
     let unpaidFinesTotal = 0;
     let docsAlertCount = 0;
+    let totalFinesCount = 0;
     state.garage.vehicles.forEach((v) => {
       const rec = state.garage.records[v.id] || { fines: [], documents: [] };
       unpaidFinesTotal += (rec.fines || []).filter((f) => !f.paid).reduce((s, f) => s + f.amount, 0);
       docsAlertCount += (rec.documents || []).filter((d) => docStatus(d.expiry).cls !== 'valid').length;
+      totalFinesCount += (rec.fines || []).length;
     });
     $('hubGarageFines').textContent = formatNumber(unpaidFinesTotal) + curSym();
     $('hubGarageDocs').textContent = docsAlertCount;
+    $('hubFinesUnpaid').textContent = formatNumber(unpaidFinesTotal) + curSym();
+    $('hubFinesCount').textContent = totalFinesCount;
 
     const savingsTotal = getSavingsTotal();
     $('hubSavingsTotal').textContent = formatMoney(savingsTotal) + curSym();
@@ -5813,13 +5822,78 @@
     return v.plate ? `${v.name} (${v.plate})` : v.name;
   }
 
-  function buildFineDetails(f) {
+  function buildFineDetails(f, vehicleId, alwaysShowVehicle) {
     const parts = [];
     if (f.series || f.number) parts.push([f.series && `${tr('Серия')} ${f.series}`, f.number && `№ ${f.number}`].filter(Boolean).join(' '));
     if (f.officer) parts.push(f.officer);
     if (f.precinct) parts.push(f.precinct);
-    if (state.garage.vehicles.length > 1) parts.push(getVehicleLabel(state.garage.activeVehicleId));
+    if (alwaysShowVehicle || state.garage.vehicles.length > 1) parts.push(getVehicleLabel(vehicleId != null ? vehicleId : state.garage.activeVehicleId));
     return parts.join(' · ');
+  }
+
+  function findFineOwner(id) {
+    for (const v of state.garage.vehicles) {
+      const rec = state.garage.records[v.id];
+      const f = rec && rec.fines && rec.fines.find((x) => x.id === id);
+      if (f) return { fine: f, vehicleId: v.id, list: rec.fines };
+    }
+    return null;
+  }
+
+  function getAllFinesFlat() {
+    const all = [];
+    state.garage.vehicles.forEach((v) => {
+      const rec = state.garage.records[v.id];
+      if (rec && rec.fines) rec.fines.forEach((f) => all.push({ fine: f, vehicleId: v.id }));
+    });
+    return all;
+  }
+
+  function renderAllFines() {
+    const entries = getAllFinesFlat().sort((a, b) => b.fine.date.localeCompare(a.fine.date));
+    const container = $('allFinesList');
+    container.innerHTML = '';
+
+    const unpaidTotal = entries.filter((e) => !e.fine.paid).reduce((s, e) => s + e.fine.amount, 0);
+    $('allFinesUnpaidTotal').textContent = formatNumber(unpaidTotal) + curSym();
+    $('allFinesCount').textContent = entries.length;
+
+    if (!entries.length) { renderEmptyRow(container, 'Няма добавени фишове'); return; }
+
+    entries.forEach(({ fine: f, vehicleId }) => {
+      const chip = document.createElement('span');
+      chip.className = 'status-chip ' + (f.paid ? 'paid' : 'unpaid');
+      chip.textContent = f.paid ? tr('Платен') : tr('Неплатен');
+      chip.title = tr('Кликни, за да превключиш');
+      chip.addEventListener('click', (e) => { e.stopPropagation(); toggleFinePaid(f.id); });
+
+      const descNode = document.createDocumentFragment();
+      const category = getFineCategoryLabel(f.category);
+      const title = document.createElement('span');
+      title.textContent = [category, f.desc].filter(Boolean).join(' — ') || tr('Фиш');
+      descNode.appendChild(title);
+      const details = buildFineDetails(f, vehicleId, true);
+      if (details) {
+        const sub = document.createElement('div');
+        sub.className = 'record-row-sub';
+        sub.textContent = details;
+        descNode.appendChild(sub);
+      }
+
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(f.date),
+        desc: descNode,
+        meta: chip,
+        cost: formatNumber(f.amount) + ' ' + curSym(),
+        onDelete: () => deleteFine(f.id),
+        onEdit: () => openFineEditModal(f.id),
+        onPhoto: () => onFinePhotoClick(f.id),
+        hasPhoto: !!f.photoPath,
+        photoTitleHas: 'Виж снимката на фиша',
+        photoTitleAdd: 'Добави снимка на фиша',
+        onRowClick: () => openFineViewModal(f.id)
+      }));
+    });
   }
 
   function renderFines() {
@@ -5839,7 +5913,7 @@
       const title = document.createElement('span');
       title.textContent = [category, f.desc].filter(Boolean).join(' — ') || tr('Фиш');
       descNode.appendChild(title);
-      const details = buildFineDetails(f);
+      const details = buildFineDetails(f, state.garage.activeVehicleId);
       if (details) {
         const sub = document.createElement('div');
         sub.className = 'record-row-sub';
@@ -5917,8 +5991,9 @@
   }
 
   function onFinePhotoClick(id) {
-    const f = getActiveRecords().fines.find((x) => x.id === id);
-    if (!f) return;
+    const owner = findFineOwner(id);
+    if (!owner) return;
+    const f = owner.fine;
     if (f.photoPath) {
       getSignedPhotoUrl(f.photoPath).then(({ data, error }) => {
         if (error || !data) { showToast(tr('Грешка при зареждане на снимката')); return; }
@@ -5936,15 +6011,16 @@
     const id = pendingFinePhotoId;
     pendingFinePhotoId = '';
     if (!file || !id) return;
-    const f = getActiveRecords().fines.find((x) => x.id === id);
-    if (!f) return;
+    const owner = findFineOwner(id);
+    if (!owner) return;
     if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
     if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
     const path = await uploadFinePhoto(file);
     if (!path) return;
-    f.photoPath = path;
+    owner.fine.photoPath = path;
     saveState();
     renderFines();
+    renderAllFines();
     showToast(tr('Снимката е прикачена'));
   }
 
@@ -5987,8 +6063,9 @@
   }
 
   function openFineViewModal(id) {
-    const f = getActiveRecords().fines.find((x) => x.id === id);
-    if (!f) return;
+    const owner = findFineOwner(id);
+    if (!owner) return;
+    const f = owner.fine;
     editingFineId = id;
     populateFineSelects();
     $('fineModalTitle').textContent = getFineCategoryLabel(f.category) || tr('ФИШ');
@@ -5997,7 +6074,7 @@
     $('fineCategory').value = f.category || 'other';
     $('fineSeries').value = f.series || '';
     $('fineNumber').value = f.number || '';
-    $('fineVehicle').value = state.garage.activeVehicleId;
+    $('fineVehicle').value = owner.vehicleId;
     $('fineOfficer').value = f.officer || '';
     $('finePrecinct').value = f.precinct || '';
     resetFinePhotoDraft(f.photoPath);
@@ -6026,8 +6103,9 @@
   }
 
   function openFineEditModal(id) {
-    const f = getActiveRecords().fines.find((x) => x.id === id);
-    if (!f) return;
+    const owner = findFineOwner(id);
+    if (!owner) return;
+    const f = owner.fine;
     editingFineId = id;
     populateFineSelects();
     setFineModalReadOnly(false);
@@ -6038,7 +6116,7 @@
     $('fineCategory').value = f.category || 'other';
     $('fineSeries').value = f.series || '';
     $('fineNumber').value = f.number || '';
-    $('fineVehicle').value = state.garage.activeVehicleId;
+    $('fineVehicle').value = owner.vehicleId;
     $('fineOfficer').value = f.officer || '';
     $('finePrecinct').value = f.precinct || '';
     resetFinePhotoDraft(f.photoPath);
@@ -6091,9 +6169,9 @@
     const targetVehicleId = $('fineVehicle').value || state.garage.activeVehicleId;
 
     if (editingFineId) {
-      const activeRec = getActiveRecords();
-      const f = activeRec.fines.find((x) => x.id === editingFineId);
-      if (f) {
+      const owner = findFineOwner(editingFineId);
+      if (owner) {
+        const f = owner.fine;
         const oldPhotoPath = f.photoPath || '';
         Object.assign(f, values);
         if (newPhotoPath) {
@@ -6103,8 +6181,8 @@
           f.photoPath = '';
           await removeStoredPhoto(oldPhotoPath);
         }
-        if (targetVehicleId !== state.garage.activeVehicleId) {
-          activeRec.fines = activeRec.fines.filter((x) => x.id !== f.id);
+        if (targetVehicleId !== owner.vehicleId) {
+          owner.list.splice(owner.list.indexOf(f), 1);
           getVehicleRecords(targetVehicleId).fines.push(f);
         }
       }
@@ -6115,25 +6193,28 @@
     saveState();
     closeFineModal();
     renderFines();
+    renderAllFines();
     renderGarageOverview();
   }
 
   async function deleteFine(id) {
-    const rec = getActiveRecords();
-    const f = rec.fines.find((x) => x.id === id);
-    if (f && f.photoPath) await removeStoredPhoto(f.photoPath);
-    rec.fines = rec.fines.filter((x) => x.id !== id);
+    const owner = findFineOwner(id);
+    if (!owner) return;
+    if (owner.fine.photoPath) await removeStoredPhoto(owner.fine.photoPath);
+    owner.list.splice(owner.list.indexOf(owner.fine), 1);
     saveState();
     renderFines();
+    renderAllFines();
     renderGarageOverview();
   }
 
   function toggleFinePaid(id) {
-    const rec = getActiveRecords();
-    const f = rec.fines.find((x) => x.id === id);
-    if (f) f.paid = !f.paid;
+    const owner = findFineOwner(id);
+    if (!owner) return;
+    owner.fine.paid = !owner.fine.paid;
     saveState();
     renderFines();
+    renderAllFines();
     renderGarageOverview();
   }
 
@@ -7154,6 +7235,7 @@
     $('docModalSaveBtn').addEventListener('click', addDocument);
 
     $('fineOpenModalBtn').addEventListener('click', openFineModal);
+    $('allFinesAddBtn').addEventListener('click', openFineModal);
     $('fineModalCancelBtn').addEventListener('click', closeFineModal);
     $('fineModalSaveBtn').addEventListener('click', addFine);
     $('finePhotoBtn').addEventListener('click', () => {

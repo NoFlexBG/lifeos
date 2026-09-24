@@ -208,6 +208,21 @@
           </div>
         </div>
 
+        <div class="console-panel tile" data-app="fines">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">⚠</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">TICKETS</div>
+          <div class="tile-desc" data-i18n>Всички фишове на всички коли</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubFinesUnpaid">0€</span><span class="tile-stat-label" data-i18n>НЕПЛАТЕНИ ФИШОВЕ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubFinesCount">0</span><span class="tile-stat-label" data-i18n>ОБЩО ФИШОВЕ</span></div>
+          </div>
+        </div>
+
         <div class="console-panel tile" data-app="workdays">
           <span class="corner tl"></span><span class="corner tr"></span>
           <span class="corner bl"></span><span class="corner br"></span>
@@ -1058,6 +1073,32 @@
       </div>
     </section>
 
+    <!-- ============ ALL FINES (across every vehicle) ============ -->
+    <section id="screen-fines" class="screen hidden">
+      <div class="garage-body">
+        <div class="garage-stats-row">
+          <div class="console-panel garage-stat" data-accent="pink">
+            <span class="gauge-label" data-i18n>НЕПЛАТЕНИ ФИШОВЕ</span>
+            <div class="garage-stat-value" id="allFinesUnpaidTotal">0€</div>
+          </div>
+          <div class="console-panel garage-stat" data-accent="cyan">
+            <span class="gauge-label" data-i18n>ОБЩО ФИШОВЕ</span>
+            <div class="garage-stat-value" id="allFinesCount">0</div>
+          </div>
+        </div>
+
+        <div class="console-panel chart-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="chart-head">
+            <span class="gauge-label" data-i18n>ВСИЧКИ ФИШОВЕ</span>
+            <button class="chip" id="allFinesAddBtn" data-i18n>+ Добави</button>
+          </div>
+          <div class="record-list" id="allFinesList"></div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ ADMIN (hidden, only rendered for the admin account) ============ -->
     <section id="screen-admin" class="screen hidden">
       <div class="admin-stats-row">
@@ -1845,6 +1886,6 @@
   </div>
 </div>
 
-<script src="app.js?v=7" charset="UTF-8"></script>
+<script src="app.js?v=8" charset="UTF-8"></script>
 </body>
 </html>
