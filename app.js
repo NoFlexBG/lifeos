@@ -201,6 +201,8 @@
     'Л/100КМ': 'L/100KM',
     'Няма документи, изтичащи скоро': 'No documents expiring soon', 'Няма неплатени фишове': 'No unpaid tickets',
     'Фиш': 'Ticket', 'е над': 'is over', 'прескочена': 'skipped',
+    'Снимка на фиша': 'Ticket photo', 'Премахни': 'Remove', '▣ Добави снимка': '▣ Add photo', '▣ Смени снимка': '▣ Change photo',
+    'Виж снимката на фиша': 'View ticket photo', 'Добави снимка на фиша': 'Add ticket photo',
     'РЕДАКТИРАЙ ФИШ': 'EDIT TICKET', 'Категория на фиша': 'Ticket category', 'Номер на фиша': 'Ticket number',
     'За какво е': 'What it is for', 'На коя кола е': 'Which car', 'Издаден от (име на полицая)': 'Issued by (officer name)',
     'От кое районно е': 'Police station / precinct', 'напр. 0123456': 'e.g. 0123456',
@@ -454,6 +456,8 @@
     'Л/100КМ': 'L/100KM',
     'Няма документи, изтичащи скоро': 'Keine Dokumente laufen bald ab', 'Няма неплатени фишове': 'Keine unbezahlten Bußgelder',
     'Фиш': 'Bußgeld', 'е над': 'ist über', 'прескочена': 'übersprungen',
+    'Снимка на фиша': 'Foto des Bußgelds', 'Премахни': 'Entfernen', '▣ Добави снимка': '▣ Foto hinzufügen', '▣ Смени снимка': '▣ Foto ändern',
+    'Виж снимката на фиша': 'Foto des Bußgelds ansehen', 'Добави снимка на фиша': 'Foto des Bußgelds hinzufügen',
     'РЕДАКТИРАЙ ФИШ': 'BUSSGELD BEARBEITEN', 'Категория на фиша': 'Kategorie des Bußgelds', 'Номер на фиша': 'Aktenzeichen',
     'За какво е': 'Wofür', 'На коя кола е': 'Für welches Auto', 'Издаден от (име на полицая)': 'Ausgestellt von (Name des Beamten)',
     'От кое районно е': 'Polizeidienststelle', 'напр. 0123456': 'z. B. 0123456',
@@ -707,6 +711,8 @@
     'Л/100КМ': 'L/100KM',
     'Няма документи, изтичащи скоро': 'Yakında sona erecek belge yok', 'Няма неплатени фишове': 'Ödenmemiş ceza yok',
     'Фиш': 'Ceza', 'е над': 'şundan büyük', 'прескочена': 'atlandı',
+    'Снимка на фиша': 'Ceza fotoğrafı', 'Премахни': 'Kaldır', '▣ Добави снимка': '▣ Fotoğraf ekle', '▣ Смени снимка': '▣ Fotoğrafı değiştir',
+    'Виж снимката на фиша': 'Ceza fotoğrafını gör', 'Добави снимка на фиша': 'Ceza fotoğrafı ekle',
     'РЕДАКТИРАЙ ФИШ': 'CEZAYI DÜZENLE', 'Категория на фиша': 'Ceza kategorisi', 'Номер на фиша': 'Ceza numarası',
     'За какво е': 'Ne için', 'На коя кола е': 'Hangi araç', 'Издаден от (име на полицая)': 'Düzenleyen (görevli adı)',
     'От кое районно е': 'Emniyet / karakol', 'напр. 0123456': 'ör. 0123456',
@@ -5532,7 +5538,7 @@
     return { cls: 'valid', label: tr('Валиден') };
   }
 
-  function createRecordRow({ date, desc, meta, cost, onDelete, onEdit, onPhoto, hasPhoto }) {
+  function createRecordRow({ date, desc, meta, cost, onDelete, onEdit, onPhoto, hasPhoto, photoTitleHas, photoTitleAdd }) {
     const row = document.createElement('div');
     row.className = 'record-row';
 
@@ -5565,7 +5571,7 @@
       const photoBtn = document.createElement('button');
       photoBtn.className = 'record-row-edit' + (hasPhoto ? ' has-receipt' : '');
       photoBtn.textContent = '▣';
-      photoBtn.title = hasPhoto ? tr('Виж фактура') : tr('Добави снимка на фактура');
+      photoBtn.title = hasPhoto ? tr(photoTitleHas || 'Виж фактура') : tr(photoTitleAdd || 'Добави снимка на фактура');
       photoBtn.addEventListener('click', onPhoto);
       actions.appendChild(photoBtn);
     }
@@ -5838,12 +5844,99 @@
         meta: chip,
         cost: formatNumber(f.amount) + ' ' + curSym(),
         onDelete: () => deleteFine(f.id),
-        onEdit: () => openFineEditModal(f.id)
+        onEdit: () => openFineEditModal(f.id),
+        onPhoto: () => onFinePhotoClick(f.id),
+        hasPhoto: !!f.photoPath,
+        photoTitleHas: 'Виж снимката на фиша',
+        photoTitleAdd: 'Добави снимка на фиша'
       }));
     });
   }
 
   let editingFineId = '';
+  let fineDraftPhotoFile = null;
+  let fineDraftPhotoPath = '';
+  let fineDraftPhotoRemoved = false;
+  let pendingFinePhotoId = '';
+
+  function updateFinePhotoField() {
+    const has = !!fineDraftPhotoFile || (!!fineDraftPhotoPath && !fineDraftPhotoRemoved);
+    $('finePhotoBtn').textContent = has ? tr('▣ Смени снимка') : tr('▣ Добави снимка');
+    $('finePhotoHint').textContent = fineDraftPhotoFile ? fineDraftPhotoFile.name : (has ? tr('Снимката е прикачена') : '');
+    $('finePhotoRemoveBtn').classList.toggle('hidden', !has);
+  }
+
+  function resetFinePhotoDraft(existingPath) {
+    fineDraftPhotoFile = null;
+    fineDraftPhotoPath = existingPath || '';
+    fineDraftPhotoRemoved = false;
+    $('finePhotoInput').value = '';
+    updateFinePhotoField();
+  }
+
+  function onFinePhotoChosen(evt) {
+    const file = evt.target.files[0];
+    evt.target.value = '';
+    if (!file) return;
+    if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
+    fineDraftPhotoFile = file;
+    fineDraftPhotoRemoved = false;
+    updateFinePhotoField();
+  }
+
+  function removeFinePhotoDraft() {
+    fineDraftPhotoFile = null;
+    if (fineDraftPhotoPath) fineDraftPhotoRemoved = true;
+    updateFinePhotoField();
+  }
+
+  async function uploadFinePhoto(file) {
+    let blob;
+    try { blob = await compressImage(file, PHOTO_MAX_DIM, 0.82); } catch { blob = file; }
+    const path = `${currentUser.id}/fines/${genId('fp')}.jpg`;
+    const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
+    if (error) { showToast(tr('Грешка при качване на снимка')); return null; }
+    return path;
+  }
+
+  async function removeStoredPhoto(path) {
+    if (!path) return;
+    await sb.storage.from(PHOTO_BUCKET).remove([path]);
+    delete signedUrlCache[path];
+  }
+
+  function onFinePhotoClick(id) {
+    const f = getActiveRecords().fines.find((x) => x.id === id);
+    if (!f) return;
+    if (f.photoPath) {
+      getSignedPhotoUrl(f.photoPath).then(({ data, error }) => {
+        if (error || !data) { showToast(tr('Грешка при зареждане на снимката')); return; }
+        openPhotoLightbox(data.signedUrl, f.photoPath);
+      });
+    } else {
+      pendingFinePhotoId = id;
+      $('finePhotoListInput').click();
+    }
+  }
+
+  async function onFinePhotoListSelected(evt) {
+    const file = evt.target.files[0];
+    evt.target.value = '';
+    const id = pendingFinePhotoId;
+    pendingFinePhotoId = '';
+    if (!file || !id) return;
+    const f = getActiveRecords().fines.find((x) => x.id === id);
+    if (!f) return;
+    if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
+    if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
+    const path = await uploadFinePhoto(file);
+    if (!path) return;
+    f.photoPath = path;
+    saveState();
+    renderFines();
+    showToast(tr('Снимката е прикачена'));
+  }
 
   function populateFineSelects() {
     const cat = $('fineCategory');
@@ -5877,6 +5970,7 @@
     $('fineVehicle').value = state.garage.activeVehicleId;
     $('fineOfficer').value = '';
     $('finePrecinct').value = '';
+    resetFinePhotoDraft('');
     $('fineModal').classList.remove('hidden');
     pushNav(closeFineModal);
   }
@@ -5896,6 +5990,7 @@
     $('fineVehicle').value = state.garage.activeVehicleId;
     $('fineOfficer').value = f.officer || '';
     $('finePrecinct').value = f.precinct || '';
+    resetFinePhotoDraft(f.photoPath);
     $('fineModal').classList.remove('hidden');
     pushNav(closeFineModal);
   }
@@ -5906,11 +6001,31 @@
     popNav();
   }
 
-  function addFine() {
+  let fineSaving = false;
+
+  async function addFine() {
+    if (fineSaving) return;
     const date = $('fineDate').value;
     const amount = parseFloat($('fineAmount').value) || 0;
     if (!date) { showToast(tr('Избери дата')); return; }
     if (!amount) { showToast(tr('Въведи сума')); return; }
+
+    fineSaving = true;
+    $('fineModalSaveBtn').disabled = true;
+    try {
+      await saveFineFromModal(date, amount);
+    } finally {
+      fineSaving = false;
+      $('fineModalSaveBtn').disabled = false;
+    }
+  }
+
+  async function saveFineFromModal(date, amount) {
+    let newPhotoPath = '';
+    if (fineDraftPhotoFile) {
+      newPhotoPath = await uploadFinePhoto(fineDraftPhotoFile);
+      if (newPhotoPath === null) return;
+    }
 
     const values = {
       date,
@@ -5927,14 +6042,22 @@
       const activeRec = getActiveRecords();
       const f = activeRec.fines.find((x) => x.id === editingFineId);
       if (f) {
+        const oldPhotoPath = f.photoPath || '';
         Object.assign(f, values);
+        if (newPhotoPath) {
+          f.photoPath = newPhotoPath;
+          await removeStoredPhoto(oldPhotoPath);
+        } else if (fineDraftPhotoRemoved) {
+          f.photoPath = '';
+          await removeStoredPhoto(oldPhotoPath);
+        }
         if (targetVehicleId !== state.garage.activeVehicleId) {
           activeRec.fines = activeRec.fines.filter((x) => x.id !== f.id);
           getVehicleRecords(targetVehicleId).fines.push(f);
         }
       }
     } else {
-      getVehicleRecords(targetVehicleId).fines.push({ id: genId('x'), ...values, paid: false });
+      getVehicleRecords(targetVehicleId).fines.push({ id: genId('x'), ...values, photoPath: newPhotoPath, paid: false });
     }
 
     saveState();
@@ -5943,9 +6066,11 @@
     renderGarageOverview();
   }
 
-  function deleteFine(id) {
+  async function deleteFine(id) {
     const rec = getActiveRecords();
-    rec.fines = rec.fines.filter((f) => f.id !== id);
+    const f = rec.fines.find((x) => x.id === id);
+    if (f && f.photoPath) await removeStoredPhoto(f.photoPath);
+    rec.fines = rec.fines.filter((x) => x.id !== id);
     saveState();
     renderFines();
     renderGarageOverview();
@@ -6858,6 +6983,10 @@
     $('fineOpenModalBtn').addEventListener('click', openFineModal);
     $('fineModalCancelBtn').addEventListener('click', closeFineModal);
     $('fineModalSaveBtn').addEventListener('click', addFine);
+    $('finePhotoBtn').addEventListener('click', () => $('finePhotoInput').click());
+    $('finePhotoInput').addEventListener('change', onFinePhotoChosen);
+    $('finePhotoRemoveBtn').addEventListener('click', removeFinePhotoDraft);
+    $('finePhotoListInput').addEventListener('change', onFinePhotoListSelected);
     ['fineDesc','fineAmount'].forEach((id) => {
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addFine(); });
     });

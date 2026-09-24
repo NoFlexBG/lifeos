@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=12">
+<link rel="stylesheet" href="styles.css?v=13">
 </head>
 <body>
 
@@ -1371,6 +1371,15 @@
         <label for="finePrecinct" data-i18n>От кое районно е</label>
         <input type="text" id="finePrecinct" class="mini-input" placeholder="напр. РУ Банско" data-i18n-ph />
       </div>
+      <div class="product-edit-field">
+        <label data-i18n>Снимка на фиша</label>
+        <div class="chip-row">
+          <button type="button" class="chip" id="finePhotoBtn">▣ Добави снимка</button>
+          <button type="button" class="chip hidden" id="finePhotoRemoveBtn" data-i18n>Премахни</button>
+          <span class="photo-upload-hint" id="finePhotoHint"></span>
+        </div>
+        <input type="file" id="finePhotoInput" accept="image/*" class="hidden" />
+      </div>
     </div>
     <div class="matrix-modal-actions">
       <button class="chip" id="fineModalCancelBtn" data-i18n>Отказ</button>
@@ -1434,6 +1443,7 @@
 </div>
 
 <input type="file" id="expenseReceiptFileInput" accept="image/*" class="hidden" />
+<input type="file" id="finePhotoListInput" accept="image/*" class="hidden" />
 
 <div class="report-view" id="companyReportView">
   <div class="report-band"></div>
@@ -1831,6 +1841,6 @@
   </div>
 </div>
 
-<script src="app.js?v=2" charset="UTF-8"></script>
+<script src="app.js?v=3" charset="UTF-8"></script>
 </body>
 </html>
