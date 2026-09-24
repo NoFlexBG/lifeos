@@ -30,6 +30,7 @@
     'Калории, вода, крачки': 'Calories, water, steps', 'ККАЛ ДНЕС': 'KCAL TODAY', 'МЛ ДНЕС': 'ML TODAY', 'КРАЧКИ ДНЕС': 'STEPS TODAY',
     'Ремонти, гориво, документи, фишове': 'Repairs, fuel, documents, tickets', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNPAID TICKETS', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOCUMENTS EXPIRING',
     'Всички фишове на всички коли': 'All tickets across every car', 'ОБЩО ФИШОВЕ': 'TOTAL TICKETS', 'ВСИЧКИ ФИШОВЕ': 'ALL TICKETS', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TICKETS ACROSS ALL CARS',
+    'Търси по серия или номер...': 'Search by series or number...',
     '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
     'ФИШ': 'TICKET', '▣ Виж снимката': '▣ View photo',
     'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
@@ -287,6 +288,7 @@
     'Калории, вода, крачки': 'Kalorien, Wasser, Schritte', 'ККАЛ ДНЕС': 'KCAL HEUTE', 'МЛ ДНЕС': 'ML HEUTE', 'КРАЧКИ ДНЕС': 'SCHRITTE HEUTE',
     'Ремонти, гориво, документи, фишове': 'Reparaturen, Kraftstoff, Dokumente, Bußgelder', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNBEZAHLTE BUSSGELDER', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOKUMENTE LAUFEN AB',
     'Всички фишове на всички коли': 'Alle Bußgelder aller Autos', 'ОБЩО ФИШОВЕ': 'BUSSGELDER GESAMT', 'ВСИЧКИ ФИШОВЕ': 'ALLE BUSSGELDER', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'BUSSGELDER ALLER AUTOS',
+    'Търси по серия или номер...': 'Nach Serie oder Nummer suchen...',
     '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
     'ФИШ': 'BUSSGELD', '▣ Виж снимката': '▣ Foto ansehen',
     'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
@@ -544,6 +546,7 @@
     'Калории, вода, крачки': 'Kalori, su, adım', 'ККАЛ ДНЕС': 'BUGÜN KKAL', 'МЛ ДНЕС': 'BUGÜN ML', 'КРАЧКИ ДНЕС': 'BUGÜN ADIM',
     'Ремонти, гориво, документи, фишове': 'Tamirler, yakıt, belgeler, cezalar', 'НЕПЛАТЕНИ ФИШОВЕ': 'ÖDENMEMİŞ CEZALAR', 'ДОКУМЕНТИ ИЗТИЧАТ': 'BELGELER SONA ERİYOR',
     'Всички фишове на всички коли': 'Tüm araçların tüm cezaları', 'ОБЩО ФИШОВЕ': 'TOPLAM CEZA', 'ВСИЧКИ ФИШОВЕ': 'TÜM CEZALAR', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TÜM ARAÇLARIN CEZALARI',
+    'Търси по серия или номер...': 'Seri veya numaraya göre ara...',
     '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
     'ФИШ': 'CEZA', '▣ Виж снимката': '▣ Fotoğrafı görüntüle',
     'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
@@ -5851,16 +5854,22 @@
 
   function renderAllFines() {
     const entries = getAllFinesFlat().sort((a, b) => b.fine.date.localeCompare(a.fine.date));
-    const container = $('allFinesList');
-    container.innerHTML = '';
 
     const unpaidTotal = entries.filter((e) => !e.fine.paid).reduce((s, e) => s + e.fine.amount, 0);
     $('allFinesUnpaidTotal').textContent = formatNumber(unpaidTotal) + curSym();
     $('allFinesCount').textContent = entries.length;
 
-    if (!entries.length) { renderEmptyRow(container, 'Няма добавени фишове'); return; }
+    const term = ($('finesSearchInput').value || '').trim().toLowerCase();
+    const filtered = term
+      ? entries.filter(({ fine: f }) => (f.series || '').toLowerCase().includes(term) || (f.number || '').toLowerCase().includes(term))
+      : entries;
 
-    entries.forEach(({ fine: f, vehicleId }) => {
+    const container = $('allFinesList');
+    container.innerHTML = '';
+
+    if (!filtered.length) { renderEmptyRow(container, term ? 'Няма съвпадения' : 'Няма добавени фишове'); return; }
+
+    filtered.forEach(({ fine: f, vehicleId }) => {
       const chip = document.createElement('span');
       chip.className = 'status-chip ' + (f.paid ? 'paid' : 'unpaid');
       chip.textContent = f.paid ? tr('Платен') : tr('Неплатен');
@@ -7236,6 +7245,7 @@
 
     $('fineOpenModalBtn').addEventListener('click', openFineModal);
     $('allFinesAddBtn').addEventListener('click', openFineModal);
+    $('finesSearchInput').addEventListener('input', renderAllFines);
     $('fineModalCancelBtn').addEventListener('click', closeFineModal);
     $('fineModalSaveBtn').addEventListener('click', addFine);
     $('finePhotoBtn').addEventListener('click', () => {

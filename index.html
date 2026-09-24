@@ -1092,7 +1092,13 @@
           <span class="corner bl"></span><span class="corner br"></span>
           <div class="chart-head">
             <span class="gauge-label" data-i18n>ВСИЧКИ ФИШОВЕ</span>
-            <button class="chip" id="allFinesAddBtn" data-i18n>+ Добави</button>
+            <div class="chart-head-actions">
+              <div class="product-list-search">
+                <span class="product-search-icon">⌕</span>
+                <input type="text" id="finesSearchInput" class="product-search-input" placeholder="Търси по серия или номер..." autocomplete="off" data-i18n-ph />
+              </div>
+              <button class="chip" id="allFinesAddBtn" data-i18n>+ Добави</button>
+            </div>
           </div>
           <div class="record-list" id="allFinesList"></div>
         </div>
@@ -1886,6 +1892,6 @@
   </div>
 </div>
 
-<script src="app.js?v=8" charset="UTF-8"></script>
+<script src="app.js?v=9" charset="UTF-8"></script>
 </body>
 </html>
