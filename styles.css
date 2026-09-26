@@ -453,6 +453,8 @@
   .tile[data-app="garage"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
   .tile[data-app="savings"]:hover { box-shadow: 0 10px 30px -10px rgba(243, 182, 77, 0.35); }
   .tile[data-app="company"]:hover { box-shadow: 0 10px 30px -10px rgba(77, 216, 230, 0.35); }
+  .tile[data-app="fines"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 107, 107, 0.35); }
+  .tile[data-app="bills"]:hover { box-shadow: 0 10px 30px -10px rgba(94, 214, 140, 0.35); }
   .tile[data-app="notes"]:hover { box-shadow: 0 10px 30px -10px rgba(255, 92, 200, 0.35); }
 
   .tile-top {
@@ -478,6 +480,8 @@
   .tile[data-app="garage"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
   .tile[data-app="savings"] .tile-icon { color: var(--amber); border-color: rgba(243,182,77,0.4); }
   .tile[data-app="company"] .tile-icon { color: var(--cyan); border-color: rgba(77,216,230,0.4); }
+  .tile[data-app="fines"] .tile-icon { color: var(--danger); border-color: rgba(255,107,107,0.4); }
+  .tile[data-app="bills"] .tile-icon { color: #5ed68c; border-color: rgba(94,214,140,0.4); }
   .tile[data-app="notes"] .tile-icon { color: var(--pink); border-color: rgba(255,92,200,0.4); }
 
   .tile-arrow { color: var(--text-faint); font-size: 16px; transition: transform 0.2s ease, color 0.2s ease; }
