@@ -4156,3 +4156,6 @@
 .bills-report-total{font-weight:700;color:var(--cyan)}
 .bills-report-overdue{color:var(--danger)}
 .bills-report-heading{margin:10px 0 4px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#8a8aa8)}
+
+#billsCalendarGrid { grid-auto-rows: minmax(64px, 1fr); }
+#billsCalendarGrid .day-cell { padding-top: 8px; font-size: 13px; }
