@@ -46,7 +46,7 @@
     'НАСТРОЙКИ НА КОЛАТА': 'CAR SETTINGS', 'НОВА КОЛА': 'NEW CAR', '+ Добави нова кола': '+ Add a new car',
     'напр. Астра': 'e.g. Astra', 'Изтрий колата': 'Delete car', 'Въведи име на колата': 'Enter a car name',
     '(редактирано)': '(edited)', 'Редактирай съобщението:': 'Edit the message:', 'Грешка при редактиране': 'Error editing', 'Изтрий това съобщение?': 'Delete this message?',
-    'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Are you sure you want to reset the coin counts?',
+    'Сигурни ли сте, че искате да нулирате бройката?': 'Are you sure you want to reset the counts?',
     'Вие бяхте блокирани': 'You have been blocked', 'Файл': 'File', 'Инфо и настройки': 'Info and settings',
     'Заглуши известията': 'Mute notifications', 'Блокирай потребителя': 'Block user', 'Отблокирай потребителя': 'Unblock user',
     'МЕДИЯ': 'MEDIA', 'ФАЙЛОВЕ': 'FILES', 'ЛИНКОВЕ': 'LINKS',
@@ -304,7 +304,7 @@
     'НАСТРОЙКИ НА КОЛАТА': 'AUTOEINSTELLUNGEN', 'НОВА КОЛА': 'NEUES AUTO', '+ Добави нова кола': '+ Neues Auto hinzufügen',
     'напр. Астра': 'z.B. Astra', 'Изтрий колата': 'Auto löschen', 'Въведи име на колата': 'Gib einen Autonamen ein',
     '(редактирано)': '(bearbeitet)', 'Редактирай съобщението:': 'Nachricht bearbeiten:', 'Грешка при редактиране': 'Fehler beim Bearbeiten', 'Изтрий това съобщение?': 'Diese Nachricht löschen?',
-    'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Möchtest du die Münzanzahl wirklich zurücksetzen?',
+    'Сигурни ли сте, че искате да нулирате бройката?': 'Möchtest du die Anzahl wirklich zurücksetzen?',
     'Вие бяхте блокирани': 'Du wurdest blockiert', 'Файл': 'Datei', 'Инфо и настройки': 'Info und Einstellungen',
     'Заглуши известията': 'Benachrichtigungen stummschalten', 'Блокирай потребителя': 'Nutzer blockieren', 'Отблокирай потребителя': 'Nutzer entsperren',
     'МЕДИЯ': 'MEDIEN', 'ФАЙЛОВЕ': 'DATEIEN', 'ЛИНКОВЕ': 'LINKS',
@@ -562,7 +562,7 @@
     'НАСТРОЙКИ НА КОЛАТА': 'ARAÇ AYARLARI', 'НОВА КОЛА': 'YENİ ARAÇ', '+ Добави нова кола': '+ Yeni araç ekle',
     'напр. Астра': 'örn. Astra', 'Изтрий колата': 'Aracı sil', 'Въведи име на колата': 'Bir araç adı gir',
     '(редактирано)': '(düzenlendi)', 'Редактирай съобщението:': 'Mesajı düzenle:', 'Грешка при редактиране': 'Düzenleme hatası', 'Изтрий това съобщение?': 'Bu mesaj silinsin mi?',
-    'Сигурни ли сте, че искате да нулирате бройката на монетите?': 'Madeni para sayılarını sıfırlamak istediğinden emin misin?',
+    'Сигурни ли сте, че искате да нулирате бройката?': 'Sayıları sıfırlamak istediğinden emin misin?',
     'Вие бяхте блокирани': 'Engellendiniz', 'Файл': 'Dosya', 'Инфо и настройки': 'Bilgi ve ayarlar',
     'Заглуши известията': 'Bildirimleri sessize al', 'Блокирай потребителя': 'Kullanıcıyı engelle', 'Отблокирай потребителя': 'Kullanıcının engelini kaldır',
     'МЕДИЯ': 'MEDYA', 'ФАЙЛОВЕ': 'DOSYALAR', 'ЛИНКОВЕ': 'BAĞLANTILAR',
@@ -1784,16 +1784,21 @@
     updateGroupTotalDisplay(denominations, totalElId);
   }
 
-  function resetCoins() {
-    if (!confirm(tr('Сигурни ли сте, че искате да нулирате бройката на монетите?'))) return;
+  function resetDenomGroup(kind, gridId) {
+    if (!confirm(tr('Сигурни ли сте, че искате да нулирате бройката?'))) return;
     const denoms = curDenoms();
     const wallet = currentWallet();
-    denoms.coins.forEach((d) => { wallet[d] = 0; });
+    denoms[kind].forEach((d) => { wallet[d] = 0; });
     saveState();
-    renderCoinGroup(denoms.coins, 'coinGrid');
+    if (kind === 'banknotes') renderBanknoteGrid();
+    else renderCoinGroup(denoms[kind], gridId);
     renderSavingsOverview();
     renderHubIfVisible();
   }
+
+  function resetBanknotes() { resetDenomGroup('banknotes', 'banknoteGrid'); }
+  function resetCoins() { resetDenomGroup('coins', 'coinGrid'); }
+  function resetCents() { resetDenomGroup('cents', 'centGrid'); }
 
   function renderBanknoteGrid() {
     const container = $('banknoteGrid');
@@ -7175,7 +7180,9 @@
     $('noteColorInput').addEventListener('input', onNoteColorChange);
     $('noteClearFormatBtn').addEventListener('click', clearNoteFormatting);
     $('savingsGoalInput').addEventListener('input', onSavingsGoalChange);
+    $('resetBanknotesBtn').addEventListener('click', resetBanknotes);
     $('resetCoinsBtn').addEventListener('click', resetCoins);
+    $('resetCentsBtn').addEventListener('click', resetCents);
     document.querySelectorAll('.vitals-tab[data-company-tab]').forEach((btn) => {
       btn.addEventListener('click', () => switchCompanyTab(btn.dataset.companyTab));
     });
