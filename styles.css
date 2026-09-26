@@ -642,6 +642,42 @@
   .dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
   .dot-work { background: var(--violet); box-shadow: 0 0 5px var(--violet); }
   .dot-today { background: transparent; border: 1px solid var(--pink); }
+  .dot-bill-upcoming { background: var(--amber); box-shadow: 0 0 5px var(--amber); }
+  .dot-bill-overdue { background: var(--danger); box-shadow: 0 0 5px var(--danger); }
+  .dot-bill-paid { background: var(--cyan); box-shadow: 0 0 5px var(--cyan); }
+
+  /* ---- Bills calendar ---- */
+
+  .day-cell.bill-upcoming, .day-cell.bill-overdue, .day-cell.bill-paid { color: var(--text); }
+  .day-cell.bill-upcoming { background: var(--amber-dim); border-color: rgba(243, 182, 77, 0.45); }
+  .day-cell.bill-overdue { background: var(--danger-dim); border-color: rgba(255, 107, 107, 0.5); }
+  .day-cell.bill-paid { background: var(--cyan-dim); border-color: rgba(77, 216, 230, 0.4); }
+
+  .day-cell.bill-upcoming::after, .day-cell.bill-overdue::after, .day-cell.bill-paid::after {
+    content: '';
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+  }
+
+  .day-cell.bill-upcoming::after { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+  .day-cell.bill-overdue::after { background: var(--danger); box-shadow: 0 0 6px var(--danger); }
+  .day-cell.bill-paid::after { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+
+  .day-cell .bill-count {
+    position: absolute;
+    bottom: 3px;
+    left: 6px;
+    font-size: 9px;
+    color: var(--text-dim);
+  }
+
+  .day-cell.selected { outline: 2px solid var(--violet); outline-offset: -2px; }
+
+  .bills-list-panel { flex-shrink: 0; }
 
   /* ============ Gauges (shared: WorkDays + Vitals) ============ */
 
@@ -4110,3 +4146,8 @@
 
     .report-footer { text-align: center; font-size: 10px; color: #aaa; letter-spacing: 0.5px; margin-top: 10px; }
   }
+
+.bills-report-row{grid-template-columns:1fr auto}
+.bills-report-total{font-weight:700;color:var(--cyan)}
+.bills-report-overdue{color:var(--danger)}
+.bills-report-heading{margin:10px 0 4px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim,#8a8aa8)}

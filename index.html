@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=20">
+<link rel="stylesheet" href="styles.css?v=21">
 </head>
 <body>
 
@@ -235,6 +235,21 @@
           <div class="tile-preview">
             <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthDays">0</span><span class="tile-stat-label" data-i18n>ДНИ ТОЗИ МЕСЕЦ</span></div>
             <div class="tile-stat"><span class="tile-stat-value" id="hubWorkMonthEarnings">0€</span><span class="tile-stat-label" data-i18n>ДОХОД ТОЗИ МЕСЕЦ</span></div>
+          </div>
+        </div>
+
+        <div class="console-panel tile" data-app="bills">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <div class="tile-top">
+            <div class="tile-icon">◷</div>
+            <div class="tile-arrow">→</div>
+          </div>
+          <div class="tile-name">BILLS</div>
+          <div class="tile-desc" data-i18n>Сметки, заеми, телефон</div>
+          <div class="tile-preview">
+            <div class="tile-stat"><span class="tile-stat-value" id="hubBillsDue">0€</span><span class="tile-stat-label" data-i18n>ОСТАВА ТОЗИ МЕСЕЦ</span></div>
+            <div class="tile-stat"><span class="tile-stat-value" id="hubBillsNext">—</span><span class="tile-stat-label" data-i18n>СЛЕДВАЩО ПЛАЩАНЕ</span></div>
           </div>
         </div>
 
@@ -1075,6 +1090,90 @@
       </div>
     </section>
 
+    <!-- ============ BILLS CALENDAR ============ -->
+    <section id="screen-bills" class="screen hidden">
+      <main class="layout">
+        <section class="console-panel calendar-panel">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+
+          <div class="calendar-header">
+            <button id="billsPrevMonth" class="nav-btn" aria-label="Предишен месец" data-i18n-aria>‹</button>
+            <div class="month-title">
+              <span id="billsMonthLabel"></span>
+              <span id="billsYearLabel"></span>
+            </div>
+            <button id="billsNextMonth" class="nav-btn" aria-label="Следващ месец" data-i18n-aria>›</button>
+          </div>
+
+          <div class="weekday-row">
+            <span data-i18n>ПН</span><span data-i18n>ВТ</span><span data-i18n>СР</span><span data-i18n>ЧТ</span><span data-i18n>ПТ</span><span data-i18n>СБ</span><span data-i18n>НД</span>
+          </div>
+
+          <div id="billsCalendarGrid" class="calendar-grid"></div>
+
+          <div class="legend">
+            <div class="legend-item"><span class="dot dot-bill-upcoming"></span> <span data-i18n>Предстои</span></div>
+            <div class="legend-item"><span class="dot dot-bill-overdue"></span> <span data-i18n>Просрочено</span></div>
+            <div class="legend-item"><span class="dot dot-bill-paid"></span> <span data-i18n>Платено</span></div>
+          </div>
+        </section>
+
+        <aside class="gauges">
+          <div class="gauge">
+            <div class="gauge-top">
+              <span class="gauge-label" data-i18n>ОБЩО ЗА МЕСЕЦА</span>
+            </div>
+            <div class="gauge-row">
+              <div class="gauge-value-wrap"><span class="gauge-value money" id="billsMonthTotal">0</span><span class="gauge-unit cur-sym">€</span></div>
+            </div>
+          </div>
+
+          <div class="gauge-pair">
+            <div class="gauge">
+              <div class="gauge-top">
+                <span class="gauge-label" data-i18n>ОСТАВА ЗА ПЛАЩАНЕ</span>
+              </div>
+              <div class="gauge-row">
+                <div class="gauge-value-wrap"><span class="gauge-value money" id="billsMonthRemaining">0</span><span class="gauge-unit cur-sym">€</span></div>
+              </div>
+            </div>
+
+            <div class="gauge">
+              <div class="gauge-top">
+                <span class="gauge-label" data-i18n>ПРОСРОЧЕНИ</span>
+              </div>
+              <div class="gauge-row">
+                <div class="gauge-value-wrap"><span class="gauge-value" id="billsOverdueCount">0</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="console-panel chart-panel bills-list-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label" id="billsListLabel" data-i18n>ПЛАЩАНИЯ</span>
+              <div class="chart-head-actions">
+                <button class="chip hidden" id="billsAllMonthBtn" data-i18n>Целия месец</button>
+                <button class="chip" id="billsAddBtn" data-i18n>+ Добави</button>
+              </div>
+            </div>
+            <div class="record-list" id="billsList"></div>
+          </div>
+
+          <div class="console-panel chart-panel bills-list-panel">
+            <span class="corner tl"></span><span class="corner tr"></span>
+            <span class="corner bl"></span><span class="corner br"></span>
+            <div class="chart-head">
+              <span class="gauge-label" id="billsReportLabel" data-i18n>МЕСЕЧЕН ОТЧЕТ</span>
+            </div>
+            <div class="record-list" id="billsReport"></div>
+          </div>
+        </aside>
+      </main>
+    </section>
+
     <!-- ============ ALL FINES (across every vehicle) ============ -->
     <section id="screen-fines" class="screen hidden">
       <div class="garage-body">
@@ -1474,6 +1573,61 @@
     <div class="matrix-modal-actions">
       <button class="chip" id="fineModalCancelBtn" data-i18n>Отказ</button>
       <button class="chip" id="fineModalSaveBtn" data-i18n>Добави</button>
+    </div>
+  </div>
+</div>
+
+<div class="product-edit-modal hidden" id="billModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" id="billModalTitle" data-i18n>ДОБАВИ ПЛАЩАНЕ</span>
+    <div class="product-edit-form">
+      <div class="product-edit-field">
+        <label for="billTitleInput" data-i18n>Име на плащането</label>
+        <input type="text" id="billTitleInput" class="mini-input" maxlength="60" placeholder="напр. Ток, Кредит, Телефон" data-i18n-ph />
+      </div>
+      <div class="product-edit-row-2">
+        <div class="product-edit-field">
+          <label for="billAmountInput" data-i18n>Сума (€)</label>
+          <input type="number" id="billAmountInput" class="mini-input" min="0" step="0.01" />
+        </div>
+        <div class="product-edit-field" id="billDayField">
+          <label for="billDayInput" data-i18n>Ден от месеца</label>
+          <input type="number" id="billDayInput" class="mini-input" min="1" max="31" step="1" placeholder="1-31" />
+        </div>
+        <div class="product-edit-field hidden" id="billDateField">
+          <label for="billDateInput" data-i18n>Дата</label>
+          <input type="date" id="billDateInput" class="mini-input" />
+        </div>
+      </div>
+      <div class="product-edit-field">
+        <label for="billRepeat" data-i18n>Повторение</label>
+        <select id="billRepeat" class="mini-input">
+          <option value="monthly" data-i18n>Всеки месец</option>
+          <option value="none" data-i18n>Еднократно</option>
+          <option value="weekly" data-i18n>Всяка седмица</option>
+          <option value="yearly" data-i18n>Всяка година</option>
+        </select>
+      </div>
+      <div class="product-edit-field">
+        <label for="billCategory" data-i18n>Категория</label>
+        <select id="billCategory" class="mini-input"></select>
+      </div>
+      <div class="product-edit-field">
+        <label for="billNoteInput" data-i18n>Бележка (по избор)</label>
+        <input type="text" id="billNoteInput" class="mini-input" maxlength="80" />
+      </div>
+      <div class="product-edit-field hidden" id="billStopField">
+        <div class="chip-row">
+          <button type="button" class="chip chip-danger" id="billStopBtn"></button>
+          <span class="photo-upload-hint" id="billStopHint"></span>
+        </div>
+      </div>
+    </div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="billCancelBtn" data-i18n>Отказ</button>
+      <button class="chip" id="billSaveBtn" data-i18n>Добави</button>
     </div>
   </div>
 </div>
@@ -1943,6 +2097,6 @@
   </div>
 </div>
 
-<script src="app.js?v=14" charset="UTF-8"></script>
+<script src="app.js?v=15" charset="UTF-8"></script>
 </body>
 </html>

@@ -273,7 +273,50 @@
     'Определяне на локация...': 'Getting location...',
     'Не успяхме да определим локацията ти': "We couldn't get your location",
     'Ново съобщение': 'New message',
-    'Грешка при изпращане': 'Error sending'
+    'Грешка при изпращане': 'Error sending',
+    "Сметки, заеми, телефон": "Bills, loans, phone",
+    "ОСТАВА ТОЗИ МЕСЕЦ": "LEFT THIS MONTH",
+    "СЛЕДВАЩО ПЛАЩАНЕ": "NEXT PAYMENT",
+    "ПЛАЩАНИЯ И СМЕТКИ": "PAYMENTS & BILLS",
+    "ОБЩО ЗА МЕСЕЦА": "MONTH TOTAL",
+    "ОСТАВА ЗА ПЛАЩАНЕ": "LEFT TO PAY",
+    "ПРОСРОЧЕНИ": "OVERDUE",
+    "Предстои": "Upcoming",
+    "Просрочено": "Overdue",
+    "Платено": "Paid",
+    "ПЛАЩАНИЯ": "PAYMENTS",
+    "Целия месец": "Whole month",
+    "ДОБАВИ ПЛАЩАНЕ": "ADD PAYMENT",
+    "РЕДАКТИРАЙ ПЛАЩАНЕ": "EDIT PAYMENT",
+    "Име на плащането": "Payment name",
+    "напр. Ток, Кредит, Телефон": "e.g. Electricity, Loan, Phone",
+    "Ден от месеца": "Day of month",
+    "Повторение": "Repeat",
+    "Всеки месец": "Every month",
+    "Еднократно": "One-time",
+    "Всяка седмица": "Every week",
+    "Всяка година": "Every year",
+    "Спри плащането": "Stop paying",
+    "Поднови плащането": "Resume payment",
+    "Спряно от": "Stopped since",
+    "Няма плащания": "No payments",
+    "Въведи име": "Enter a name",
+    "Въведи ден от месеца (1-31)": "Enter a day of month (1-31)",
+    "Избери дата": "Pick a date",
+    "Кликни, за да превключиш": "Click to toggle",
+    "Плащането е подновено": "Payment resumed",
+    "Плащането е спряно": "Payment stopped",
+    "Ще се изтрият всички повторения и историята на това плащане. Ако просто вече не го плащаш, използвай \"Спри плащането\" от редакцията. Да изтрия ли?": "This will delete all repeats and the history of this payment. If you just no longer pay it, use \"Stop paying\" in the edit view. Delete anyway?",
+    "МЕСЕЧЕН ОТЧЕТ": "MONTHLY REPORT",
+    "Общо разходи за месеца": "Total expenses for the month",
+    "По категории": "By category",
+    "Сметка (ток, вода, парно)": "Bill (electricity, water, heating)",
+    "Заем / Кредит": "Loan / Credit",
+    "Телефон / Интернет": "Phone / Internet",
+    "Наем": "Rent",
+    "Застраховка": "Insurance",
+    "Абонамент": "Subscription",
+    "Данък / Такса": "Tax / Fee"
   };
 
   const I18N_DE = {
@@ -532,7 +575,50 @@
     'Определяне на локация...': 'Standort wird ermittelt...',
     'Не успяхме да определим локацията ти': 'Dein Standort konnte nicht ermittelt werden',
     'Ново съобщение': 'Neue Nachricht',
-    'Грешка при изпращане': 'Fehler beim Senden'
+    'Грешка при изпращане': 'Fehler beim Senden',
+    "Сметки, заеми, телефон": "Rechnungen, Kredite, Telefon",
+    "ОСТАВА ТОЗИ МЕСЕЦ": "VERBLEIBT DIESEN MONAT",
+    "СЛЕДВАЩО ПЛАЩАНЕ": "NÄCHSTE ZAHLUNG",
+    "ПЛАЩАНИЯ И СМЕТКИ": "ZAHLUNGEN & RECHNUNGEN",
+    "ОБЩО ЗА МЕСЕЦА": "MONATSSUMME",
+    "ОСТАВА ЗА ПЛАЩАНЕ": "NOCH ZU ZAHLEN",
+    "ПРОСРОЧЕНИ": "ÜBERFÄLLIG",
+    "Предстои": "Ausstehend",
+    "Просрочено": "Überfällig",
+    "Платено": "Bezahlt",
+    "ПЛАЩАНИЯ": "ZAHLUNGEN",
+    "Целия месец": "Ganzer Monat",
+    "ДОБАВИ ПЛАЩАНЕ": "ZAHLUNG HINZUFÜGEN",
+    "РЕДАКТИРАЙ ПЛАЩАНЕ": "ZAHLUNG BEARBEITEN",
+    "Име на плащането": "Name der Zahlung",
+    "напр. Ток, Кредит, Телефон": "z. B. Strom, Kredit, Telefon",
+    "Ден от месеца": "Tag des Monats",
+    "Повторение": "Wiederholung",
+    "Всеки месец": "Jeden Monat",
+    "Еднократно": "Einmalig",
+    "Всяка седмица": "Jede Woche",
+    "Всяка година": "Jedes Jahr",
+    "Спри плащането": "Zahlung beenden",
+    "Поднови плащането": "Zahlung fortsetzen",
+    "Спряно от": "Beendet seit",
+    "Няма плащания": "Keine Zahlungen",
+    "Въведи име": "Namen eingeben",
+    "Въведи ден от месеца (1-31)": "Tag des Monats eingeben (1-31)",
+    "Избери дата": "Datum wählen",
+    "Кликни, за да превключиш": "Zum Umschalten klicken",
+    "Плащането е подновено": "Zahlung fortgesetzt",
+    "Плащането е спряно": "Zahlung beendet",
+    "Ще се изтрият всички повторения и историята на това плащане. Ако просто вече не го плащаш, използвай \"Спри плащането\" от редакцията. Да изтрия ли?": "Dadurch werden alle Wiederholungen und der Verlauf dieser Zahlung gelöscht. Wenn du sie nur nicht mehr zahlst, nutze „Zahlung beenden“ in der Bearbeitung. Trotzdem löschen?",
+    "МЕСЕЧЕН ОТЧЕТ": "MONATSBERICHT",
+    "Общо разходи за месеца": "Gesamtausgaben im Monat",
+    "По категории": "Nach Kategorie",
+    "Сметка (ток, вода, парно)": "Rechnung (Strom, Wasser, Heizung)",
+    "Заем / Кредит": "Kredit / Darlehen",
+    "Телефон / Интернет": "Telefon / Internet",
+    "Наем": "Miete",
+    "Застраховка": "Versicherung",
+    "Абонамент": "Abonnement",
+    "Данък / Такса": "Steuer / Gebühr"
   };
 
   const I18N_TR = {
@@ -791,7 +877,50 @@
     'Определяне на локация...': 'Konum belirleniyor...',
     'Не успяхме да определим локацията ти': 'Konumun belirlenemedi',
     'Ново съобщение': 'Yeni mesaj',
-    'Грешка при изпращане': 'Gönderme hatası'
+    'Грешка при изпращане': 'Gönderme hatası',
+    "Сметки, заеми, телефон": "Faturalar, krediler, telefon",
+    "ОСТАВА ТОЗИ МЕСЕЦ": "BU AY KALAN",
+    "СЛЕДВАЩО ПЛАЩАНЕ": "SONRAKİ ÖDEME",
+    "ПЛАЩАНИЯ И СМЕТКИ": "ÖDEMELER VE FATURALAR",
+    "ОБЩО ЗА МЕСЕЦА": "AYLIK TOPLAM",
+    "ОСТАВА ЗА ПЛАЩАНЕ": "ÖDENECEK KALAN",
+    "ПРОСРОЧЕНИ": "GECİKMİŞ",
+    "Предстои": "Yaklaşan",
+    "Просрочено": "Gecikmiş",
+    "Платено": "Ödendi",
+    "ПЛАЩАНИЯ": "ÖDEMELER",
+    "Целия месец": "Tüm ay",
+    "ДОБАВИ ПЛАЩАНЕ": "ÖDEME EKLE",
+    "РЕДАКТИРАЙ ПЛАЩАНЕ": "ÖDEMEYİ DÜZENLE",
+    "Име на плащането": "Ödeme adı",
+    "напр. Ток, Кредит, Телефон": "örn. Elektrik, Kredi, Telefon",
+    "Ден от месеца": "Ayın günü",
+    "Повторение": "Tekrar",
+    "Всеки месец": "Her ay",
+    "Еднократно": "Tek seferlik",
+    "Всяка седмица": "Her hafta",
+    "Всяка година": "Her yıl",
+    "Спри плащането": "Ödemeyi durdur",
+    "Поднови плащането": "Ödemeyi sürdür",
+    "Спряно от": "Durdurulma tarihi",
+    "Няма плащания": "Ödeme yok",
+    "Въведи име": "Ad gir",
+    "Въведи ден от месеца (1-31)": "Ayın gününü gir (1-31)",
+    "Избери дата": "Tarih seç",
+    "Кликни, за да превключиш": "Değiştirmek için tıkla",
+    "Плащането е подновено": "Ödeme sürdürüldü",
+    "Плащането е спряно": "Ödeme durduruldu",
+    "Ще се изтрият всички повторения и историята на това плащане. Ако просто вече не го плащаш, използвай \"Спри плащането\" от редакцията. Да изтрия ли?": "Bu, ödemenin tüm tekrarlarını ve geçmişini siler. Sadece artık ödemiyorsan düzenlemedeki \"Ödemeyi durdur\"u kullan. Yine de silinsin mi?",
+    "МЕСЕЧЕН ОТЧЕТ": "AYLIK RAPOR",
+    "Общо разходи за месеца": "Ayın toplam giderleri",
+    "По категории": "Kategoriye göre",
+    "Сметка (ток, вода, парно)": "Fatura (elektrik, su, ısınma)",
+    "Заем / Кредит": "Kredi / Borç",
+    "Телефон / Интернет": "Telefon / İnternet",
+    "Наем": "Kira",
+    "Застраховка": "Sigorta",
+    "Абонамент": "Abonelik",
+    "Данък / Такса": "Vergi / Harç"
   };
 
   const SUPABASE_URL = 'https://ytosvspqdmazfwymgssv.supabase.co';
@@ -821,7 +950,8 @@
       savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
       company: { advances: [], expenses: [] },
       profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true, paypalMe: '' },
-      notes: { entries: [] }
+      notes: { entries: [] },
+      bills: { items: [] }
     };
   }
 
@@ -887,6 +1017,9 @@
           },
           notes: {
             entries: (parsed.notes && parsed.notes.entries) || []
+          },
+          bills: {
+            items: (parsed.bills && parsed.bills.items) || []
           }
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
@@ -1026,7 +1159,7 @@
     $('vehicleBox').classList.toggle('hidden', name !== 'garage');
     updateChatFabVisibility();
 
-    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', fines: 'TICKETS', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', chat: 'CHAT', admin: 'ADMIN' };
+    const titles = { hub: 'LIFEOS', workdays: 'WORKDAYS', vitals: 'VITALS', tdee: 'TDEE', garage: 'GARAGE', fines: 'TICKETS', bills: 'BILLS', savings: 'SAVINGS', company: 'EXPENSES', notes: 'NOTES', chat: 'CHAT', admin: 'ADMIN' };
     const subs = {
       hub: 'ЛИЧЕН КОНТРОЛЕН ЦЕНТЪР',
       workdays: 'СИСТЕМА ЗА ПРОСЛЕДЯВАНЕ',
@@ -1034,6 +1167,7 @@
       tdee: 'КАЛКУЛАТОР НА ЕНЕРГОРАЗХОД',
       garage: 'ОБСЛУЖВАНЕ НА АВТОМОБИЛИ',
       fines: 'ФИШОВЕ НА ВСИЧКИ КОЛИ',
+      bills: 'ПЛАЩАНИЯ И СМЕТКИ',
       savings: 'СПЕСТЕНИ ПАРИ',
       company: 'СЛУЖЕБНИ ПАРИ',
       notes: 'БЕЛЕЖКИ',
@@ -1049,6 +1183,7 @@
     if (name === 'tdee') computeTDEE();
     if (name === 'garage') { renderVehicleSelect(); renderGarageAll(); switchGarageTab('overview'); }
     if (name === 'fines') renderAllFines();
+    if (name === 'bills') { billsViewDate = new Date(); billsViewDate.setDate(1); billsSelectedKey = ''; renderBills(); }
     if (name === 'savings') renderSavingsAll();
     if (name === 'company') { renderCompanyAll(); switchCompanyTab('overview'); }
     if (name === 'notes') renderNotes();
@@ -1097,6 +1232,13 @@
 
     $('hubCompanyBalance').textContent = formatMoney(getCompanyBalance()) + curSym();
     $('hubCompanyMonthSpent').textContent = formatMoney(getCompanyMonthSpent()) + curSym();
+
+    const monthBills = getBillsInRange(monthStart, new Date(today.getFullYear(), today.getMonth() + 1, 0));
+    $('hubBillsDue').textContent = formatMoney(monthBills.filter((o) => billOccStatus(o.item, o.key) !== 'paid')
+      .reduce((s, o) => s + (o.item.amount || 0), 0)) + curSym();
+    const nextBill = getBillsInRange(new Date(), new Date(today.getFullYear() + 1, today.getMonth(), today.getDate()))
+      .find((o) => o.key >= todayKey() && billOccStatus(o.item, o.key) !== 'paid');
+    $('hubBillsNext').textContent = nextBill ? `${nextBill.key.slice(8, 10)}.${nextBill.key.slice(5, 7)} · ${nextBill.item.title}` : '—';
 
     $('hubNotesCount').textContent = state.notes.entries.length;
     const lastNote = state.notes.entries.slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
@@ -1867,6 +2009,390 @@
     setCurrentSavingsGoal(isNaN(goal) ? 0 : goal);
     saveState();
     renderSavingsOverview();
+  }
+
+  /* ============ Bills calendar ============ */
+
+  const BILL_CATEGORIES = [
+    { id: 'utilities', label: 'Сметка (ток, вода, парно)' },
+    { id: 'loan', label: 'Заем / Кредит' },
+    { id: 'phone', label: 'Телефон / Интернет' },
+    { id: 'rent', label: 'Наем' },
+    { id: 'insurance', label: 'Застраховка' },
+    { id: 'subscription', label: 'Абонамент' },
+    { id: 'tax', label: 'Данък / Такса' },
+    { id: 'other', label: 'Друго' }
+  ];
+
+  const BILL_REPEAT_LABELS = { monthly: 'Всеки месец', none: 'Еднократно', weekly: 'Всяка седмица', yearly: 'Всяка година' };
+
+  let billsViewDate = new Date();
+  billsViewDate.setDate(1);
+  let billsSelectedKey = '';
+  let editingBillId = '';
+
+  function billKeyOf(d) { return dateKey(d.getFullYear(), d.getMonth(), d.getDate()); }
+
+  function billParseKey(key) {
+    const [y, m, d] = key.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function daysInMonthOf(y, m) { return new Date(y, m + 1, 0).getDate(); }
+
+  function getBillCategoryLabel(id) {
+    const c = BILL_CATEGORIES.find((x) => x.id === id);
+    return c ? tr(c.label) : '';
+  }
+
+  function nextMonthlyKey(day) {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    let y = now.getFullYear();
+    let m = now.getMonth();
+    let d = new Date(y, m, Math.min(day, daysInMonthOf(y, m)));
+    if (d < now) {
+      m += 1;
+      y += Math.floor(m / 12);
+      m %= 12;
+      d = new Date(y, m, Math.min(day, daysInMonthOf(y, m)));
+    }
+    return billKeyOf(d);
+  }
+
+  function billOccurrencesInRange(item, start, end) {
+    const first = billParseKey(item.date);
+    const last = item.endKey ? billParseKey(item.endKey) : null;
+    const rangeEnd = last && last < end ? last : end;
+    const out = [];
+    const push = (d) => { if (d >= first && d >= start && d <= rangeEnd) out.push(billKeyOf(d)); };
+
+    if (item.repeat === 'weekly') {
+      const d = new Date(first);
+      if (d < start) d.setDate(d.getDate() + Math.ceil((start - d) / 604800000 - 0.1) * 7);
+      for (; d <= rangeEnd; d.setDate(d.getDate() + 7)) push(d);
+    } else if (item.repeat === 'monthly') {
+      const day = item.day || first.getDate();
+      const firstIdx = first.getFullYear() * 12 + first.getMonth();
+      const startIdx = start.getFullYear() * 12 + start.getMonth();
+      const endIdx = rangeEnd.getFullYear() * 12 + rangeEnd.getMonth();
+      for (let idx = Math.max(firstIdx, startIdx); idx <= endIdx; idx++) {
+        const y = Math.floor(idx / 12);
+        const m = idx % 12;
+        push(new Date(y, m, Math.min(day, daysInMonthOf(y, m))));
+      }
+    } else if (item.repeat === 'yearly') {
+      for (let y = Math.max(first.getFullYear(), start.getFullYear()); y <= rangeEnd.getFullYear(); y++) {
+        push(new Date(y, first.getMonth(), Math.min(first.getDate(), daysInMonthOf(y, first.getMonth()))));
+      }
+    } else {
+      push(first);
+    }
+    return out;
+  }
+
+  function getBillsInRange(start, end) {
+    const out = [];
+    state.bills.items.forEach((item) => {
+      billOccurrencesInRange(item, start, end).forEach((key) => out.push({ item, key }));
+    });
+    return out.sort((a, b) => a.key.localeCompare(b.key) || a.item.title.localeCompare(b.item.title));
+  }
+
+  function billOccStatus(item, key) {
+    if (item.paid && item.paid[key]) return 'paid';
+    if (item.repeat !== 'none' && key !== item.date && item.createdKey && key < item.createdKey) return 'paid';
+    return key < todayKey() ? 'overdue' : 'upcoming';
+  }
+
+  function billStatusChip(item, key) {
+    const status = billOccStatus(item, key);
+    const chip = document.createElement('span');
+    let cls = 'soon';
+    let label;
+    if (status === 'paid') { cls = 'paid'; label = tr('Платено'); }
+    else if (status === 'overdue') { cls = 'expired'; label = tr('Просрочено'); }
+    else {
+      const diff = Math.round((billParseKey(key) - billParseKey(todayKey())) / 86400000);
+      label = diff === 0 ? tr('Днес') : diff <= 30 ? `${diff} ${tr('дни')}` : tr('Предстои');
+    }
+    chip.className = 'status-chip ' + cls;
+    chip.textContent = label;
+    chip.title = tr('Кликни, за да превключиш');
+    chip.addEventListener('click', (e) => { e.stopPropagation(); toggleBillPaid(item.id, key); });
+    return chip;
+  }
+
+  function toggleBillPaid(id, key) {
+    const item = state.bills.items.find((x) => x.id === id);
+    if (!item) return;
+    if (!item.paid) item.paid = {};
+    if (item.paid[key]) delete item.paid[key];
+    else item.paid[key] = true;
+    saveState();
+    renderBills();
+  }
+
+  function shiftBillsMonth(delta) {
+    billsViewDate.setMonth(billsViewDate.getMonth() + delta);
+    billsSelectedKey = '';
+    renderBills();
+  }
+
+  function renderBills() {
+    const y = billsViewDate.getFullYear();
+    const m = billsViewDate.getMonth();
+    $('billsMonthLabel').textContent = MONTH_NAMES()[m];
+    $('billsYearLabel').textContent = y;
+
+    const occ = getBillsInRange(new Date(y, m, 1), new Date(y, m + 1, 0));
+    const byDay = {};
+    occ.forEach((o) => { (byDay[o.key] = byDay[o.key] || []).push(o); });
+
+    const grid = $('billsCalendarGrid');
+    grid.innerHTML = '';
+    const leading = (new Date(y, m, 1).getDay() + 6) % 7;
+    for (let i = 0; i < leading; i++) {
+      const empty = document.createElement('div');
+      empty.className = 'day-cell empty';
+      grid.appendChild(empty);
+    }
+
+    const today = new Date();
+    for (let d = 1; d <= daysInMonthOf(y, m); d++) {
+      const key = dateKey(y, m, d);
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+      cell.appendChild(document.createTextNode(String(d)));
+      if (isSameDay(new Date(y, m, d), today)) cell.classList.add('today');
+
+      const dayItems = byDay[key];
+      if (dayItems) {
+        const statuses = dayItems.map((o) => billOccStatus(o.item, key));
+        cell.classList.add(statuses.includes('overdue') ? 'bill-overdue' : statuses.includes('upcoming') ? 'bill-upcoming' : 'bill-paid');
+        cell.title = dayItems.map((o) => o.item.title).join(', ');
+        if (dayItems.length > 1) {
+          const count = document.createElement('span');
+          count.className = 'bill-count';
+          count.textContent = '×' + dayItems.length;
+          cell.appendChild(count);
+        }
+      }
+      if (key === billsSelectedKey) cell.classList.add('selected');
+      cell.addEventListener('click', () => {
+        billsSelectedKey = billsSelectedKey === key ? '' : key;
+        renderBills();
+      });
+      grid.appendChild(cell);
+    }
+
+    const total = occ.reduce((s, o) => s + (o.item.amount || 0), 0);
+    const pending = occ.filter((o) => billOccStatus(o.item, o.key) !== 'paid');
+    $('billsMonthTotal').textContent = formatMoney(total);
+    $('billsMonthRemaining').textContent = formatMoney(pending.reduce((s, o) => s + (o.item.amount || 0), 0));
+    $('billsOverdueCount').textContent = occ.filter((o) => billOccStatus(o.item, o.key) === 'overdue').length;
+
+    renderBillsReport(occ, y, m);
+
+    $('billsListLabel').textContent = billsSelectedKey ? `${tr('ПЛАЩАНИЯ')} — ${formatDateDisplay(billsSelectedKey)}` : tr('ПЛАЩАНИЯ');
+    $('billsAllMonthBtn').classList.toggle('hidden', !billsSelectedKey);
+
+    const container = $('billsList');
+    container.innerHTML = '';
+    const list = billsSelectedKey ? occ.filter((o) => o.key === billsSelectedKey) : occ;
+    if (!list.length) { renderEmptyRow(container, 'Няма плащания'); return; }
+
+    list.forEach(({ item, key }) => {
+      const descNode = document.createDocumentFragment();
+      const title = document.createElement('span');
+      title.textContent = item.title;
+      descNode.appendChild(title);
+      const sub = [getBillCategoryLabel(item.category), item.repeat !== 'none' ? tr(BILL_REPEAT_LABELS[item.repeat]) : '', item.note]
+        .filter(Boolean).join(' · ');
+      if (sub) {
+        const subEl = document.createElement('div');
+        subEl.className = 'record-row-sub';
+        subEl.textContent = sub;
+        descNode.appendChild(subEl);
+      }
+      container.appendChild(createRecordRow({
+        date: formatDateDisplay(key),
+        desc: descNode,
+        meta: billStatusChip(item, key),
+        cost: item.amount ? formatMoney(item.amount) + ' ' + curSym() : '',
+        onEdit: () => openBillModal(item.id),
+        onDelete: () => deleteBill(item.id)
+      }));
+    });
+  }
+
+  function renderBillsReport(occ, y, m) {
+    $('billsReportLabel').textContent = `${tr('МЕСЕЧЕН ОТЧЕТ')} — ${MONTH_NAMES()[m]} ${y}`;
+    const container = $('billsReport');
+    container.innerHTML = '';
+    if (!occ.length) { renderEmptyRow(container, 'Няма плащания'); return; }
+
+    const sum = (list) => list.reduce((s, o) => s + (o.item.amount || 0), 0);
+    const paid = occ.filter((o) => billOccStatus(o.item, o.key) === 'paid');
+    const overdue = occ.filter((o) => billOccStatus(o.item, o.key) === 'overdue');
+    const upcoming = occ.filter((o) => billOccStatus(o.item, o.key) === 'upcoming');
+
+    const addRow = (label, amount, cls) => {
+      const row = document.createElement('div');
+      row.className = 'record-row bills-report-row';
+      const name = document.createElement('span');
+      name.className = 'record-row-desc';
+      name.textContent = label;
+      const cost = document.createElement('span');
+      cost.className = 'record-row-cost' + (cls ? ' ' + cls : '');
+      cost.textContent = formatMoney(amount) + ' ' + curSym();
+      row.append(name, cost);
+      container.appendChild(row);
+    };
+    const addHeading = (text) => {
+      const h = document.createElement('div');
+      h.className = 'bills-report-heading';
+      h.textContent = text;
+      container.appendChild(h);
+    };
+
+    addRow(tr('Общо разходи за месеца'), sum(occ), 'bills-report-total');
+    addRow(`${tr('Платено')} (${paid.length})`, sum(paid));
+    addRow(`${tr('Предстои')} (${upcoming.length})`, sum(upcoming));
+    if (overdue.length) addRow(`${tr('Просрочено')} (${overdue.length})`, sum(overdue), 'bills-report-overdue');
+
+    addHeading(tr('По категории'));
+    const byCat = {};
+    occ.forEach((o) => { byCat[o.item.category] = (byCat[o.item.category] || 0) + (o.item.amount || 0); });
+    Object.keys(byCat).sort((a, b) => byCat[b] - byCat[a]).forEach((cat) => {
+      addRow(getBillCategoryLabel(cat) || tr('Друго'), byCat[cat]);
+    });
+  }
+
+  function updateBillRepeatFields() {
+    const monthly = $('billRepeat').value === 'monthly';
+    $('billDayField').classList.toggle('hidden', !monthly);
+    $('billDateField').classList.toggle('hidden', monthly);
+  }
+
+  function updateBillStopField(item) {
+    const show = !!item && item.repeat !== 'none';
+    $('billStopField').classList.toggle('hidden', !show);
+    if (!show) return;
+    $('billStopBtn').textContent = tr(item.endKey ? 'Поднови плащането' : 'Спри плащането');
+    $('billStopHint').textContent = item.endKey ? `${tr('Спряно от')} ${formatDateDisplay(item.endKey)}` : '';
+  }
+
+  function openBillModal(id) {
+    const item = id ? state.bills.items.find((x) => x.id === id) : null;
+    if (id && !item) return;
+    editingBillId = id || '';
+
+    const select = $('billCategory');
+    select.innerHTML = '';
+    BILL_CATEGORIES.forEach((c) => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      opt.textContent = tr(c.label);
+      select.appendChild(opt);
+    });
+
+    const baseKey = item ? item.date : (billsSelectedKey || todayKey());
+    $('billModalTitle').textContent = tr(item ? 'РЕДАКТИРАЙ ПЛАЩАНЕ' : 'ДОБАВИ ПЛАЩАНЕ');
+    $('billSaveBtn').textContent = tr(item ? 'Запиши' : 'Добави');
+    $('billTitleInput').value = item ? item.title : '';
+    $('billAmountInput').value = item && item.amount ? item.amount : '';
+    $('billCategory').value = item ? item.category : 'utilities';
+    $('billRepeat').value = item ? item.repeat : 'monthly';
+    $('billDateInput').value = baseKey;
+    $('billDayInput').value = item ? (item.day || billParseKey(item.date).getDate()) : billParseKey(baseKey).getDate();
+    $('billNoteInput').value = item ? (item.note || '') : '';
+    updateBillRepeatFields();
+    updateBillStopField(item);
+    $('billModal').classList.remove('hidden');
+    pushNav(closeBillModal);
+  }
+
+  function closeBillModal() {
+    editingBillId = '';
+    $('billModal').classList.add('hidden');
+    popNav();
+  }
+
+  function saveBillFromModal() {
+    const title = $('billTitleInput').value.trim();
+    if (!title) { showToast(tr('Въведи име')); return; }
+
+    const repeat = $('billRepeat').value;
+    const existing = editingBillId ? state.bills.items.find((x) => x.id === editingBillId) : null;
+    let date;
+    let day = 0;
+    if (repeat === 'monthly') {
+      day = parseInt($('billDayInput').value, 10);
+      if (!day || day < 1 || day > 31) { showToast(tr('Въведи ден от месеца (1-31)')); return; }
+      const sameDay = existing && existing.repeat === 'monthly' && (existing.day || billParseKey(existing.date).getDate()) === day;
+      date = sameDay ? existing.date : nextMonthlyKey(day);
+    } else {
+      date = $('billDateInput').value;
+      if (!date) { showToast(tr('Избери дата')); return; }
+    }
+
+    const values = {
+      title,
+      amount: parseFloat($('billAmountInput').value) || 0,
+      category: $('billCategory').value || 'other',
+      repeat,
+      note: $('billNoteInput').value.trim(),
+      date,
+      day
+    };
+
+    if (existing) {
+      const dateChanged = existing.date !== date;
+      Object.assign(existing, values);
+      if (dateChanged && repeat === 'none') existing.paid = {};
+    } else {
+      state.bills.items.push({ id: genId('bill'), ...values, paid: {}, createdKey: todayKey() });
+    }
+
+    billsViewDate = billParseKey(date);
+    billsViewDate.setDate(1);
+    billsSelectedKey = '';
+    saveState();
+    closeBillModal();
+    renderBills();
+  }
+
+  function toggleBillStop() {
+    const item = state.bills.items.find((x) => x.id === editingBillId);
+    if (!item) return;
+    if (item.endKey) {
+      delete item.endKey;
+      item.createdKey = todayKey();
+      showToast(tr('Плащането е подновено'));
+    } else {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const endKey = billKeyOf(yesterday);
+      if (item.date > endKey) {
+        state.bills.items = state.bills.items.filter((x) => x.id !== item.id);
+      } else {
+        item.endKey = endKey;
+      }
+      showToast(tr('Плащането е спряно'));
+    }
+    saveState();
+    closeBillModal();
+    renderBills();
+  }
+
+  function deleteBill(id) {
+    const item = state.bills.items.find((x) => x.id === id);
+    if (!item) return;
+    if (item.repeat !== 'none' && !confirm(tr('Ще се изтрият всички повторения и историята на това плащане. Ако просто вече не го плащаш, използвай "Спри плащането" от редакцията. Да изтрия ли?'))) return;
+    state.bills.items = state.bills.items.filter((x) => x.id !== id);
+    saveState();
+    renderBills();
   }
 
   /* ============ Company expenses ============ */
@@ -6948,7 +7474,10 @@
           } : state.profile,
           notes: parsed.notes ? {
             entries: parsed.notes.entries || []
-          } : state.notes
+          } : state.notes,
+          bills: parsed.bills ? {
+            items: parsed.bills.items || []
+          } : state.bills
         };
         if (!state.garage.vehicles.some((v) => v.id === state.garage.activeVehicleId)) {
           state.garage.activeVehicleId = state.garage.vehicles[0].id;
@@ -7311,6 +7840,14 @@
     $('noteFindPrev').addEventListener('click', () => activateNoteFindHit(noteFindIndex - 1));
     $('noteFindNext').addEventListener('click', () => activateNoteFindHit(noteFindIndex + 1));
     $('notesSearchInput').addEventListener('input', renderNotes);
+    $('billsPrevMonth').addEventListener('click', () => shiftBillsMonth(-1));
+    $('billsNextMonth').addEventListener('click', () => shiftBillsMonth(1));
+    $('billsAddBtn').addEventListener('click', () => openBillModal(''));
+    $('billsAllMonthBtn').addEventListener('click', () => { billsSelectedKey = ''; renderBills(); });
+    $('billRepeat').addEventListener('change', updateBillRepeatFields);
+    $('billSaveBtn').addEventListener('click', saveBillFromModal);
+    $('billCancelBtn').addEventListener('click', closeBillModal);
+    $('billStopBtn').addEventListener('click', toggleBillStop);
     document.querySelectorAll('.note-tool-btn[data-cmd]').forEach((btn) => {
       btn.addEventListener('click', () => applyNoteCommand(btn.dataset.cmd));
     });
