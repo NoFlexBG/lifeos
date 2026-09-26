@@ -2594,6 +2594,37 @@
 
   #noteEditBtn { width: 32px; height: 32px; font-size: 15px; }
 
+  .note-find {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+  }
+
+  .note-find.hidden { display: none; }
+  .note-find-box { flex: 1; min-width: 0; }
+  .note-find-box .product-search-input { width: 100%; }
+
+  .note-find-count {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--text-dim);
+    white-space: nowrap;
+    min-width: 34px;
+    text-align: center;
+  }
+
+  .note-find-hit {
+    color: var(--violet);
+    background: var(--violet-dim);
+    border-radius: 3px;
+  }
+
+  .note-find-hit.active {
+    color: #05050a;
+    background: var(--amber);
+  }
+
   .note-view-mode .product-edit-field > label { display: none; }
 
   .note-view-mode #noteTitleInput {

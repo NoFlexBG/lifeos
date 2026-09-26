@@ -159,7 +159,8 @@
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'SAVE AND CONTINUE', 'Пропусни за сега': 'Skip for now',
     '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
 
-    'БЕЛЕЖКА': 'NOTE', 'НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
+    'Търси в бележката...': 'Search in note...', 'Предишно съвпадение': 'Previous match', 'Следващо съвпадение': 'Next match',
+    'БЕЛЕЖКА': 'NOTE','НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
     'Удебелен': 'Bold', 'Курсив': 'Italic', 'Подчертан': 'Underline', 'Зачертан': 'Strikethrough',
     'Размер на шрифта (px)': 'Font size (px)', 'Шрифт': 'Font', 'Цвят на текста': 'Text color',
     'Списък': 'List', 'Номериран списък': 'Numbered list',
@@ -417,7 +418,8 @@
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'SPEICHERN UND WEITER', 'Пропусни за сега': 'Vorerst überspringen',
     '⭳ Изтегли резервно копие': '⭳ Backup herunterladen', '⭱ Възстанови от файл': '⭱ Aus Datei wiederherstellen', '⏻ Изход': '⏻ Abmelden',
 
-    'БЕЛЕЖКА': 'NOTIZ', 'НОВА БЕЛЕЖКА': 'NEUE NOTIZ', 'Заглавие (по избор)': 'Titel (optional)', 'Текст': 'Text',
+    'Търси в бележката...': 'In der Notiz suchen...', 'Предишно съвпадение': 'Vorheriger Treffer', 'Следващо съвпадение': 'Nächster Treffer',
+    'БЕЛЕЖКА': 'NOTIZ','НОВА БЕЛЕЖКА': 'NEUE NOTIZ', 'Заглавие (по избор)': 'Titel (optional)', 'Текст': 'Text',
     'Удебелен': 'Fett', 'Курсив': 'Kursiv', 'Подчертан': 'Unterstrichen', 'Зачертан': 'Durchgestrichen',
     'Размер на шрифта (px)': 'Schriftgröße (px)', 'Шрифт': 'Schriftart', 'Цвят на текста': 'Textfarbe',
     'Списък': 'Liste', 'Номериран списък': 'Nummerierte Liste',
@@ -675,7 +677,8 @@
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'KAYDET VE DEVAM ET', 'Пропусни за сега': 'Şimdilik atla',
     '⭳ Изтегли резервно копие': '⭳ Yedeği indir', '⭱ Възстанови от файл': '⭱ Dosyadan geri yükle', '⏻ Изход': '⏻ Çıkış yap',
 
-    'БЕЛЕЖКА': 'NOT', 'НОВА БЕЛЕЖКА': 'YENİ NOT', 'Заглавие (по избор)': 'Başlık (isteğe bağlı)', 'Текст': 'Metin',
+    'Търси в бележката...': 'Notta ara...', 'Предишно съвпадение': 'Önceki eşleşme', 'Следващо съвпадение': 'Sonraki eşleşme',
+    'БЕЛЕЖКА': 'NOT','НОВА БЕЛЕЖКА': 'YENİ NOT', 'Заглавие (по избор)': 'Başlık (isteğe bağlı)', 'Текст': 'Metin',
     'Удебелен': 'Kalın', 'Курсив': 'İtalik', 'Подчертан': 'Altı çizili', 'Зачертан': 'Üstü çizili',
     'Размер на шрифта (px)': 'Yazı boyutu (px)', 'Шрифт': 'Yazı tipi', 'Цвят на текста': 'Metin rengi',
     'Списък': 'Liste', 'Номериран списък': 'Numaralı liste',
@@ -2592,9 +2595,74 @@
   }
 
   let noteViewMode = false;
+  let noteFindHits = [];
+  let noteFindIndex = -1;
+
+  function restoreNoteBody() {
+    const n = state.notes.entries.find((x) => x.id === editingNoteId);
+    $('noteBodyInput').innerHTML = n ? (n.body || '') : '';
+  }
+
+  function resetNoteFind(restoreBody) {
+    $('noteFindInput').value = '';
+    $('noteFindCount').textContent = '';
+    noteFindHits = [];
+    noteFindIndex = -1;
+    if (restoreBody) restoreNoteBody();
+  }
+
+  function activateNoteFindHit(index) {
+    if (!noteFindHits.length) return;
+    noteFindIndex = (index + noteFindHits.length) % noteFindHits.length;
+    noteFindHits.forEach((el, i) => el.classList.toggle('active', i === noteFindIndex));
+    const body = $('noteBodyInput');
+    const el = noteFindHits[noteFindIndex];
+    body.scrollTop += (el.getBoundingClientRect().top - body.getBoundingClientRect().top) - body.clientHeight / 2;
+    $('noteFindCount').textContent = `${noteFindIndex + 1}/${noteFindHits.length}`;
+  }
+
+  function runNoteFind() {
+    restoreNoteBody();
+    noteFindHits = [];
+    noteFindIndex = -1;
+    const words = $('noteFindInput').value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    if (!words.length) { $('noteFindCount').textContent = ''; return; }
+
+    const re = new RegExp('(' + words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'gi');
+    const walker = document.createTreeWalker($('noteBodyInput'), NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    textNodes.forEach((node) => {
+      const text = node.nodeValue;
+      re.lastIndex = 0;
+      let last = 0;
+      let m;
+      const frag = document.createDocumentFragment();
+      let found = false;
+      while ((m = re.exec(text)) !== null) {
+        if (m[0] === '') { re.lastIndex++; continue; }
+        found = true;
+        if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+        const hit = document.createElement('span');
+        hit.className = 'note-find-hit';
+        hit.textContent = m[0];
+        frag.appendChild(hit);
+        last = m.index + m[0].length;
+      }
+      if (!found) return;
+      if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(frag, node);
+    });
+
+    noteFindHits = Array.from($('noteBodyInput').querySelectorAll('.note-find-hit'));
+    if (!noteFindHits.length) { $('noteFindCount').textContent = tr('Няма съвпадения'); return; }
+    activateNoteFindHit(0);
+  }
 
   function setNoteModalMode(mode) {
     noteViewMode = mode === 'view';
+    $('noteFind').classList.toggle('hidden', !noteViewMode);
     $('noteModal').classList.toggle('note-view-mode', noteViewMode);
     $('noteTitleInput').readOnly = noteViewMode;
     $('noteBodyInput').contentEditable = noteViewMode ? 'false' : 'true';
@@ -2637,6 +2705,7 @@
     editingNoteId = id;
     $('noteTitleInput').value = n.title || '';
     $('noteBodyInput').innerHTML = n.body || '';
+    resetNoteFind(false);
     setNoteModalMode('view');
     $('noteModal').classList.remove('hidden');
     pushNav(closeNoteModal);
@@ -2644,6 +2713,7 @@
 
   function switchNoteToEdit() {
     if (!editingNoteId) return;
+    resetNoteFind(true);
     setNoteModalMode('edit');
     $('noteSaveBtn').textContent = tr('Запази');
   }
@@ -7234,6 +7304,12 @@
     $('noteSaveBtn').addEventListener('click', saveNoteFromModal);
     $('noteTitleInput').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !noteViewMode) saveNoteFromModal(); });
     $('noteEditBtn').addEventListener('click', switchNoteToEdit);
+    $('noteFindInput').addEventListener('input', runNoteFind);
+    $('noteFindInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); activateNoteFindHit(noteFindIndex + (e.shiftKey ? -1 : 1)); }
+    });
+    $('noteFindPrev').addEventListener('click', () => activateNoteFindHit(noteFindIndex - 1));
+    $('noteFindNext').addEventListener('click', () => activateNoteFindHit(noteFindIndex + 1));
     $('notesSearchInput').addEventListener('input', renderNotes);
     document.querySelectorAll('.note-tool-btn[data-cmd]').forEach((btn) => {
       btn.addEventListener('click', () => applyNoteCommand(btn.dataset.cmd));

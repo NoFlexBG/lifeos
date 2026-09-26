@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=18">
+<link rel="stylesheet" href="styles.css?v=19">
 </head>
 <body>
 
@@ -1854,6 +1854,15 @@
       <span class="gauge-label" id="noteModalTitle">НОВА БЕЛЕЖКА</span>
       <button type="button" class="record-row-edit hidden" id="noteEditBtn" title="Редактирай" data-i18n-title>✎</button>
     </div>
+    <div class="note-find hidden" id="noteFind">
+      <div class="product-list-search note-find-box">
+        <span class="product-search-icon">⌕</span>
+        <input type="text" id="noteFindInput" class="product-search-input" placeholder="Търси в бележката..." autocomplete="off" data-i18n-ph />
+      </div>
+      <span class="note-find-count" id="noteFindCount"></span>
+      <button type="button" class="note-tool-btn" id="noteFindPrev" title="Предишно съвпадение" data-i18n-title>▲</button>
+      <button type="button" class="note-tool-btn" id="noteFindNext" title="Следващо съвпадение" data-i18n-title>▼</button>
+    </div>
     <div class="product-edit-form">
       <div class="product-edit-field" id="noteTitleField">
         <label for="noteTitleInput" data-i18n>Заглавие (по избор)</label>
@@ -1934,6 +1943,6 @@
   </div>
 </div>
 
-<script src="app.js?v=13" charset="UTF-8"></script>
+<script src="app.js?v=14" charset="UTF-8"></script>
 </body>
 </html>
