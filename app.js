@@ -159,7 +159,7 @@
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'SAVE AND CONTINUE', 'Пропусни за сега': 'Skip for now',
     '⭳ Изтегли резервно копие': '⭳ Download backup', '⭱ Възстанови от файл': '⭱ Restore from file', '⏻ Изход': '⏻ Log out',
 
-    'НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
+    'БЕЛЕЖКА': 'NOTE', 'НОВА БЕЛЕЖКА': 'NEW NOTE', 'Заглавие (по избор)': 'Title (optional)', 'Текст': 'Text',
     'Удебелен': 'Bold', 'Курсив': 'Italic', 'Подчертан': 'Underline', 'Зачертан': 'Strikethrough',
     'Размер на шрифта (px)': 'Font size (px)', 'Шрифт': 'Font', 'Цвят на текста': 'Text color',
     'Списък': 'List', 'Номериран списък': 'Numbered list',
@@ -417,7 +417,7 @@
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'SPEICHERN UND WEITER', 'Пропусни за сега': 'Vorerst überspringen',
     '⭳ Изтегли резервно копие': '⭳ Backup herunterladen', '⭱ Възстанови от файл': '⭱ Aus Datei wiederherstellen', '⏻ Изход': '⏻ Abmelden',
 
-    'НОВА БЕЛЕЖКА': 'NEUE NOTIZ', 'Заглавие (по избор)': 'Titel (optional)', 'Текст': 'Text',
+    'БЕЛЕЖКА': 'NOTIZ', 'НОВА БЕЛЕЖКА': 'NEUE NOTIZ', 'Заглавие (по избор)': 'Titel (optional)', 'Текст': 'Text',
     'Удебелен': 'Fett', 'Курсив': 'Kursiv', 'Подчертан': 'Unterstrichen', 'Зачертан': 'Durchgestrichen',
     'Размер на шрифта (px)': 'Schriftgröße (px)', 'Шрифт': 'Schriftart', 'Цвят на текста': 'Textfarbe',
     'Списък': 'Liste', 'Номериран списък': 'Nummerierte Liste',
@@ -675,7 +675,7 @@
     'ЗАПАЗИ И ПРОДЪЛЖИ': 'KAYDET VE DEVAM ET', 'Пропусни за сега': 'Şimdilik atla',
     '⭳ Изтегли резервно копие': '⭳ Yedeği indir', '⭱ Възстанови от файл': '⭱ Dosyadan geri yükle', '⏻ Изход': '⏻ Çıkış yap',
 
-    'НОВА БЕЛЕЖКА': 'YENİ NOT', 'Заглавие (по избор)': 'Başlık (isteğe bağlı)', 'Текст': 'Metin',
+    'БЕЛЕЖКА': 'NOT', 'НОВА БЕЛЕЖКА': 'YENİ NOT', 'Заглавие (по избор)': 'Başlık (isteğe bağlı)', 'Текст': 'Metin',
     'Удебелен': 'Kalın', 'Курсив': 'İtalik', 'Подчертан': 'Altı çizili', 'Зачертан': 'Üstü çizili',
     'Размер на шрифта (px)': 'Yazı boyutu (px)', 'Шрифт': 'Yazı tipi', 'Цвят на текста': 'Metin rengi',
     'Списък': 'Liste', 'Номериран списък': 'Numaralı liste',
@@ -2524,7 +2524,7 @@
     list.forEach((n) => {
       const card = document.createElement('div');
       card.className = 'note-card';
-      card.addEventListener('click', () => openNoteEditModal(n.id));
+      card.addEventListener('click', () => openNoteViewModal(n.id));
 
       if (n.title) {
         const titleEl = document.createElement('div');
@@ -2561,11 +2561,28 @@
     });
   }
 
+  let noteViewMode = false;
+
+  function setNoteModalMode(mode) {
+    noteViewMode = mode === 'view';
+    $('noteModal').classList.toggle('note-view-mode', noteViewMode);
+    $('noteTitleInput').readOnly = noteViewMode;
+    $('noteBodyInput').contentEditable = noteViewMode ? 'false' : 'true';
+    $('noteToolbar').classList.toggle('hidden', noteViewMode);
+    $('noteSaveBtn').classList.toggle('hidden', noteViewMode);
+    $('noteEditBtn').classList.toggle('hidden', !noteViewMode);
+    $('noteCancelBtn').textContent = tr(noteViewMode ? 'Затвори' : 'Отказ');
+    $('noteTitleField').classList.toggle('hidden', noteViewMode && !$('noteTitleInput').value.trim());
+    if (mode === 'add') $('noteModalTitle').textContent = tr('НОВА БЕЛЕЖКА');
+    else if (mode === 'edit') $('noteModalTitle').textContent = tr('РЕДАКТИРАЙ БЕЛЕЖКА');
+    else $('noteModalTitle').textContent = tr('БЕЛЕЖКА');
+  }
+
   function openNoteAddModal() {
     editingNoteId = '';
     $('noteTitleInput').value = '';
     $('noteBodyInput').innerHTML = '';
-    $('noteModalTitle').textContent = tr('НОВА БЕЛЕЖКА');
+    setNoteModalMode('add');
     $('noteSaveBtn').textContent = tr('Запази');
     $('noteModal').classList.remove('hidden');
     $('noteTitleInput').focus();
@@ -2578,14 +2595,32 @@
     editingNoteId = id;
     $('noteTitleInput').value = n.title || '';
     $('noteBodyInput').innerHTML = n.body || '';
-    $('noteModalTitle').textContent = tr('РЕДАКТИРАЙ БЕЛЕЖКА');
+    setNoteModalMode('edit');
     $('noteSaveBtn').textContent = tr('Запази');
     $('noteModal').classList.remove('hidden');
     pushNav(closeNoteModal);
   }
 
+  function openNoteViewModal(id) {
+    const n = state.notes.entries.find((x) => x.id === id);
+    if (!n) return;
+    editingNoteId = id;
+    $('noteTitleInput').value = n.title || '';
+    $('noteBodyInput').innerHTML = n.body || '';
+    setNoteModalMode('view');
+    $('noteModal').classList.remove('hidden');
+    pushNav(closeNoteModal);
+  }
+
+  function switchNoteToEdit() {
+    if (!editingNoteId) return;
+    setNoteModalMode('edit');
+    $('noteSaveBtn').textContent = tr('Запази');
+  }
+
   function closeNoteModal() {
     editingNoteId = '';
+    noteViewMode = false;
     $('noteModal').classList.add('hidden');
     popNav();
   }
@@ -7167,7 +7202,8 @@
     $('noteAddOpenBtn').addEventListener('click', openNoteAddModal);
     $('noteCancelBtn').addEventListener('click', closeNoteModal);
     $('noteSaveBtn').addEventListener('click', saveNoteFromModal);
-    $('noteTitleInput').addEventListener('keydown', (e) => { if (e.key === 'Enter') saveNoteFromModal(); });
+    $('noteTitleInput').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !noteViewMode) saveNoteFromModal(); });
+    $('noteEditBtn').addEventListener('click', switchNoteToEdit);
     $('notesSearchInput').addEventListener('input', renderNotes);
     document.querySelectorAll('.note-tool-btn[data-cmd]').forEach((btn) => {
       btn.addEventListener('click', () => applyNoteCommand(btn.dataset.cmd));

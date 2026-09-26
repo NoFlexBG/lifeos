@@ -2585,6 +2585,32 @@
 
   .note-body-editable:focus { border-color: var(--line-strong); }
 
+  .note-modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  #noteEditBtn { width: 32px; height: 32px; font-size: 15px; }
+
+  .note-view-mode .product-edit-field > label { display: none; }
+
+  .note-view-mode #noteTitleInput {
+    border-color: transparent;
+    background: transparent;
+    padding-left: 0;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: default;
+  }
+
+  .note-view-mode .note-body-editable {
+    border-radius: 6px;
+    cursor: default;
+    max-height: 55vh;
+  }
+
   .note-body-editable:empty::before {
     content: attr(data-placeholder);
     color: var(--text-faint);

@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=17">
+<link rel="stylesheet" href="styles.css?v=18">
 </head>
 <body>
 
@@ -1850,9 +1850,12 @@
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
     <span class="corner bl"></span><span class="corner br"></span>
-    <span class="gauge-label" id="noteModalTitle">НОВА БЕЛЕЖКА</span>
+    <div class="note-modal-head">
+      <span class="gauge-label" id="noteModalTitle">НОВА БЕЛЕЖКА</span>
+      <button type="button" class="record-row-edit hidden" id="noteEditBtn" title="Редактирай" data-i18n-title>✎</button>
+    </div>
     <div class="product-edit-form">
-      <div class="product-edit-field">
+      <div class="product-edit-field" id="noteTitleField">
         <label for="noteTitleInput" data-i18n>Заглавие (по избор)</label>
         <input type="text" id="noteTitleInput" class="mini-input" placeholder="напр. Пазар за уикенда" maxlength="80" data-i18n-ph />
       </div>
@@ -1931,6 +1934,6 @@
   </div>
 </div>
 
-<script src="app.js?v=11" charset="UTF-8"></script>
+<script src="app.js?v=12" charset="UTF-8"></script>
 </body>
 </html>
