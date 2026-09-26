@@ -2501,13 +2501,43 @@
     return el.textContent || '';
   }
 
+  function highlightWords(text, words) {
+    if (!words.length) return document.createTextNode(text);
+    const re = new RegExp('(' + words.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')', 'gi');
+    const frag = document.createDocumentFragment();
+    let last = 0;
+    let m;
+    while ((m = re.exec(text)) !== null) {
+      if (m[0] === '') { re.lastIndex++; continue; }
+      if (m.index > last) frag.appendChild(document.createTextNode(text.slice(last, m.index)));
+      const mark = document.createElement('span');
+      mark.className = 'product-search-highlight';
+      mark.textContent = m[0];
+      frag.appendChild(mark);
+      last = m.index + m[0].length;
+    }
+    if (last < text.length) frag.appendChild(document.createTextNode(text.slice(last)));
+    return frag;
+  }
+
+  function noteSnippet(text, words) {
+    const lower = text.toLowerCase();
+    const positions = words.map((w) => lower.indexOf(w)).filter((i) => i >= 0);
+    if (!positions.length) return text;
+    const first = Math.min(...positions);
+    if (first <= 80) return text;
+    return '…' + text.slice(first - 60);
+  }
+
   function renderNotes() {
     const term = ($('notesSearchInput').value || '').trim().toLowerCase();
+    const words = term.split(/\s+/).filter(Boolean);
     let list = state.notes.entries.slice().sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
-    if (term) {
-      list = list.filter((n) =>
-        (n.title || '').toLowerCase().includes(term) || htmlToPlainText(n.body).toLowerCase().includes(term)
-      );
+    if (words.length) {
+      list = list.filter((n) => {
+        const haystack = ((n.title || '') + ' ' + htmlToPlainText(n.body)).toLowerCase();
+        return words.every((w) => haystack.includes(w));
+      });
     }
 
     const container = $('notesGrid');
@@ -2529,13 +2559,13 @@
       if (n.title) {
         const titleEl = document.createElement('div');
         titleEl.className = 'note-card-title';
-        titleEl.textContent = n.title;
+        titleEl.appendChild(highlightWords(n.title, words));
         card.appendChild(titleEl);
       }
 
       const bodyEl = document.createElement('div');
       bodyEl.className = 'note-card-body';
-      bodyEl.textContent = htmlToPlainText(n.body);
+      bodyEl.appendChild(highlightWords(noteSnippet(htmlToPlainText(n.body), words), words));
       card.appendChild(bodyEl);
 
       const dateEl = document.createElement('div');
