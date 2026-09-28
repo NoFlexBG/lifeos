@@ -1448,6 +1448,7 @@
 
   function startTour() {
     if (!$('profileModal').classList.contains('hidden')) closeProfileModal();
+    if (!$('settingsModal').classList.contains('hidden')) closeSettingsModal();
     if (currentScreen !== 'hub') showScreen('hub');
     tourIndex = 0;
     tourActive = true;
