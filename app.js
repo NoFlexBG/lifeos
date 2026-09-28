@@ -275,6 +275,7 @@
     'Ново съобщение': 'New message',
     'Грешка при изпращане': 'Error sending',
     "Сметки, заеми, телефон": "Bills, loans, phone",
+    'Календар за следене на сметки — плащанията се повтарят всеки месец.': "Calendar for tracking bills — payments repeat every month.",
     "ОСТАВА ТОЗИ МЕСЕЦ": "LEFT THIS MONTH",
     "СЛЕДВАЩО ПЛАЩАНЕ": "NEXT PAYMENT",
     "ПЛАЩАНИЯ И СМЕТКИ": "PAYMENTS & BILLS",
@@ -577,6 +578,7 @@
     'Ново съобщение': 'Neue Nachricht',
     'Грешка при изпращане': 'Fehler beim Senden',
     "Сметки, заеми, телефон": "Rechnungen, Kredite, Telefon",
+    'Календар за следене на сметки — плащанията се повтарят всеки месец.': "Kalender zur Verfolgung von Rechnungen — Zahlungen wiederholen sich jeden Monat.",
     "ОСТАВА ТОЗИ МЕСЕЦ": "VERBLEIBT DIESEN MONAT",
     "СЛЕДВАЩО ПЛАЩАНЕ": "NÄCHSTE ZAHLUNG",
     "ПЛАЩАНИЯ И СМЕТКИ": "ZAHLUNGEN & RECHNUNGEN",
@@ -879,6 +881,7 @@
     'Ново съобщение': 'Yeni mesaj',
     'Грешка при изпращане': 'Gönderme hatası',
     "Сметки, заеми, телефон": "Faturalar, krediler, telefon",
+    'Календар за следене на сметки — плащанията се повтарят всеки месец.': "Faturaları takip etmek için takvim — ödemeler her ay tekrarlanır.",
     "ОСТАВА ТОЗИ МЕСЕЦ": "BU AY KALAN",
     "СЛЕДВАЩО ПЛАЩАНЕ": "SONRAKİ ÖDEME",
     "ПЛАЩАНИЯ И СМЕТКИ": "ÖDEMELER VE FATURALAR",
@@ -1389,12 +1392,12 @@
     { selector: '.tile[data-app="garage"]', title: 'Garage', text: 'Ремонти, гориво, документи и фишове за колата ти.' },
     { selector: '.tile[data-app="fines"]', title: 'Tickets', text: 'Всички фишове на всички коли на едно място, с бърза търсачка.' },
     { selector: '.tile[data-app="workdays"]', title: 'Workdays', text: 'Отбелязвай работните си дни и следи дохода си по месеци.' },
-    { selector: '.tile[data-app="bills"]', title: 'Bills', text: 'Календар на сметки, заеми и телефон — плащанията се повтарят автоматично всеки месец.' },
+    { selector: '.tile[data-app="bills"]', title: 'Bills', text: 'Календар за следене на сметки — плащанията се повтарят всеки месец.' },
     { selector: '.tile[data-app="savings"]', title: 'Savings', text: 'Следи спестените си пари в брой — банкноти, монети и центове.' },
     { selector: '.tile[data-app="company"]', title: 'Expenses', text: 'Служебни аванси и разходи — генерирай отчет за шефа с един клик.' },
     { selector: '.tile[data-app="notes"]', title: 'Notes', text: 'Бързи бележки, за да не забравяш нищо важно.' },
     { selector: '.tile[data-app="tdee"]', title: 'TDEE', text: 'Калкулатор, който изчислява колко калории са ти нужни на ден.' },
-    { selector: '.tile[data-app="chat"]', title: 'Mail', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' }
+    { selector: '#chatFabBtn', title: 'Mail', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' }
   ];
 
   /* ============ First-login onboarding (name/gender/age/language/currency) ============ */
@@ -3489,8 +3492,6 @@
     const badge = $('chatFabBadge');
     badge.textContent = total > 99 ? '99+' : total;
     badge.classList.toggle('hidden', total === 0);
-    $('hubChatUnread').textContent = chatMessagesUnreadTotal;
-    $('hubChatRequests').textContent = chatFriendRequests.length;
   }
 
   function updateChatFabVisibility() {
