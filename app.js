@@ -5053,7 +5053,7 @@
 
   /* ============ Push notifications ============ */
 
-  const VAPID_PUBLIC_KEY = 'BHDVQmOmIap8qeWzBk8VXMKTOPT65wV38JRmL4j8fEooHuBPlG_NxpifXMcbOtBIM_MGaO1tC7ymNAWA-3aaxzE';
+  const VAPID_PUBLIC_KEY = 'BAxxUdK6sxVAvU-t4W-A_pRtLDaaNTREhQ6lOIjNmv2YOsr5v4AjUYZwgm8c3_WX8V6ybdWPqlIg5sOGLvcoi9k';
 
   function urlBase64ToUint8Array(base64String) {
     const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
