@@ -4159,3 +4159,6 @@
 
 #billsCalendarGrid { grid-auto-rows: minmax(64px, 1fr); }
 #billsCalendarGrid .day-cell { padding-top: 8px; font-size: 13px; }
+
+.tile[data-app="chat"]:hover { box-shadow: 0 10px 30px -10px rgba(45, 212, 191, 0.35); }
+.tile[data-app="chat"] .tile-icon { color: #2dd4bf; border-color: rgba(45,212,191,0.4); }

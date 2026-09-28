@@ -3473,6 +3473,8 @@
     const badge = $('chatFabBadge');
     badge.textContent = total > 99 ? '99+' : total;
     badge.classList.toggle('hidden', total === 0);
+    $('hubChatUnread').textContent = chatMessagesUnreadTotal;
+    $('hubChatRequests').textContent = chatFriendRequests.length;
   }
 
   function updateChatFabVisibility() {
