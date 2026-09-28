@@ -1122,6 +1122,17 @@
     history.back();
   }
 
+  // Swaps the handler for the current top-of-stack nav entry without touching
+  // browser history — used when one overlay hands off directly to another
+  // (e.g. settings closes and the tour opens) so we never call history.back()
+  // and history.pushState() in the same tick, which desyncs navStack from the
+  // real history depth and can eventually navigate the user out of the app.
+  function replaceNavTop(onBack) {
+    if (navHandlingPop) return;
+    if (navStack.length) navStack[navStack.length - 1] = onBack;
+    else pushNav(onBack);
+  }
+
   window.addEventListener('popstate', () => {
     if (navConsumingOwnPop) { navConsumingOwnPop = false; return; }
     if (navStack.length) {
@@ -1372,15 +1383,18 @@
   /* ============ Onboarding tour ============ */
 
   const TOUR_STEPS = [
-    { selector: '#profileAvatarBtn', title: 'Твоят профил', text: 'От тук сменяш профилната снимка, името си, темата, езика и валутата на приложението.' },
+    { selector: '#profileAvatarBtn', title: 'Твоят профил', text: 'От тук сменяш профилната снимка, името, пола и възрастта си.' },
+    { selector: '#settingsBtn', title: 'Настройки', text: 'Тема, език, валута и известия за чат — оттук ги сменяш по всяко време.' },
     { selector: '.tile[data-app="vitals"]', title: 'Vitals', text: 'Следи калории, вода, крачки и тегло всеки ден.' },
-    { selector: '.tile[data-app="workdays"]', title: 'Workdays', text: 'Отбелязвай работните си дни и виж дохода си по месеци.' },
     { selector: '.tile[data-app="garage"]', title: 'Garage', text: 'Ремонти, гориво, документи и фишове за колата ти.' },
+    { selector: '.tile[data-app="fines"]', title: 'Tickets', text: 'Всички фишове на всички коли на едно място, с бърза търсачка.' },
+    { selector: '.tile[data-app="workdays"]', title: 'Workdays', text: 'Отбелязвай работните си дни и виж дохода си по месеци.' },
+    { selector: '.tile[data-app="bills"]', title: 'Bills', text: 'Календар на сметки, заеми и телефон — плащанията се повтарят автоматично всеки месец.' },
     { selector: '.tile[data-app="savings"]', title: 'Savings', text: 'Следи спестените си пари в брой — банкноти, монети и центове.' },
     { selector: '.tile[data-app="company"]', title: 'Expenses', text: 'Служебни аванси и разходи — генерирай отчет за шефа с един клик.' },
     { selector: '.tile[data-app="notes"]', title: 'Notes', text: 'Бързи бележки, за да не забравяш нищо важно.' },
-    { selector: '#chatFabBtn', title: 'Chat', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' },
-    { selector: '.tile[data-app="tdee"]', title: 'TDEE', text: 'Калкулатор, който изчислява колко калории са ти нужни на ден.' }
+    { selector: '.tile[data-app="tdee"]', title: 'TDEE', text: 'Калкулатор, който изчислява колко калории са ти нужни на ден.' },
+    { selector: '.tile[data-app="chat"]', title: 'Mail', text: 'Добавяй приятели по имейл и си пишете направо в приложението.' }
   ];
 
   /* ============ First-login onboarding (name/gender/age/language/currency) ============ */
@@ -1447,14 +1461,16 @@
   }
 
   function startTour() {
-    if (!$('profileModal').classList.contains('hidden')) closeProfileModal();
-    if (!$('settingsModal').classList.contains('hidden')) closeSettingsModal();
+    const hadOverlayOpen = !$('profileModal').classList.contains('hidden') || !$('settingsModal').classList.contains('hidden');
+    $('profileModal').classList.add('hidden');
+    $('settingsModal').classList.add('hidden');
     if (currentScreen !== 'hub') showScreen('hub');
     tourIndex = 0;
     tourActive = true;
     $('tourOverlay').classList.remove('hidden');
     renderTourStep();
-    pushNav(tourSkip);
+    if (hadOverlayOpen) replaceNavTop(tourSkip);
+    else pushNav(tourSkip);
   }
 
   function endTour() {
