@@ -1636,6 +1636,7 @@
   function shiftMonth(delta) {
     viewDate.setMonth(viewDate.getMonth() + delta);
     renderCalendar();
+    renderStats(false);
   }
 
   function renderCalendar() {
@@ -1706,17 +1707,19 @@
   }
 
   function renderStats(instant) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Follows the month currently browsed in the calendar (viewDate), not
+    // necessarily today's real month — so stats update when you page
+    // through past/future months.
+    const viewed = new Date(viewDate.getFullYear(), viewDate.getMonth(), 1);
 
-    const monthStart = new Date(today.getFullYear(), today.getMonth(), 1);
-    const monthEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999);
-    const prevMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+    const monthStart = new Date(viewed.getFullYear(), viewed.getMonth(), 1);
+    const monthEnd = new Date(viewed.getFullYear(), viewed.getMonth() + 1, 0, 23, 59, 59, 999);
+    const prevMonthStart = new Date(viewed.getFullYear(), viewed.getMonth() - 1, 1);
     const prevMonthEnd = new Date(monthStart.getTime() - 1);
 
     const firstHalfStart = monthStart;
-    const firstHalfEnd = new Date(today.getFullYear(), today.getMonth(), 15, 23, 59, 59, 999);
-    const secondHalfStart = new Date(today.getFullYear(), today.getMonth(), 16);
+    const firstHalfEnd = new Date(viewed.getFullYear(), viewed.getMonth(), 15, 23, 59, 59, 999);
+    const secondHalfStart = new Date(viewed.getFullYear(), viewed.getMonth(), 16);
     const secondHalfEnd = monthEnd;
 
     const prevFirstHalfStart = prevMonthStart;
@@ -1724,9 +1727,9 @@
     const prevSecondHalfStart = new Date(prevMonthStart.getFullYear(), prevMonthStart.getMonth(), 16);
     const prevSecondHalfEnd = prevMonthEnd;
 
-    const yearStart = new Date(today.getFullYear(), 0, 1);
-    const yearEnd = new Date(today.getFullYear(), 11, 31, 23, 59, 59, 999);
-    const prevYearStart = new Date(today.getFullYear() - 1, 0, 1);
+    const yearStart = new Date(viewed.getFullYear(), 0, 1);
+    const yearEnd = new Date(viewed.getFullYear(), 11, 31, 23, 59, 59, 999);
+    const prevYearStart = new Date(viewed.getFullYear() - 1, 0, 1);
     const prevYearEnd = new Date(yearStart.getTime() - 1);
 
     const firstHalfDays = countWorkRange(firstHalfStart, firstHalfEnd);
