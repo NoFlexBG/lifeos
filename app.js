@@ -6237,9 +6237,9 @@
     today.setHours(0, 0, 0, 0);
     const exp = new Date(expiry + 'T00:00:00');
     const diffDays = Math.round((exp - today) / 86400000);
-    if (diffDays < 0) return { cls: 'expired', label: tr('Изтекъл') };
-    if (diffDays <= 30) return { cls: 'soon', label: `${diffDays} ${tr('дни')}` };
-    return { cls: 'valid', label: tr('Валиден') };
+    const cls = diffDays < 0 ? 'expired' : diffDays <= 30 ? 'soon' : 'valid';
+    const label = diffDays < 0 ? tr('Изтекъл') : `${diffDays} ${tr('дни')}`;
+    return { cls, label };
   }
 
   function createRecordRow({ date, desc, meta, cost, onDelete, onEdit, onPhoto, hasPhoto, photoTitleHas, photoTitleAdd, onRowClick }) {
