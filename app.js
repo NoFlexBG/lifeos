@@ -952,7 +952,7 @@
       },
       savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
       company: { advances: [], expenses: [] },
-      profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true, paypalMe: '' },
+      profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true, paypalMe: '', lang: '', theme: '' },
       chatBackgrounds: {},
       notes: { entries: [] },
       bills: { items: [] }
@@ -1017,7 +1017,9 @@
             avatarPath: (parsed.profile && parsed.profile.avatarPath) || '',
             currency: (parsed.profile && parsed.profile.currency) || 'EUR',
             onboarded: (parsed.profile && typeof parsed.profile.onboarded === 'boolean') ? parsed.profile.onboarded : true,
-            paypalMe: (parsed.profile && parsed.profile.paypalMe) || ''
+            paypalMe: (parsed.profile && parsed.profile.paypalMe) || '',
+            lang: (parsed.profile && parsed.profile.lang) || '',
+            theme: (parsed.profile && parsed.profile.theme) || ''
           },
           chatBackgrounds: parsed.chatBackgrounds || {},
           notes: {
@@ -1280,6 +1282,10 @@
 
   function selectTheme(theme) {
     applyTheme(theme);
+    if (currentUser) {
+      state.profile.theme = theme;
+      saveState();
+    }
   }
 
   function updateThemeChipRow() {
@@ -1363,6 +1369,10 @@
     if (lang === currentLang) return;
     applyLang(lang);
     showScreen(currentScreen);
+    if (currentUser) {
+      state.profile.lang = lang;
+      saveState();
+    }
   }
 
   function initLang() {
@@ -1435,7 +1445,7 @@
     const fullName = [first, last].filter(Boolean).join(' ');
     if (fullName) state.profile.name = fullName;
     state.vitals.calc.sex = $('onboardGender').value === 'female' ? 'female' : 'male';
-    if (state.vitals.calc.sex === 'female') applyTheme('pink');
+    if (state.vitals.calc.sex === 'female') { applyTheme('pink'); state.profile.theme = 'pink'; }
     const age = parseInt($('onboardAge').value, 10);
     if (!isNaN(age) && age > 0) state.vitals.calc.age = age;
     saveState();
@@ -7552,7 +7562,9 @@
             name: parsed.profile.name || '',
             avatarPath: parsed.profile.avatarPath || '',
             currency: parsed.profile.currency || 'EUR',
-            paypalMe: parsed.profile.paypalMe || ''
+            paypalMe: parsed.profile.paypalMe || '',
+            lang: parsed.profile.lang || '',
+            theme: parsed.profile.theme || ''
           } : state.profile,
           chatBackgrounds: parsed.chatBackgrounds || state.chatBackgrounds,
           notes: parsed.notes ? {
@@ -8057,6 +8069,10 @@
 
   async function startApp() {
     await loadState();
+    // The account's saved language/theme (set from any device) win over this
+    // device's local/default choice, so switching them syncs on login.
+    if (state.profile.lang && state.profile.lang !== currentLang) applyLang(state.profile.lang);
+    if (state.profile.theme) applyTheme(state.profile.theme);
     updateCurrencyChipRow();
     applyI18n();
 
