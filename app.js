@@ -31,7 +31,7 @@
     'Ремонти, гориво, документи, фишове': 'Repairs, fuel, documents, tickets', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNPAID TICKETS', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOCUMENTS EXPIRING',
     'Всички фишове на всички коли': 'All tickets across every car', 'ОБЩО ФИШОВЕ': 'TOTAL TICKETS', 'ВСИЧКИ ФИШОВЕ': 'ALL TICKETS', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TICKETS ACROSS ALL CARS',
     'Търси по серия или номер...': 'Search by series or number...',
-    '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'РЕДАКТИРАЙ РЕМОНТ': 'EDIT REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
+    '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'РЕДАКТИРАЙ РЕМОНТ': 'EDIT REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'РЕДАКТИРАЙ ДОКУМЕНТ': 'EDIT DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
     'ФИШ': 'TICKET', '▣ Виж снимката': '▣ View photo',
     'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
     'Обща цена €': 'Total price €',
@@ -334,7 +334,7 @@
     'Ремонти, гориво, документи, фишове': 'Reparaturen, Kraftstoff, Dokumente, Bußgelder', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNBEZAHLTE BUSSGELDER', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOKUMENTE LAUFEN AB',
     'Всички фишове на всички коли': 'Alle Bußgelder aller Autos', 'ОБЩО ФИШОВЕ': 'BUSSGELDER GESAMT', 'ВСИЧКИ ФИШОВЕ': 'ALLE BUSSGELDER', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'BUSSGELDER ALLER AUTOS',
     'Търси по серия или номер...': 'Nach Serie oder Nummer suchen...',
-    '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'РЕДАКТИРАЙ РЕМОНТ': 'REPARATUR BEARBEITEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
+    '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'РЕДАКТИРАЙ РЕМОНТ': 'REPARATUR BEARBEITEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'РЕДАКТИРАЙ ДОКУМЕНТ': 'DOKUMENT BEARBEITEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
     'ФИШ': 'BUSSGELD', '▣ Виж снимката': '▣ Foto ansehen',
     'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
     'Обща цена €': 'Gesamtpreis €',
@@ -637,7 +637,7 @@
     'Ремонти, гориво, документи, фишове': 'Tamirler, yakıt, belgeler, cezalar', 'НЕПЛАТЕНИ ФИШОВЕ': 'ÖDENMEMİŞ CEZALAR', 'ДОКУМЕНТИ ИЗТИЧАТ': 'BELGELER SONA ERİYOR',
     'Всички фишове на всички коли': 'Tüm araçların tüm cezaları', 'ОБЩО ФИШОВЕ': 'TOPLAM CEZA', 'ВСИЧКИ ФИШОВЕ': 'TÜM CEZALAR', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TÜM ARAÇLARIN CEZALARI',
     'Търси по серия или номер...': 'Seri veya numaraya göre ara...',
-    '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'РЕДАКТИРАЙ РЕМОНТ': 'TAMİRİ DÜZENLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
+    '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'РЕДАКТИРАЙ РЕМОНТ': 'TAMİRİ DÜZENLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'РЕДАКТИРАЙ ДОКУМЕНТ': 'BELGEYİ DÜZENLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
     'ФИШ': 'CEZA', '▣ Виж снимката': '▣ Fotoğrafı görüntüle',
     'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
     'Обща цена €': 'Toplam fiyat €',
@@ -6530,19 +6530,33 @@
         desc: d.type,
         meta: chip,
         cost: '',
+        onEdit: () => openDocModal(d.id),
         onDelete: () => deleteDocument(d.id)
       }));
     });
   }
 
-  function openDocModal() {
-    $('docType').selectedIndex = 0;
-    $('docExpiry').value = todayKey();
+  let editingDocumentId = '';
+
+  function openDocModal(id) {
+    const doc = id ? getActiveRecords().documents.find((d) => d.id === id) : null;
+    editingDocumentId = id || '';
+    $('docModalTitle').textContent = tr(doc ? 'РЕДАКТИРАЙ ДОКУМЕНТ' : 'ДОБАВИ ДОКУМЕНТ');
+    $('docModalSaveBtn').textContent = tr(doc ? 'Запиши' : 'Добави');
+    if (doc) {
+      const options = Array.from($('docType').options);
+      const idx = options.findIndex((o) => o.value === doc.type);
+      $('docType').selectedIndex = idx >= 0 ? idx : 0;
+    } else {
+      $('docType').selectedIndex = 0;
+    }
+    $('docExpiry').value = doc ? doc.expiry : todayKey();
     $('docModal').classList.remove('hidden');
     pushNav(closeDocModal);
   }
 
   function closeDocModal() {
+    editingDocumentId = '';
     $('docModal').classList.add('hidden');
     popNav();
   }
@@ -6551,7 +6565,14 @@
     const type = $('docType').value;
     const expiry = $('docExpiry').value;
     if (!expiry) { showToast(tr('Избери дата')); return; }
-    getActiveRecords().documents.push({ id: genId('d'), type, expiry });
+
+    const rec = getActiveRecords();
+    const existing = editingDocumentId ? rec.documents.find((d) => d.id === editingDocumentId) : null;
+    if (existing) {
+      Object.assign(existing, { type, expiry });
+    } else {
+      rec.documents.push({ id: genId('d'), type, expiry });
+    }
     saveState();
     closeDocModal();
     renderDocuments();
@@ -8035,7 +8056,7 @@
       $(id).addEventListener('keydown', (e) => { if (e.key === 'Enter') addFuel(); });
     });
 
-    $('docOpenModalBtn').addEventListener('click', openDocModal);
+    $('docOpenModalBtn').addEventListener('click', () => openDocModal(''));
     $('docModalCancelBtn').addEventListener('click', closeDocModal);
     $('docModalSaveBtn').addEventListener('click', addDocument);
 
