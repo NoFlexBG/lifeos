@@ -31,7 +31,7 @@
     'Ремонти, гориво, документи, фишове': 'Repairs, fuel, documents, tickets', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNPAID TICKETS', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOCUMENTS EXPIRING',
     'Всички фишове на всички коли': 'All tickets across every car', 'ОБЩО ФИШОВЕ': 'TOTAL TICKETS', 'ВСИЧКИ ФИШОВЕ': 'ALL TICKETS', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TICKETS ACROSS ALL CARS',
     'Търси по серия или номер...': 'Search by series or number...',
-    '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
+    '+ Добави': '+ Add', 'ДОБАВИ РЕМОНТ': 'ADD REPAIR', 'РЕДАКТИРАЙ РЕМОНТ': 'EDIT REPAIR', 'ДОБАВИ ГОРИВО': 'ADD FUEL', 'ДОБАВИ ДОКУМЕНТ': 'ADD DOCUMENT', 'ДОБАВИ ФИШ': 'ADD TICKET',
     'ФИШ': 'TICKET', '▣ Виж снимката': '▣ View photo',
     'Тип': 'Type', 'Валиден до': 'Valid until', 'Въведи описание': 'Enter a description', 'Въведи литри или цена': 'Enter liters or price',
     'Обща цена €': 'Total price €',
@@ -334,7 +334,7 @@
     'Ремонти, гориво, документи, фишове': 'Reparaturen, Kraftstoff, Dokumente, Bußgelder', 'НЕПЛАТЕНИ ФИШОВЕ': 'UNBEZAHLTE BUSSGELDER', 'ДОКУМЕНТИ ИЗТИЧАТ': 'DOKUMENTE LAUFEN AB',
     'Всички фишове на всички коли': 'Alle Bußgelder aller Autos', 'ОБЩО ФИШОВЕ': 'BUSSGELDER GESAMT', 'ВСИЧКИ ФИШОВЕ': 'ALLE BUSSGELDER', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'BUSSGELDER ALLER AUTOS',
     'Търси по серия или номер...': 'Nach Serie oder Nummer suchen...',
-    '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
+    '+ Добави': '+ Hinzufügen', 'ДОБАВИ РЕМОНТ': 'REPARATUR HINZUFÜGEN', 'РЕДАКТИРАЙ РЕМОНТ': 'REPARATUR BEARBEITEN', 'ДОБАВИ ГОРИВО': 'KRAFTSTOFF HINZUFÜGEN', 'ДОБАВИ ДОКУМЕНТ': 'DOKUMENT HINZUFÜGEN', 'ДОБАВИ ФИШ': 'BUSSGELD HINZUFÜGEN',
     'ФИШ': 'BUSSGELD', '▣ Виж снимката': '▣ Foto ansehen',
     'Тип': 'Typ', 'Валиден до': 'Gültig bis', 'Въведи описание': 'Beschreibung eingeben', 'Въведи литри или цена': 'Liter oder Preis eingeben',
     'Обща цена €': 'Gesamtpreis €',
@@ -637,7 +637,7 @@
     'Ремонти, гориво, документи, фишове': 'Tamirler, yakıt, belgeler, cezalar', 'НЕПЛАТЕНИ ФИШОВЕ': 'ÖDENMEMİŞ CEZALAR', 'ДОКУМЕНТИ ИЗТИЧАТ': 'BELGELER SONA ERİYOR',
     'Всички фишове на всички коли': 'Tüm araçların tüm cezaları', 'ОБЩО ФИШОВЕ': 'TOPLAM CEZA', 'ВСИЧКИ ФИШОВЕ': 'TÜM CEZALAR', 'ФИШОВЕ НА ВСИЧКИ КОЛИ': 'TÜM ARAÇLARIN CEZALARI',
     'Търси по серия или номер...': 'Seri veya numaraya göre ara...',
-    '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
+    '+ Добави': '+ Ekle', 'ДОБАВИ РЕМОНТ': 'TAMİR EKLE', 'РЕДАКТИРАЙ РЕМОНТ': 'TAMİRİ DÜZENLE', 'ДОБАВИ ГОРИВО': 'YAKIT EKLE', 'ДОБАВИ ДОКУМЕНТ': 'BELGE EKLE', 'ДОБАВИ ФИШ': 'CEZA EKLE',
     'ФИШ': 'CEZA', '▣ Виж снимката': '▣ Fotoğrafı görüntüle',
     'Тип': 'Tür', 'Валиден до': 'Geçerlilik tarihi', 'Въведи описание': 'Bir açıklama gir', 'Въведи литри или цена': 'Litre veya fiyat gir',
     'Обща цена €': 'Toplam fiyat €',
@@ -6387,22 +6387,30 @@
         desc: r.desc,
         meta: r.km ? formatNumber(r.km) + ' km' : '',
         cost: formatNumber(r.cost) + ' ' + curSym(),
+        onEdit: () => openRepairModal(r.id),
         onDelete: () => deleteRepair(r.id)
       }));
     });
   }
 
-  function openRepairModal() {
-    $('repairDate').value = todayKey();
-    $('repairDesc').value = '';
-    $('repairKm').value = '';
-    $('repairCost').value = '';
+  let editingRepairId = '';
+
+  function openRepairModal(id) {
+    const rec = id ? getActiveRecords().repairs.find((r) => r.id === id) : null;
+    editingRepairId = id || '';
+    $('repairModalTitle').textContent = tr(rec ? 'РЕДАКТИРАЙ РЕМОНТ' : 'ДОБАВИ РЕМОНТ');
+    $('repairModalSaveBtn').textContent = tr(rec ? 'Запиши' : 'Добави');
+    $('repairDate').value = rec ? rec.date : todayKey();
+    $('repairDesc').value = rec ? rec.desc : '';
+    $('repairKm').value = rec && rec.km ? rec.km : '';
+    $('repairCost').value = rec && rec.cost ? rec.cost : '';
     $('repairModal').classList.remove('hidden');
     $('repairDesc').focus();
     pushNav(closeRepairModal);
   }
 
   function closeRepairModal() {
+    editingRepairId = '';
     $('repairModal').classList.add('hidden');
     popNav();
   }
@@ -6414,7 +6422,14 @@
     const cost = parseFloat($('repairCost').value) || 0;
     if (!date) { showToast(tr('Избери дата')); return; }
     if (!desc) { showToast(tr('Въведи описание')); return; }
-    getActiveRecords().repairs.push({ id: genId('r'), date, desc, km, cost });
+
+    const rec = getActiveRecords();
+    const existing = editingRepairId ? rec.repairs.find((r) => r.id === editingRepairId) : null;
+    if (existing) {
+      Object.assign(existing, { date, desc, km, cost });
+    } else {
+      rec.repairs.push({ id: genId('r'), date, desc, km, cost });
+    }
     saveState();
     closeRepairModal();
     renderRepairs();
@@ -8006,7 +8021,7 @@
     $('vehicleSettingsSaveBtn').addEventListener('click', saveVehicleSettings);
     $('vehicleDeleteBtn').addEventListener('click', deleteVehicleFromSettings);
 
-    $('repairOpenModalBtn').addEventListener('click', openRepairModal);
+    $('repairOpenModalBtn').addEventListener('click', () => openRepairModal(''));
     $('repairModalCancelBtn').addEventListener('click', closeRepairModal);
     $('repairModalSaveBtn').addEventListener('click', addRepair);
     ['repairDesc','repairKm','repairCost'].forEach((id) => {
