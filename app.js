@@ -37,7 +37,7 @@
     'Обща цена €': 'Total price €',
     'На линия': 'Online', 'последно видян': 'last seen', 'преди малко': 'just now', 'мин.': 'min', 'ч.': 'h', 'д.': 'd',
     'ЧЛЕНОВЕ НА ГРУПАТА': 'GROUP MEMBERS', 'Изтрий групата': 'Delete group', 'Собственик': 'Owner', 'Админ': 'Admin', 'Член': 'Member',
-    'Ти': 'You', 'Свали от admin': 'Remove admin', 'Направи admin': 'Make admin', 'Премахни': 'Remove', "ФОН НА ЧАТА": "CHAT BACKGROUND", "Снимка": "Photo", "Фонът е обновен": "Background updated", "Фонът е премахнат": "Background removed",
+    'Ти': 'You', 'Свали от admin': 'Remove admin', 'Направи admin': 'Make admin', 'Премахни': 'Remove', "ФОН НА РАЗГОВОРА": "CONVERSATION BACKGROUND", "Снимка": "Photo", "Фонът е обновен": "Background updated", "Фонът е премахнат": "Background removed",
     'Премахни този човек от групата?': 'Remove this person from the group?', 'Грешка при промяна на ролята': 'Error changing role',
     'Ролята е променена': 'Role changed', 'Грешка при премахване': 'Error removing', 'Премахнат от групата': 'Removed from the group',
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Are you sure you want to permanently delete the group?',
@@ -340,7 +340,7 @@
     'Обща цена €': 'Gesamtpreis €',
     'На линия': 'Online', 'последно видян': 'zuletzt online', 'преди малко': 'gerade eben', 'мин.': 'Min', 'ч.': 'Std', 'д.': 'Tg',
     'ЧЛЕНОВЕ НА ГРУПАТА': 'GRUPPENMITGLIEDER', 'Изтрий групата': 'Gruppe löschen', 'Собственик': 'Besitzer', 'Админ': 'Admin', 'Член': 'Mitglied',
-    'Ти': 'Du', 'Свали от admin': 'Admin entfernen', 'Направи admin': 'Zum Admin machen', 'Премахни': 'Entfernen', "ФОН НА ЧАТА": "CHAT-HINTERGRUND", "Снимка": "Foto", "Фонът е обновен": "Hintergrund aktualisiert", "Фонът е премахнат": "Hintergrund entfernt",
+    'Ти': 'Du', 'Свали от admin': 'Admin entfernen', 'Направи admin': 'Zum Admin machen', 'Премахни': 'Entfernen', "ФОН НА РАЗГОВОРА": "GESPRÄCHSHINTERGRUND", "Снимка": "Foto", "Фонът е обновен": "Hintergrund aktualisiert", "Фонът е премахнат": "Hintergrund entfernt",
     'Премахни този човек от групата?': 'Diese Person aus der Gruppe entfernen?', 'Грешка при промяна на ролята': 'Fehler beim Ändern der Rolle',
     'Ролята е променена': 'Rolle geändert', 'Грешка при премахване': 'Fehler beim Entfernen', 'Премахнат от групата': 'Aus der Gruppe entfernt',
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Möchtest du die Gruppe wirklich endgültig löschen?',
@@ -643,7 +643,7 @@
     'Обща цена €': 'Toplam fiyat €',
     'На линия': 'Çevrimiçi', 'последно видян': 'son görülme', 'преди малко': 'az önce', 'мин.': 'dk', 'ч.': 'sa', 'д.': 'g',
     'ЧЛЕНОВЕ НА ГРУПАТА': 'GRUP ÜYELERİ', 'Изтрий групата': 'Grubu sil', 'Собственик': 'Sahip', 'Админ': 'Admin', 'Член': 'Üye',
-    'Ти': 'Sen', 'Свали от admin': 'Adminlikten çıkar', 'Направи admin': 'Admin yap', 'Премахни': 'Kaldır', "ФОН НА ЧАТА": "SOHBET ARKA PLANI", "Снимка": "Fotoğraf", "Фонът е обновен": "Arka plan güncellendi", "Фонът е премахнат": "Arka plan kaldırıldı",
+    'Ти': 'Sen', 'Свали от admin': 'Adminlikten çıkar', 'Направи admin': 'Admin yap', 'Премахни': 'Kaldır', "ФОН НА РАЗГОВОРА": "SOHBET ARKA PLANI", "Снимка": "Fotoğraf", "Фонът е обновен": "Arka plan güncellendi", "Фонът е премахнат": "Arka plan kaldırıldı",
     'Премахни този човек от групата?': 'Bu kişi gruptan çıkarılsın mı?', 'Грешка при промяна на ролята': 'Rol değiştirilirken hata oluştu',
     'Ролята е променена': 'Rol değiştirildi', 'Грешка при премахване': 'Kaldırma hatası', 'Премахнат от групата': 'Gruptan çıkarıldı',
     'Сигурни ли сте, че искате да изтриете групата завинаги?': 'Grubu kalıcı olarak silmek istediğinden emin misin?',
@@ -952,7 +952,8 @@
       },
       savings: { goalsByCurrency: { EUR: 1000 }, walletsByCurrency: { EUR: {} } },
       company: { advances: [], expenses: [] },
-      profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true, paypalMe: '', chatBackgroundPath: '' },
+      profile: { name: '', avatarPath: '', currency: 'EUR', onboarded: true, paypalMe: '' },
+      chatBackgrounds: {},
       notes: { entries: [] },
       bills: { items: [] }
     };
@@ -1016,9 +1017,9 @@
             avatarPath: (parsed.profile && parsed.profile.avatarPath) || '',
             currency: (parsed.profile && parsed.profile.currency) || 'EUR',
             onboarded: (parsed.profile && typeof parsed.profile.onboarded === 'boolean') ? parsed.profile.onboarded : true,
-            paypalMe: (parsed.profile && parsed.profile.paypalMe) || '',
-            chatBackgroundPath: (parsed.profile && parsed.profile.chatBackgroundPath) || ''
+            paypalMe: (parsed.profile && parsed.profile.paypalMe) || ''
           },
+          chatBackgrounds: parsed.chatBackgrounds || {},
           notes: {
             entries: (parsed.notes && parsed.notes.entries) || []
           },
@@ -2875,12 +2876,19 @@
     openAvatarCropModal(file);
   }
 
-  /* ============ Chat background (personal, per account) ============ */
+  /* ============ Chat background (per conversation, private to this account) ============ */
+
+  function currentChatBgKey() {
+    if (activeChatGroupId) return 'g_' + activeChatGroupId;
+    if (activeChatFriendId) return 'f_' + activeChatFriendId;
+    return '';
+  }
 
   async function applyChatBackground() {
     const el = $('chatMessages');
     if (!el) return;
-    const path = state.profile.chatBackgroundPath;
+    const key = currentChatBgKey();
+    const path = key ? state.chatBackgrounds[key] : '';
     if (!path) { el.style.backgroundImage = ''; return; }
     const { data } = await getSignedPhotoUrl(path);
     if (data) el.style.backgroundImage = `url('${data.signedUrl}')`;
@@ -2890,10 +2898,12 @@
     const file = evt.target.files[0];
     evt.target.value = '';
     if (!file) return;
+    const key = currentChatBgKey();
+    if (!key) return;
     if (!file.type.startsWith('image/')) { showToast(tr('Само снимки')); return; }
     if (file.size > MAX_PHOTO_MB * 1024 * 1024) { showToast(`${tr('Файлът е над')} ${MAX_PHOTO_MB}MB`); return; }
 
-    const oldPath = state.profile.chatBackgroundPath;
+    const oldPath = state.chatBackgrounds[key];
     const blob = await compressImage(file, PHOTO_MAX_DIM, 0.85);
     const path = `${currentUser.id}/chat-bg/${genId('bg')}.jpg`;
     const { error } = await sb.storage.from(PHOTO_BUCKET).upload(path, blob, { contentType: 'image/jpeg' });
@@ -2903,18 +2913,19 @@
       sb.storage.from(PHOTO_BUCKET).remove([oldPath]);
       delete signedUrlCache[oldPath];
     }
-    state.profile.chatBackgroundPath = path;
+    state.chatBackgrounds[key] = path;
     saveState();
     applyChatBackground();
     showToast(tr('Фонът е обновен'));
   }
 
   function removeChatBackground() {
-    const oldPath = state.profile.chatBackgroundPath;
+    const key = currentChatBgKey();
+    const oldPath = key ? state.chatBackgrounds[key] : '';
     if (!oldPath) return;
     sb.storage.from(PHOTO_BUCKET).remove([oldPath]);
     delete signedUrlCache[oldPath];
-    state.profile.chatBackgroundPath = '';
+    delete state.chatBackgrounds[key];
     saveState();
     applyChatBackground();
     showToast(tr('Фонът е премахнат'));
@@ -3750,6 +3761,7 @@
     wireTypingChannel(friendId);
     startChatPresenceHeartbeat('dm', friendId);
     updateChatBlockedBannerAndInput();
+    applyChatBackground();
     await loadChatMessages();
     await sb.from('messages').update({ read_at: new Date().toISOString() })
       .eq('receiver_id', currentUser.id).eq('sender_id', friendId).is('read_at', null);
@@ -3773,6 +3785,7 @@
     pushNav(closeChatConversation);
     startChatPresenceHeartbeat('group', groupId);
     updateChatBlockedBannerAndInput();
+    applyChatBackground();
     await loadGroupMessages();
   }
 
@@ -7539,9 +7552,9 @@
             name: parsed.profile.name || '',
             avatarPath: parsed.profile.avatarPath || '',
             currency: parsed.profile.currency || 'EUR',
-            paypalMe: parsed.profile.paypalMe || '',
-            chatBackgroundPath: parsed.profile.chatBackgroundPath || ''
+            paypalMe: parsed.profile.paypalMe || ''
           } : state.profile,
+          chatBackgrounds: parsed.chatBackgrounds || state.chatBackgrounds,
           notes: parsed.notes ? {
             entries: parsed.notes.entries || []
           } : state.notes,
