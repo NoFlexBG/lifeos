@@ -3080,6 +3080,8 @@
     gap: 8px;
     padding-right: 4px;
     padding-bottom: 30px;
+    background-size: cover;
+    background-position: center;
   }
 
   .chat-message {
