@@ -5372,14 +5372,14 @@
     showToast(tr('Целта за калории е обновена'));
   }
 
-  function renderWeekChart(containerId, values, color, unit) {
+  function renderWeekChart(containerId, values, color, unit, onBarClick) {
     const container = $(containerId);
     container.innerHTML = '';
     const max = Math.max(...values.map((v) => v.value), 1);
 
     values.forEach((v) => {
       const wrap = document.createElement('div');
-      wrap.className = 'week-bar-wrap' + (v.isToday ? ' today' : '');
+      wrap.className = 'week-bar-wrap' + (v.isToday ? ' today' : '') + (onBarClick ? ' clickable' : '');
 
       const tooltip = document.createElement('div');
       tooltip.className = 'week-bar-tooltip';
@@ -5399,6 +5399,7 @@
 
       wrap.appendChild(bar);
       wrap.appendChild(label);
+      if (onBarClick) wrap.addEventListener('click', () => onBarClick(v.key));
       container.appendChild(wrap);
 
       requestAnimationFrame(() => { bar.style.height = `${pct}%`; });
@@ -5417,9 +5418,41 @@
       days.push({ key, label: WEEKDAY_SHORT()[(d.getDay() + 6) % 7], isToday: i === 0 });
     }
 
-    renderWeekChart('weekChartCalories', days.map((d) => ({ ...d, value: getVitalsDay(d.key).calories })), 'var(--pink)', tr('ккал'));
+    renderWeekChart('weekChartCalories', days.map((d) => ({ ...d, value: getVitalsDay(d.key).calories })), 'var(--pink)', tr('ккал'), openDayMealsModal);
     renderWeekChart('weekChartWater', days.map((d) => ({ ...d, value: getVitalsDay(d.key).water })), 'var(--cyan)', tr('мл'));
     renderWeekChart('weekChartSteps', days.map((d) => ({ ...d, value: getVitalsDay(d.key).steps })), 'var(--violet)', tr('крачки'));
+  }
+
+  function openDayMealsModal(key) {
+    const entry = getVitalsDay(key);
+    const meals = (entry.meals || []).slice().reverse();
+
+    $('dayMealsModalTitle').textContent = formatDateDisplay(key);
+    $('dayMealsSummary').textContent =
+      `${formatNumber(entry.calories)} ${tr('ккал')} · ${tr('Б')} ${Math.round(entry.protein)}${tr('г')} · ${tr('В')} ${Math.round(entry.carbs)}${tr('г')} · ${tr('М')} ${Math.round(entry.fat)}${tr('г')}`;
+
+    const container = $('dayMealsList');
+    container.innerHTML = '';
+    if (!meals.length) { renderEmptyRow(container, 'Няма записано хранене'); }
+    else {
+      meals.forEach((m) => {
+        container.appendChild(createRecordRow({
+          date: m.time,
+          desc: m.desc,
+          meta: `${tr('Б')}${Math.round(m.protein)} ${tr('В')}${Math.round(m.carbs)} ${tr('М')}${Math.round(m.fat)}`,
+          cost: formatNumber(m.calories) + ' ккал',
+          onDelete: () => { deleteMealOnDay(key, m.id); openDayMealsModal(key); }
+        }));
+      });
+    }
+
+    $('dayMealsModal').classList.remove('hidden');
+    pushNav(closeDayMealsModal);
+  }
+
+  function closeDayMealsModal() {
+    $('dayMealsModal').classList.add('hidden');
+    popNav();
   }
 
   /* ============ Weight tab ============ */
@@ -6199,8 +6232,8 @@
     renderProducts();
   }
 
-  function deleteMeal(id) {
-    mutateVitalsDay(todayKey(), (e) => {
+  function deleteMealOnDay(key, id) {
+    mutateVitalsDay(key, (e) => {
       if (!e.meals) return;
       const m = e.meals.find((x) => x.id === id);
       if (!m) return;
@@ -6210,9 +6243,12 @@
       e.fat -= m.fat;
       e.meals = e.meals.filter((x) => x.id !== id);
     });
-    renderVitalsToday(false);
+    if (key === todayKey()) { renderVitalsToday(false); renderMealHistory(); }
     renderVitalsCharts();
-    renderMealHistory();
+  }
+
+  function deleteMeal(id) {
+    deleteMealOnDay(todayKey(), id);
   }
 
   function renderMealHistory() {
@@ -8058,6 +8094,7 @@
 
     $('docOpenModalBtn').addEventListener('click', () => openDocModal(''));
     $('docModalCancelBtn').addEventListener('click', closeDocModal);
+    $('dayMealsCloseBtn').addEventListener('click', closeDayMealsModal);
     $('docModalSaveBtn').addEventListener('click', addDocument);
 
     $('fineOpenModalBtn').addEventListener('click', openFineModal);

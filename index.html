@@ -26,7 +26,7 @@
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
 <link rel="preconnect" href="https://ytosvspqdmazfwymgssv.supabase.co" crossorigin />
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.112.3"></script>
-<link rel="stylesheet" href="styles.css?v=27">
+<link rel="stylesheet" href="styles.css?v=28">
 </head>
 <body>
 
@@ -1481,6 +1481,19 @@
   </div>
 </div>
 
+<div class="product-edit-modal hidden" id="dayMealsModal">
+  <div class="console-panel product-edit-modal-inner">
+    <span class="corner tl"></span><span class="corner tr"></span>
+    <span class="corner bl"></span><span class="corner br"></span>
+    <span class="gauge-label" id="dayMealsModalTitle">ХРАНЕНЕ</span>
+    <div class="weight-tooltip-macros" id="dayMealsSummary"></div>
+    <div class="record-list" id="dayMealsList"></div>
+    <div class="matrix-modal-actions">
+      <button class="chip" id="dayMealsCloseBtn" data-i18n>Затвори</button>
+    </div>
+  </div>
+</div>
+
 <div class="product-edit-modal hidden" id="fineModal">
   <div class="console-panel product-edit-modal-inner">
     <span class="corner tl"></span><span class="corner tr"></span>
@@ -2105,6 +2118,6 @@
   </div>
 </div>
 
-<script src="app.js?v=29" charset="UTF-8"></script>
+<script src="app.js?v=30" charset="UTF-8"></script>
 </body>
 </html>
